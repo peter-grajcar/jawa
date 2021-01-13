@@ -8,32 +8,61 @@
 
 namespace jawa {
 
-    using loc_t = unsigned;
+    struct loc_t
+    {
+        unsigned line;
+        unsigned column;
+    };
 
     /**
      * A class for storing the compiler context.
      */
     class context {
     private:
-        loc_t loc;
+        loc_t loc_;
     public:
+        inline const loc_t &loc() const
+        {
+            return loc_;
+        }
+
         /**
          * Returns the line number.
          *
          * @return line number.
          */
-        inline loc_t line() const
+        inline unsigned line() const
         {
-            return loc;
+            return loc_.line;
         };
+
+        /**
+         * Returns the column number.
+         *
+         * @return column number.
+         */
+        inline unsigned column() const
+        {
+            return loc_.column;
+        }
 
         /**
          * Increments the line number.
          */
         inline void inc_line()
         {
-            ++loc;
+            loc_.column = 0;
+            ++loc_.line;
         }
+
+        /**
+         * Increments the line number.
+         */
+        inline void inc_column(unsigned n)
+        {
+            loc_.column += n;
+        }
+
     };
 
 }

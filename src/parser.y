@@ -18,8 +18,6 @@
 {
 #include "bisonflex.hpp"
 #include "context.hpp"
-
-#define YYLLOC_DEFAULT(res,rhs,N)	(res = (N)?YYRHSLOC(rhs, 1):YYRHSLOC(rhs, 0))
 }
 
 /* parser.cpp */
@@ -31,14 +29,64 @@ YY_DECL;
 %param {yyscan_t yyscanner}		// the name yyscanner is enforced by Flex
 %param {jawa::context *ctx}
 
-%start translation_unit
+%start compilation_unit
 
-%token EOF		0				"end of file"
-%token SEMIC                    ";"
+%token EOF		    0   "end of file"
+%token SEMIC            ";"
+%token ABSTRACT         "abstract"
+%token CONTINUE         "continue"
+%token FOR              "for"
+%token NEW              "new"
+%token SWITCH           "switch"
+%token ASSERT           "assert"
+%token DEFAULT          "default"
+%token IF               "if"
+%token PACKAGE          "package"
+%token SYNCHRONIZED     "synchronizes"
+%token BOOLEAN          "boolean"
+%token DO               "do"
+%token GOTO             "goto"
+%token PRIVATE          "private"
+%token THIS             "this"
+%token BREAK            "break"
+%token DOUBLE           "double"
+%token IMPLEMENTS       "implements"
+%token PROTECTED        "protected"
+%token THROW            "throw"
+%token BYTE             "byte"
+%token ELSE             "else"
+%token IMPORT           "import"
+%token PUBLIC           "public"
+%token THROWS           "throws"
+%token CASE             "case"
+%token ENUM             "enum"
+%token INSTANCEOF       "instanceof"
+%token RETURN           "return"
+%token TRANSIENT        "transient"
+%token CATCH            "catch"
+%token EXTENDS          "extends"
+%token INT              "int"
+%token SHORT            "short"
+%token TRY              "try"
+%token CHAR             "char"
+%token FINAL            "final"
+%token INTERFACE        "interface"
+%token STATIC           "static"
+%token VOID             "void"
+%token CLASS            "class"
+%token FINALLY          "finally"
+%token LONG             "long"
+%token STRICTFP         "strictfp"
+%token VOLATILE         "volatile"
+%token CONST            "const"
+%token FLOAT            "float"
+%token NATIVE           "native"
+%token SUPER            "super"
+%token WHILE            "while"
 
 %%
 
-translation_unit: SEMIC
+compilation_unit: SEMIC
                   ;
 
 %%
