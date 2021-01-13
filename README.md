@@ -6,9 +6,11 @@ Jawa jest obiektowy język programowania.
 
 ```jawa
 publiczna klasa WitajŚwiecie {
+
     publiczny statyczny void głowny(Łańcuch[] args) {
         System.wyjście.wydrukovać("Witaj świecie");
     }
+
 }
 ```
 
