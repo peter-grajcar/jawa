@@ -12,10 +12,15 @@ publiczna klasa WitajŚwiecie {
 }
 ```
 
-## Compiling Sources
+## Compiling the Sources
 
 ```
 mkdir build
 cd build
 cmake -DBISON_ROOT=<bison_install_folder> -DFLEX_ROOT=<flex_install_folder> ..
 ```
+
+## References
+
+- [Jasmin - JVM assembler](http://jasmin.sourceforge.net/)
+- [Java Grammar](https://docs.oracle.com/javase/specs/jls/se7/html/jls-2.html)
