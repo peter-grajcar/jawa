@@ -10,20 +10,18 @@ if [ ! -f "$BIN_DIR/$JAWAC" ]; then
   exit 1
 fi
 
+alias diff="diff --old-group-format=$'EXPECTED:\n%<OUTPUT:\n%>\n' \\
+                 --new-group-format=$'EXPECTED:\n%<OUTPUT:\n%>\n' \\
+                 --unchanged-group-format=$'\e[0;33m%=\e[0m'"
+
 PASSED=
 FAILED=
-
-alias diff="diff --old-group-format=$'EXPECTED:\n%<OUTPUT:\n%>\n' \\
-                       --new-group-format=$'EXPECTED:\n%<OUTPUT:\n%>\n' \\
-                       --unchanged-group-format=$'\e[0;33m%=\e[0m'"
 
 for TEST in "$TEST_DIR"/*.jawa; do
   TEST_NAME=$(basename "$TEST")
   printf "==== TEST %-20s ====\n" "$TEST_NAME"
   GOLD=$(echo $TEST | sed "s/\.jawa/.out/")
-  if
-    "$BIN_DIR/$JAWAC" "$TEST" 2>/dev/null | diff "$GOLD" -
-  then
+  if "$BIN_DIR/$JAWAC" "$TEST" 2>/dev/null | diff "$GOLD" -; then
     echo "\e[0;32m$TEST_NAME PASSED\e[0m"
     PASSED=${PASSED}1
   else
@@ -34,4 +32,9 @@ for TEST in "$TEST_DIR"/*.jawa; do
 done
 
 printf "===================================\n"
-printf "%d tests PASSED\n%d tests FAILED\n" ${#PASSED} ${#FAILED}
+printf "%d tests PASSED\n" ${#PASSED}
+printf "%d tests FAILED\n" ${#FAILED}
+
+if [ -n "$FAILED" ]; then
+  exit 1
+fi
