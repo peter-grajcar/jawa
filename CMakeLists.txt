@@ -11,11 +11,11 @@ FLEX_TARGET(lexer src/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
 
 file(GLOB_RECURSE sources "src/*.cpp")
 
-add_executable(jawa
+add_executable(jawac
         ${sources}
         ${BISON_parser_OUTPUTS}
         ${FLEX_lexer_OUTPUTS}
         )
 
-target_include_directories(jawa PUBLIC include)
-target_include_directories(jawa PUBLIC build)
+target_include_directories(jawac PUBLIC include)
+target_include_directories(jawac PUBLIC build)
