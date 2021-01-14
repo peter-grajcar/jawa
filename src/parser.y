@@ -16,9 +16,11 @@
 /* parser.hpp */
 %code requires
 {
+#include <sstream>
+
 #include "bisonflex.hpp"
 #include "context.hpp"
-#include <sstream>
+#include "modifiers.hpp"
 }
 
 /* parser.cpp */
@@ -32,8 +34,12 @@ YY_DECL;
 
 %start compilation_unit
 
-%token EOF		    0   "end of file"
-%token SEMIC            ";"
+%token EOF		            0   "end of file"
+%token SEMIC                    ";"
+
+%token<jawa::gender> PUBLIC     "publiczny/publiczna"
+%token<jawa::gender> STATIC     "statyczny/statyczna"
+
 %token ABSTRACT         "abstract"
 %token CONTINUE         "continue"
 %token FOR              "for"
@@ -57,7 +63,6 @@ YY_DECL;
 %token BYTE             "byte"
 %token ELSE             "else"
 %token IMPORT           "import"
-%token PUBLIC           "publiczny/publiczna"
 %token THROWS           "throws"
 %token CASE             "case"
 %token ENUM             "enum"
@@ -72,7 +77,6 @@ YY_DECL;
 %token CHAR             "char"
 %token FINAL            "final"
 %token INTERFACE        "interface"
-%token STATIC           "static"
 %token VOID             "void"
 %token CLASS            "class"
 %token FINALLY          "finally"
@@ -96,7 +100,7 @@ YY_DECL;
 
 %%
 
-compilation_unit: PUBLIC CLASS IDF LCUR
+compilation_unit: PUBLIC CLASS IDF LCUR PUBLIC STATIC VOID IDF
                   ;
 
 %%
@@ -118,12 +122,12 @@ namespace jawa {
                 msg << " or";
         }
 
-        ctx->message(jawa::error::SYNTAX, parser_ctx.location(), msg.str());
+        ctx->message(error::SYNTAX, parser_ctx.location(), msg.str());
     }
 
     void parser::error(const location_type& loc, const std::string& msg)
     {
-         ctx->message(jawa::error::SYNTAX, loc, msg);
+         ctx->message(error::SYNTAX, loc, msg);
     }
 
 }

@@ -9,10 +9,10 @@ find_package(FLEX)
 BISON_TARGET(parser src/parser.y ${CMAKE_CURRENT_BINARY_DIR}/parser.cpp)
 FLEX_TARGET(lexer src/lexer.l ${CMAKE_CURRENT_BINARY_DIR}/lexer.cpp)
 
+file(GLOB_RECURSE sources "src/*.cpp")
+
 add_executable(jawa
-        src/main.cpp
-        src/error.cpp
-        src/context.cpp
+        ${sources}
         ${BISON_parser_OUTPUTS}
         ${FLEX_lexer_OUTPUTS}
         )
