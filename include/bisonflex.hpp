@@ -10,7 +10,7 @@
 
 #define YY_DECL jawa::parser::symbol_type yylex(yyscan_t yyscanner, jawa::context *ctx)
 
-#define YY_USER_ACTION ctx->inc_column(yyleng);
+#define YY_USER_ACTION ctx->inc_column(yyleng); ctx->line_buffer() << yytext;
 
 #define YYLLOC_DEFAULT(res, rhs, N)    (res = (N)?YYRHSLOC(rhs, 1):YYRHSLOC(rhs, 0))
 
