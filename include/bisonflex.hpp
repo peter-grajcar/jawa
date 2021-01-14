@@ -12,15 +12,17 @@
 
 #define YY_USER_ACTION ctx->inc_column(yyleng);
 
-#define YYLLOC_DEFAULT(res,rhs,N)	(res = (N)?YYRHSLOC(rhs, 1):YYRHSLOC(rhs, 0))
+#define YYLLOC_DEFAULT(res, rhs, N)    (res = (N)?YYRHSLOC(rhs, 1):YYRHSLOC(rhs, 0))
 
 #ifndef YY_TYPEDEF_YY_SCANNER_T
 #define YY_TYPEDEF_YY_SCANNER_T
 typedef void* yyscan_t;
 #endif
 
-namespace jawa {
-    yyscan_t lexer_init(FILE * iff);
+namespace jawa
+{
+    yyscan_t lexer_init(FILE *iff);
+
     void lexer_shutdown(yyscan_t scanner);
 }
 

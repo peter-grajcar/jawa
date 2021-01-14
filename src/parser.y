@@ -10,7 +10,7 @@
 %define api.parser.class {parser}
 %define api.token.prefix {TOKEN_}
 %define parse.assert
-%define parse.error verbose
+%define parse.error custom
 
 
 /* parser.hpp */
@@ -18,6 +18,7 @@
 {
 #include "bisonflex.hpp"
 #include "context.hpp"
+#include <sstream>
 }
 
 /* parser.cpp */
@@ -56,7 +57,7 @@ YY_DECL;
 %token BYTE             "byte"
 %token ELSE             "else"
 %token IMPORT           "import"
-%token PUBLIC           "public"
+%token PUBLIC           "publiczny/publiczna"
 %token THROWS           "throws"
 %token CASE             "case"
 %token ENUM             "enum"
@@ -84,19 +85,46 @@ YY_DECL;
 %token SUPER            "super"
 %token WHILE            "while"
 
+%token LCUR             "{"
+%token RCUR             "}"
+%token LPAR             "("
+%token RPAR             ")"
+%token LBRA             "["
+%token RBRA             "]"
+
+%token<jawa::Name> IDF  "identyfikator"
+
 %%
 
-compilation_unit: SEMIC
+compilation_unit: PUBLIC CLASS IDF LCUR
                   ;
 
 %%
 
 namespace jawa {
 
-	void parser::error(const location_type& l, const std::string& m)
-	{
-		// TODO:
-	}
+    void parser::report_syntax_error(parser::context const &parser_ctx) const
+    {
+        // Max 3 expected tokens
+        symbol_kind_type expected[3];
+        int n = parser_ctx.expected_tokens(expected, 3);
+
+        std::stringstream msg;
+        msg << "nieoczekiwany znak: " << symbol_name(parser_ctx.token()) << " oczekiwany:";
+        for (int i = 0; i < n; ++i) {
+            msg << ' ';
+            msg << symbol_name(expected[i]);
+            if (i + 1 < n)
+                msg << " or";
+        }
+
+        ctx->message(jawa::error::SYNTAX, parser_ctx.location(), msg.str());
+    }
+
+    void parser::error(const location_type& loc, const std::string& msg)
+    {
+         ctx->message(jawa::error::SYNTAX, loc, msg);
+    }
 
 }
 

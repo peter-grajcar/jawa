@@ -10,25 +10,39 @@
 %option nounistd
 
 
-HEX_DIGIT       [0-9a-fA-F]
-UNICODE_MARKER  u+
-UNICODE_ESCAPE  \\{UNICODE_MARKER}{HEX_DIGIT}{4}
+HEX_DIGIT           [0-9a-fA-F]
+UNICODE_MARKER      u+
+UNICODE_ESCAPE      \\{UNICODE_MARKER}{HEX_DIGIT}{4}
 
-LINE_TERMINATOR \n|\r|\r\n
-INPUT_CHAR      [^\n\r]
-WHITESPACE      \x20|\x09|\x0c
+LINE_TERMINATOR     \n|\r|\r\n
+INPUT_CHAR          [^\n\r]
+WHITESPACE          \x20|\x09|\x0c
 
-DIGIT           [0-9]
+DIGIT               [0-9]
 
 %%
 
-{WHITESPACE}        // Do nothing
+{WHITESPACE}        /* Do nothing */
 
 {LINE_TERMINATOR}   ctx->inc_line();
 
-;           return jawa::parser::make_SEMIC(ctx->loc());
+    /* Keywords */
 
-<<EOF>>     return jawa::parser::make_EOF(ctx->loc());
+publiczn[ya]        return jawa::parser::make_PUBLIC(ctx->loc());
+
+klasa               return jawa::parser::make_CLASS(ctx->loc());
+
+;                   return jawa::parser::make_SEMIC(ctx->loc());
+\{                  return jawa::parser::make_LCUR(ctx->loc());
+\}                  return jawa::parser::make_RCUR(ctx->loc());
+\(                  return jawa::parser::make_LPAR(ctx->loc());
+\}                  return jawa::parser::make_RPAR(ctx->loc());
+\[                  return jawa::parser::make_LBRA(ctx->loc());
+\]                  return jawa::parser::make_RBRA(ctx->loc());
+
+<<EOF>>             return jawa::parser::make_EOF(ctx->loc());
+
+.                   ctx->message(jawa::error::UNEXPECTED_CHAR, ctx->loc(), yytext[0]);
 
 %%
 
