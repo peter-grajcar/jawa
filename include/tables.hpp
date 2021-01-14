@@ -8,7 +8,8 @@
 
 #include <string>
 
-namespace jawa {
+namespace jawa
+{
 
     using Name = std::string;
 

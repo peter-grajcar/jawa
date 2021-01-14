@@ -12,7 +12,8 @@ namespace jawa
     {
         std::ostringstream oss;
         if (ch < 32 || ch > 126 || ch == '\'' || ch == '"')
-            oss << "\\x" << std::hex << std::setfill('0') << std::setw(2) << (int) ch;
+            oss << "\\x" << std::hex << std::setfill('0')
+                << std::setw(2) << (int) ch;
         else
             oss.put(ch);
         return std::move(oss).str();
@@ -21,9 +22,9 @@ namespace jawa
 
     void context::message_line(loc_t const &loc) const
     {
-        std::cerr << std::setw(4) << loc.line << ':';
+        std::cerr << '|' << std::setw(4) << loc.line << ':';
         std::cerr << line_buffer_.str() << " ..." << std::endl
-                  << std::setw(5) << ' ';
+                  << '|' << std::setw(5) << ' ';
         // column starts at 1, so subtracting 1 is safe
         for (unsigned i = 0; i < loc.column - 1; ++i) {
             std::cerr << ' ';
