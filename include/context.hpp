@@ -16,10 +16,11 @@ namespace jawa
 
     struct loc_t
     {
-        loc_t() : line(1), column(1) {}
+        loc_t() : line(1), column_start(1), column_end(1) {}
 
         unsigned line;
-        unsigned column;
+        unsigned column_start;
+        unsigned column_end;
     };
 
     /**
@@ -62,7 +63,8 @@ namespace jawa
          */
         inline void inc_line()
         {
-            loc_.column = 0;
+            loc_.column_start = 1;
+            loc_.column_end = 1;
             ++loc_.line;
             line_buffer_.str("");
         }
@@ -72,7 +74,8 @@ namespace jawa
          */
         inline void inc_column(unsigned n)
         {
-            loc_.column += n;
+            loc_.column_start = loc_.column_end;
+            loc_.column_end += n;
         }
 
         inline std::ostream &line_buffer()

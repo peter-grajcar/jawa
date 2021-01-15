@@ -26,29 +26,39 @@ namespace jawa
         std::cerr << line_buffer_.str() << " ..." << std::endl
                   << '|' << std::setw(5) << ' ';
         // column starts at 1, so subtracting 1 is safe
-        for (unsigned i = 0; i < loc.column - 1; ++i) {
+        for (unsigned i = 0; i < loc.column_start - 1; ++i) {
             std::cerr << ' ';
         }
-        std::cerr << '^' << std::endl;
+
+        // point to the erroneous single-character token
+        if (loc.column_end - loc.column_start == 1) {
+            std::cerr << '^' << std::endl;
+            return;
+        }
+
+        // underline erroneous token
+        for (unsigned i = loc.column_start; i < loc.column_end - 1; ++i) {
+            std::cerr << '~';
+        }
     }
 
     void context::message(errors::err err, const loc_t &loc) const
     {
-        std::cerr << "błąd:" << loc.line << ':' << loc.column << ": "
+        std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": "
                   << err.msg() << std::endl;
         message_line(loc);
     }
 
     void context::message(errors::err_c err, const loc_t &loc, char ch) const
     {
-        std::cerr << "błąd:" << loc.line << ':' << loc.column << ": "
+        std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": "
                   << err.msg() << '\'' << escape(ch) << '\'' << std::endl;
         message_line(loc);
     }
 
     void context::message(errors::err_n err, const loc_t &loc, const Name &name) const
     {
-        std::cerr << "błąd:" << loc.line << ':' << loc.column << ": "
+        std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": "
                   << err.msg() << '\"' << name << '\"' << std::endl;
         message_line(loc);
     }
