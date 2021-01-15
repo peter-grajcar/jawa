@@ -6,6 +6,8 @@
 #ifndef JAWA_UNICODE_HPP
 #define JAWA_UNICODE_HPP
 
+#include <locale>
+
 namespace jawa::unicode
 {
 

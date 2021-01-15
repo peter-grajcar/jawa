@@ -30,33 +30,31 @@ namespace jawa
     private:
         loc_t loc_;
         std::ostringstream line_buffer_;
+        std::locale locale_;
 
         void message_line(loc_t const &loc) const;
 
     public:
+        context() : locale_("pl_PL.UTF-8") {}
+
+        /**
+         * Returns current location of the parser.
+         *
+         * @return current location.
+         */
         inline const loc_t &loc() const
         {
             return loc_;
         }
 
         /**
-         * Returns the line number.
+         * Returns used locale.
          *
-         * @return line number.
+         * @return locale.
          */
-        inline unsigned line() const
+        inline const std::locale &locale() const
         {
-            return loc_.line;
-        };
-
-        /**
-         * Returns the column number.
-         *
-         * @return column number.
-         */
-        inline unsigned column() const
-        {
-            return loc_.column;
+            return locale_;
         }
 
         /**
@@ -68,7 +66,6 @@ namespace jawa
             ++loc_.line;
             line_buffer_.str("");
         }
-
 
         /**
          * Increments the line number.

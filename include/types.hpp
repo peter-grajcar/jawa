@@ -11,7 +11,7 @@
 namespace jawa
 {
 
-    using bool_t = bool
+    using bool_t = bool;
     using byte_t = int8_t;
     using short_t = int16_t;
     using int_t = int32_t;

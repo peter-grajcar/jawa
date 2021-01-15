@@ -21,6 +21,7 @@
 #include "bisonflex.hpp"
 #include "context.hpp"
 #include "modifiers.hpp"
+#include "types.hpp"
 }
 
 /* parser.cpp */
