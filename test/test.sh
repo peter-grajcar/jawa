@@ -20,7 +20,7 @@ FAILED=
 for TEST in "$TEST_DIR"/*.jawa; do
   TEST_NAME=$(basename "$TEST")
   printf "==== TEST %-20s ====\n" "$TEST_NAME"
-  GOLD=$(echo $TEST | sed "s/\.jawa/.out/")
+  GOLD=$(echo "$TEST" | sed "s/\.jawa/.out/")
   if "$BIN_DIR/$JAWAC" "$TEST" 2>/dev/null | diff "$GOLD" -; then
     echo "\e[0;32m$TEST_NAME PASSED\e[0m"
     PASSED=${PASSED}1
