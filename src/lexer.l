@@ -9,7 +9,6 @@
 %option batch never-interactive reentrant
 %option nounistd
 
-
 HEX_DIGIT           [0-9a-fA-F]
 UNICODE_MARKER      u+
 UNICODE_ESCAPE      \\{UNICODE_MARKER}{HEX_DIGIT}{4}
@@ -29,16 +28,64 @@ LETTER_OR_DIGIT     {LETTER}|{DIGIT}
 
     /* Keywords */
 
+prywatn[ya]                 return jawa::parser::make_PRIVATE(jawa::get_gender(yytext), ctx->loc());
+chronion[ya]                return jawa::parser::make_PROTECTED(jawa::get_gender(yytext), ctx->loc());
 publiczn[ya]                return jawa::parser::make_PUBLIC(jawa::get_gender(yytext), ctx->loc());
 statyczn[ya]                return jawa::parser::make_STATIC(jawa::get_gender(yytext), ctx->loc());
-klasa                       return jawa::parser::make_CLASS(ctx->loc());
+końcow[ya]                  return jawa::parser::make_FINAL(jawa::get_gender(yytext), ctx->loc());
+ojczyst[ya]                 return jawa::parser::make_NATIVE(jawa::get_gender(yytext), ctx->loc());
+zmeinn[ya]                  return jawa::parser::make_VOLATILE(jawa::get_gender(yytext), ctx->loc());
+zsynchronizowan[ya]         return jawa::parser::make_SYNCHRONIZED(jawa::get_gender(yytext), ctx->loc());
+abstrakcyjn[ya]             return jawa::parser::make_ABSTRACT(jawa::get_gender(yytext), ctx->loc());
+rzejściow[ya]               return jawa::parser::make_TRANSIENT(jawa::get_gender(yytext), ctx->loc());
+
+jeśli                       return jawa::parser::make_IF(ctx->loc());
+albo                        return jawa::parser::make_ELSE(ctx->loc());
+dla                         return jawa::parser::make_FOR(ctx->loc());
+zrob                        return jawa::parser::make_DO(ctx->loc());
+dopóki                      return jawa::parser::make_WHILE(ctx->loc());
+zwróć                       return jawa::parser::make_RETURN(ctx->loc());
+spróbuj                     return jawa::parser::make_TRY(ctx->loc());
+łap                         return jawa::parser::make_CATCH(ctx->loc());
+wreszcie                    return jawa::parser::make_FINALLY(ctx->loc());
+kontyntynuj                 return jawa::parser::make_CONTINUE(ctx->loc());
+przełącz                    return jawa::parser::make_SWITCH(ctx->loc());
+domyślna                    return jawa::parser::make_DEFAULT(ctx->loc());
+złam                        return jawa::parser::make_BREAK(ctx->loc());
+przypad                     return jawa::parser::make_CASE(ctx->loc());
+rzuć                        return jawa::parser::make_THROW(ctx->loc());
+
 void                        return jawa::parser::make_VOID(ctx->loc());
+całość                      return jawa::parser::make_INT(ctx->loc());
+krótki                      return jawa::parser::make_SHORT(ctx->loc());
+znak                        return jawa::parser::make_CHAR(ctx->loc());
+bajt                        return jawa::parser::make_BYTE(ctx->loc());
+długy                       return jawa::parser::make_LONG(ctx->loc());
+podwójny                    return jawa::parser::make_DOUBLE(ctx->loc());
+pojedynczy                  return jawa::parser::make_FLOAT(ctx->loc());
+boolowski                   return jawa::parser::make_BOOLEAN(ctx->loc());
+
+klasa                       return jawa::parser::make_CLASS(ctx->loc());
+urządzenie                  return jawa::parser::make_INTERFACE(ctx->loc());
+wyliczenie                  return jawa::parser::make_ENUM(ctx->loc());
+nadzbiór                    return jawa::parser::make_SUPER(ctx->loc());
+przedłuża                   return jawa::parser::make_EXTENDS(ctx->loc());
+realizuje                   return jawa::parser::make_IMPLEMENTS(ctx->loc());
+to                          return jawa::parser::make_THIS(ctx->loc());
+potwierdzić                 return jawa::parser::make_ASSERT(ctx->loc());
+pakiet                      return jawa::parser::make_PACKAGE(ctx->loc());
+zaimportuj                  return jawa::parser::make_IMPORT(ctx->loc());
+
+rzuca                       return jawa::parser::make_THROWS(ctx->loc());
+
+prawda                      return jawa::parser::make_TRUE(ctx->loc());
+nieprawda                   return jawa::parser::make_FALSE(ctx->loc());
 
 ;                           return jawa::parser::make_SEMIC(ctx->loc());
 \{                          return jawa::parser::make_LCUR(ctx->loc());
 \}                          return jawa::parser::make_RCUR(ctx->loc());
 \(                          return jawa::parser::make_LPAR(ctx->loc());
-\}                          return jawa::parser::make_RPAR(ctx->loc());
+\)                          return jawa::parser::make_RPAR(ctx->loc());
 \[                          return jawa::parser::make_LBRA(ctx->loc());
 \]                          return jawa::parser::make_RBRA(ctx->loc());
 

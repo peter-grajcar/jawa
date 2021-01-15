@@ -38,16 +38,16 @@ YY_DECL;
 %token EOF		        0               "koniec pliku"
 
 /* modifiers */
-%token                  PRIVATE         "prywatny/prywatna"
-%token                  PROTECTED       "chroniony/chroniona"
+%token<jawa::gender>    PRIVATE         "prywatny/prywatna"
+%token<jawa::gender>    PROTECTED       "chroniony/chroniona"
 %token<jawa::gender>    PUBLIC          "publiczny/publiczna"
 %token<jawa::gender>    STATIC          "statyczny/statyczna"
-%token                  FINAL           "końcowy/końcowa"
-%token                  NATIVE          "ojczysty/ojczysta"
-%token                  VOLATILE        "zmeinny/zmeinna"
-%token                  SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
-%token                  ABSTRACT        "abstrakcyjny/abstrakcyjna"
-%token                  TRANSIENT       "przejściowy/przejściowa"
+%token<jawa::gender>    FINAL           "końcowy/końcowa"
+%token<jawa::gender>    NATIVE          "ojczysty/ojczysta"
+%token<jawa::gender>    VOLATILE        "zmeinny/zmeinna"
+%token<jawa::gender>    SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
+%token<jawa::gender>    ABSTRACT        "abstrakcyjny/abstrakcyjna"
+%token<jawa::gender>    TRANSIENT       "przejściowy/przejściowa"
 
 /* control flow */
 %token                  IF              "jeśli"
