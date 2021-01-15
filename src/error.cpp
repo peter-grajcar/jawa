@@ -8,5 +8,5 @@
 namespace jawa::error
 {
     err_n SYNTAX{"Syntax Error", "błąd składni: "};
-    err_c UNEXPECTED_CHAR{"Unexpected Character", "nieoczekiwany charakter: "};
+    err_c UNEXPECTED_CHAR{"Unexpected Character", "nieoczekiwany znak: "};
 }
