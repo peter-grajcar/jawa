@@ -81,6 +81,33 @@ rzuca                       return jawa::parser::make_THROWS(ctx->loc());
 prawda                      return jawa::parser::make_TRUE(ctx->loc());
 nieprawda                   return jawa::parser::make_FALSE(ctx->loc());
 
+wystąpienie                 return jawa::parser::make_INSTANCEOF(ctx->loc());
+nowy                        return jawa::parser::make_NEW(ctx->loc());
+
+==                          return jawa::parser::make_EQOP(jawa::operators::EQ, ctx->loc());
+!=                          return jawa::parser::make_EQOP(jawa::operators::NE, ctx->loc());
+\<                          return jawa::parser::make_RELOP(jawa::operators::LT, ctx->loc());
+>                           return jawa::parser::make_RELOP(jawa::operators::GT, ctx->loc());
+\<=                         return jawa::parser::make_RELOP(jawa::operators::LTE, ctx->loc());
+>=                          return jawa::parser::make_RELOP(jawa::operators::GTE, ctx->loc());
+\+=                         return jawa::parser::make_COMP(jawa::operators::COMP_ADD, ctx->loc());
+-=                          return jawa::parser::make_COMP(jawa::operators::COMP_SUB, ctx->loc());
+\*=                         return jawa::parser::make_COMP(jawa::operators::COMP_MUL, ctx->loc());
+\/=                         return jawa::parser::make_COMP(jawa::operators::COMP_DIV, ctx->loc());
+\%=                         return jawa::parser::make_COMP(jawa::operators::COMP_MOD, ctx->loc());
+\<\<=                       return jawa::parser::make_COMP(jawa::operators::COMP_SHL, ctx->loc());
+>>=                         return jawa::parser::make_COMP(jawa::operators::COMP_SHR, ctx->loc());
+>>>=                        return jawa::parser::make_COMP(jawa::operators::COMP_SHR_U, ctx->loc());
+&=                          return jawa::parser::make_COMP(jawa::operators::COMP_AND, ctx->loc());
+\|=                         return jawa::parser::make_COMP(jawa::operators::COMP_OR, ctx->loc());
+\^=                         return jawa::parser::make_COMP(jawa::operators::COMP_XOR, ctx->loc());
+~=                          return jawa::parser::make_COMP(jawa::operators::COMP_NOT, ctx->loc());
+\+\+                        return jawa::parser::make_INCDEC(jawa::operators::INC, ctx->loc());
+--                          return jawa::parser::make_INCDEC(jawa::operators::DEC, ctx->loc());
+\+                          return jawa::parser::make_ADDOP(jawa::operators::ADD, ctx->loc());
+-                           return jawa::parser::make_ADDOP(jawa::operators::SUB, ctx->loc());
+\/                          return jawa::parser::make_DIVOP(jawa::operators::DIV, ctx->loc());
+\%                          return jawa::parser::make_DIVOP(jawa::operators::MOD, ctx->loc());
 ;                           return jawa::parser::make_SEMIC(ctx->loc());
 \{                          return jawa::parser::make_LCUR(ctx->loc());
 \}                          return jawa::parser::make_RCUR(ctx->loc());
@@ -88,12 +115,24 @@ nieprawda                   return jawa::parser::make_FALSE(ctx->loc());
 \)                          return jawa::parser::make_RPAR(ctx->loc());
 \[                          return jawa::parser::make_LBRA(ctx->loc());
 \]                          return jawa::parser::make_RBRA(ctx->loc());
+\.                          return jawa::parser::make_DOT(ctx->loc());
+&&                          return jawa::parser::make_DAMP(ctx->loc());
+&                           return jawa::parser::make_AMP(ctx->loc());
+\|\|                        return jawa::parser::make_DVERT(ctx->loc());
+\|                          return jawa::parser::make_VERT(ctx->loc());
+\^                          return jawa::parser::make_HAT(ctx->loc());
+~                           return jawa::parser::make_TILDE(ctx->loc());
+=                           return jawa::parser::make_ASGN(ctx->loc());
+:                           return jawa::parser::make_COLON(ctx->loc());
+\?                          return jawa::parser::make_INTRG(ctx->loc());
+->                          return jawa::parser::make_ARROW(ctx->loc());
+\*                          return jawa::parser::make_STAR(ctx->loc());
 
 {LETTER}{LETTER_OR_DIGIT}*  return jawa::parser::make_IDF(yytext, ctx->loc());
 
 <<EOF>>                     return jawa::parser::make_EOF(ctx->loc());
 
-.                           ctx->message(jawa::error::UNEXPECTED_CHAR, ctx->loc(), yytext[0]);
+.                           ctx->message(jawa::errors::UNEXPECTED_CHAR, ctx->loc(), yytext[0]);
 
 %%
 

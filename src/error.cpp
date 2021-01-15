@@ -5,7 +5,7 @@
 
 #include "error.hpp"
 
-namespace jawa::error
+namespace jawa::errors
 {
     err_n SYNTAX{"Syntax Error", "błąd składni: "};
     err_c UNEXPECTED_CHAR{"Unexpected Character", "nieoczekiwany znak: "};

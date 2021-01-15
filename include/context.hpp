@@ -86,7 +86,7 @@ namespace jawa
          * @param err type of the error.
          * @param loc location of the error.
          */
-        void message(error::err err, const loc_t &loc) const;
+        void message(errors::err err, const loc_t &loc) const;
 
         /**
          * Reports an error with character that caused the error.
@@ -95,7 +95,7 @@ namespace jawa
          * @param loc location of the error.
          * @param c character that caused the error.
          */
-        void message(error::err_c err, const loc_t &loc, char c) const;
+        void message(errors::err_c err, const loc_t &loc, char c) const;
 
         /**
          * Reports an error with name that caused the error.
@@ -104,7 +104,7 @@ namespace jawa
          * @param loc location of the error.
          * @param n name that caused the error.
          */
-        void message(error::err_n err, const loc_t &loc, const Name &name) const;
+        void message(errors::err_n err, const loc_t &loc, const Name &name) const;
 
     };
 

@@ -22,12 +22,15 @@
 #include "context.hpp"
 #include "modifiers.hpp"
 #include "types.hpp"
+#include "operators.hpp"
 }
 
 /* parser.cpp */
 %code
 {
 YY_DECL;
+
+using namespace jawa;
 }
 
 %param {yyscan_t yyscanner}		// the name yyscanner is enforced by Flex
@@ -35,97 +38,98 @@ YY_DECL;
 
 %start compilation_unit
 
-%token EOF		        0               "koniec pliku"
+%token                      EOF     0       "koniec pliku"
 
 /* modifiers */
-%token<jawa::gender>    PRIVATE         "prywatny/prywatna"
-%token<jawa::gender>    PROTECTED       "chroniony/chroniona"
-%token<jawa::gender>    PUBLIC          "publiczny/publiczna"
-%token<jawa::gender>    STATIC          "statyczny/statyczna"
-%token<jawa::gender>    FINAL           "końcowy/końcowa"
-%token<jawa::gender>    NATIVE          "ojczysty/ojczysta"
-%token<jawa::gender>    VOLATILE        "zmeinny/zmeinna"
-%token<jawa::gender>    SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
-%token<jawa::gender>    ABSTRACT        "abstrakcyjny/abstrakcyjna"
-%token<jawa::gender>    TRANSIENT       "przejściowy/przejściowa"
+%token<gender>              PRIVATE         "prywatny/prywatna"
+%token<gender>              PROTECTED       "chroniony/chroniona"
+%token<gender>              PUBLIC          "publiczny/publiczna"
+%token<gender>              STATIC          "statyczny/statyczna"
+%token<gender>              FINAL           "końcowy/końcowa"
+%token<gender>              NATIVE          "ojczysty/ojczysta"
+%token<gender>              VOLATILE        "zmeinny/zmeinna"
+%token<gender>              SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
+%token<gender>              ABSTRACT        "abstrakcyjny/abstrakcyjna"
+%token<gender>              TRANSIENT       "przejściowy/przejściowa"
 
 /* control flow */
-%token                  IF              "jeśli"
-%token                  ELSE            "albo"
-%token                  FOR             "dla"
-%token                  DO              "zrob"
-%token                  WHILE           "dopóki"
-%token                  RETURN          "zwróć"
-%token                  TRY             "spróbuj"
-%token                  CATCH           "łap"
-%token                  FINALLY         "wreszcie"
-%token                  CONTINUE        "kontyntynuj"
-%token                  SWITCH          "przełącz"
-%token                  DEFAULT         "domyślna"
-%token                  BREAK           "złam"
-%token                  CASE            "przypad"
-%token                  THROW           "rzuć"
+%token                      IF              "jeśli"
+%token                      ELSE            "albo"
+%token                      FOR             "dla"
+%token                      DO              "zrob"
+%token                      WHILE           "dopóki"
+%token                      RETURN          "zwróć"
+%token                      TRY             "spróbuj"
+%token                      CATCH           "łap"
+%token                      FINALLY         "wreszcie"
+%token                      CONTINUE        "kontyntynuj"
+%token                      SWITCH          "przełącz"
+%token                      DEFAULT         "domyślna"
+%token                      BREAK           "złam"
+%token                      CASE            "przypad"
+%token                      THROW           "rzuć"
 
 /* types */
-%token                  VOID            "void"
-%token                  INT             "całość"
-%token                  SHORT           "krótki"
-%token                  CHAR            "znak"
-%token                  BYTE            "bajt"
-%token                  LONG            "długy"
-%token                  DOUBLE          "podwójny"
-%token                  FLOAT           "pojedynczy"
-%token                  BOOLEAN         "boolowski"
+%token                      VOID            "void"
+%token                      INT             "całość"
+%token                      SHORT           "krótki"
+%token                      CHAR            "znak"
+%token                      BYTE            "bajt"
+%token                      LONG            "długy"
+%token                      DOUBLE          "podwójny"
+%token                      FLOAT           "pojedynczy"
+%token                      BOOLEAN         "boolowski"
 
 /* classes */
-%token                  CLASS           "klasa"
-%token                  INTERFACE       "urządzenie"
-%token                  ENUM            "wyliczenie"
-%token                  SUPER           "nadzbiór"
-%token                  EXTENDS         "przedłuża"
-%token                  IMPLEMENTS      "realizuje"
-%token                  THIS            "to"
-%token                  ASSERT          "potwierdzić"
-%token                  PACKAGE         "pakiet"
-%token                  IMPORT          "zaimportuj"
+%token                      CLASS           "klasa"
+%token                      INTERFACE       "urządzenie"
+%token                      ENUM            "wyliczenie"
+%token                      SUPER           "nadzbiór"
+%token                      EXTENDS         "przedłuża"
+%token                      IMPLEMENTS      "realizuje"
+%token                      THIS            "to"
+%token                      ASSERT          "potwierdzić"
+%token                      PACKAGE         "pakiet"
+%token                      IMPORT          "zaimportuj"
 
-%token                  THROWS          "rzuca"
+%token                      THROWS          "rzuca"
 
 /* operators */
-%token                  INSTANCEOF      "wystąpienie"
-%token                  NEW             "nowy"
-%token                  SEMIC           ";"
-%token                  LCUR            "{"
-%token                  RCUR            "}"
-%token                  LPAR            "("
-%token                  RPAR            ")"
-%token                  LBRA            "["
-%token                  RBRA            "]"
-%token                  AMP             "&"
-%token                  DAMP            "&&"
-%token                  VERT            "|"
-%token                  DVERT           "||"
-%token                  HAT             "^"
-%token                  TILDE           "~"
-%token                  ASGN            "="
-%token                  COLON           ":"
-%token                  INTRG           "?"
-%token                  ARROW           "->"
-%token                  STAR            "*"
-%token                  ADDOP           "+, -"
-%token                  DIVOP           "/, %"
-%token                  INCDEC          "++, --"
-%token                  CMPE            "==, !="
-%token                  SHIFT           "<<, >>, <<<"
-%token                  CMP             "<, <=, >, >="
-%token                  COMP            "+= , -=,  *=,  /=,  &=,  |=,  ^=,  %=,  <<=,  >>=,  >>>="
+%token                      INSTANCEOF      "wystąpienie"
+%token                      NEW             "nowy"
+%token                      LCUR            "{"
+%token                      RCUR            "}"
+%token                      LPAR            "("
+%token                      RPAR            ")"
+%token                      LBRA            "["
+%token                      RBRA            "]"
+%token                      SEMIC           ";"
+%token                      DOT             "."
+%token                      AMP             "&"
+%token                      DAMP            "&&"
+%token                      VERT            "|"
+%token                      DVERT           "||"
+%token                      HAT             "^"
+%token                      TILDE           "~"
+%token                      ASGN            "="
+%token                      COLON           ":"
+%token                      INTRG           "?"
+%token                      ARROW           "->"
+%token                      STAR            "*"
+%token<operators::addop>    ADDOP           "+, -"
+%token<operators::divop>    DIVOP           "/, %"
+%token<operators::incdec>   INCDEC          "++, --"
+%token<operators::eqop>     EQOP            "==, !="
+%token<operators::shift>    SHIFT           "<<, >>, >>>"
+%token<operators::relop>    RELOP           "<, <=, >, >="
+%token<operators::comp>     COMP            "+= , -=,  *=,  /=,  &=,  |=,  ^=,  %=,  <<=,  >>=,  >>>="
 
 /* constants */
-%token<jawa::Name>      IDF             "identyfikator"
-%token<jawa::Name>      STR_LIT         "łancuch"
-%token<jawa::int_t>     INT_LIT         "literał całkowity"
-%token                  TRUE            "prawda"
-%token                  FALSE           "nieprawda"
+%token<Name>                IDF             "identyfikator"
+%token<Name>                STR_LIT         "łancuch"
+%token<int_t>               INT_LIT         "literał całkowity"
+%token                      TRUE            "prawda"
+%token                      FALSE           "nieprawda"
 
 %%
 
@@ -151,12 +155,12 @@ namespace jawa {
                 msg << " or";
         }
 
-        ctx->message(error::SYNTAX, parser_ctx.location(), msg.str());
+        ctx->message(errors::SYNTAX, parser_ctx.location(), msg.str());
     }
 
     void parser::error(const location_type& loc, const std::string& msg)
     {
-         ctx->message(error::SYNTAX, loc, msg);
+         ctx->message(errors::SYNTAX, loc, msg);
     }
 
 }

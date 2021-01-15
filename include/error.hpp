@@ -9,7 +9,7 @@
 #include "tables.hpp"
 #include <array>
 
-namespace jawa::error
+namespace jawa::errors
 {
 
     template <typename ... Args>

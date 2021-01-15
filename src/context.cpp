@@ -32,21 +32,21 @@ namespace jawa
         std::cerr << '^' << std::endl;
     }
 
-    void context::message(error::err err, const loc_t &loc) const
+    void context::message(errors::err err, const loc_t &loc) const
     {
         std::cerr << "błąd:" << loc.line << ':' << loc.column << ": "
                   << err.msg() << std::endl;
         message_line(loc);
     }
 
-    void context::message(error::err_c err, const loc_t &loc, char ch) const
+    void context::message(errors::err_c err, const loc_t &loc, char ch) const
     {
         std::cerr << "błąd:" << loc.line << ':' << loc.column << ": "
                   << err.msg() << '\'' << escape(ch) << '\'' << std::endl;
         message_line(loc);
     }
 
-    void context::message(error::err_n err, const loc_t &loc, const Name &name) const
+    void context::message(errors::err_n err, const loc_t &loc, const Name &name) const
     {
         std::cerr << "błąd:" << loc.line << ':' << loc.column << ": "
                   << err.msg() << '\"' << name << '\"' << std::endl;
