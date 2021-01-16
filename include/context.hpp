@@ -14,6 +14,8 @@
 namespace jawa
 {
 
+    extern std::ostringstream line_buffer;
+
     struct loc_t
     {
         loc_t() : line(1), column_start(1), column_end(1) {}
@@ -30,7 +32,6 @@ namespace jawa
     {
     private:
         loc_t loc_;
-        std::ostringstream line_buffer_;
         std::locale locale_;
 
         void message_line(loc_t const &loc) const;
@@ -66,7 +67,6 @@ namespace jawa
             loc_.column_start = 1;
             loc_.column_end = 1;
             ++loc_.line;
-            line_buffer_.str("");
         }
 
         /**
@@ -76,11 +76,6 @@ namespace jawa
         {
             loc_.column_start = loc_.column_end;
             loc_.column_end += n;
-        }
-
-        inline std::ostream &line_buffer()
-        {
-            return line_buffer_;
         }
 
         /**
