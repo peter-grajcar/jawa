@@ -29,8 +29,9 @@
                     if (c == '\n') { \
                         buf[n++] = (char) c; \
                     } \
-                    if (c == EOF && ferror(yyin)) \
+                    if (c == EOF && ferror(yyin)) { \
                         YY_FATAL_ERROR("input in flex scanner failed"); \
+                    } \
                     result = n; \
 
 #ifndef YY_TYPEDEF_YY_SCANNER_T

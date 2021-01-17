@@ -25,9 +25,9 @@ namespace jawa
 
     void context::message_line(loc_t const &loc) const
     {
-        std::cerr << ' ' << std::setw(4) << loc.line << '|';
+        std::cerr << ' ' << std::setw(5) << loc.line << '|';
         std::cerr << jawa::line_buffer.str() << std::endl
-                  << std::setw(6) << '|';
+                  << std::setw(7) << '|';
         // column starts at 1, so subtracting 1 is safe
         for (unsigned i = 0; i < loc.column_start - 1; ++i) {
             std::cerr << ' ';

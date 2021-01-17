@@ -8,7 +8,7 @@ Jawa jest obiektowy język programowania.
 <span class="pl-k">publiczna klasa</span> <span class="pl-v">WitajŚwiecie</span> {
     
     <span class="pl-k">publiczny statyczny void</span> <span class="pl-v">głowny</span>(<span class="pl-v">Łańcuch</span>[] <span class="pl-v">args</span>) {
-        <span class="pv-v">System</span>.<span class="pl-v">wyjście</span>.<span class="pl-v">wydrukovać</span>(<span class="pl-c1">"Witaj świecie"</span>);
+        <span class="pl-v">System</span>.<span class="pl-v">wyjście</span>.<span class="pl-v">wydrukovać</span>(<span class="pl-c1">"Witaj świecie"</span>);
     }
     
 }
