@@ -4,12 +4,12 @@ Jawa jest obiektowy język programowania.
 
 ## Code Examples
 
-<pre>
+<pre lang="jawa">
 <code>
-<font color="#ea4a5a">publiczna klasa</font> <font color="#fb8532">WitajŚwiecie</font> {
+<span style="color: #ea4a5a; ">publiczna klasa</span> <span style="color: #fb8532; ">WitajŚwiecie</span> {
     
-    <font color="#ea4a5a">publiczny statyczny void</font> <font color="#fb8532">głowny</font>(<font color="#fb8532">Łańcuch</font>[] <font color="#fb8532">args</font>) {
-        <font color="#fb8532">System</font>.<font color="#fb8532">wyjście</font>.<font color="#fb8532">wydrukovać</font>(<font color="#79b8ff">"Witaj świecie"</font>);
+    <span style="color: #ea4a5a; ">publiczny statyczny void</span> <span style="color: #fb8532; ">głowny</span>(<span style="color: #fb8532; ">Łańcuch</span>[] <span style="color: #fb8532; ">args</span>) {
+        <span style="color: #fb8532; ">System</span>.<span style="color: #fb8532; ">wyjście</span>.<span style="color: #fb8532; ">wydrukovać</span>(<span style="color: #79b8ff; ">"Witaj świecie"</span>);
     }
     
 }
