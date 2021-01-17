@@ -4,15 +4,17 @@ Jawa jest obiektowy język programowania.
 
 ## Code Examples
 
-```jawa
-publiczna klasa WitajŚwiecie {
-
-    publiczny statyczny void głowny(Łańcuch[] args) {
-        System.wyjście.wydrukovać("Witaj świecie");
+<pre>
+<code>
+<font color="#ea4a5a">publiczna klasa</font> <font color="#fb8532">WitajŚwiecie</font> {
+    
+    <font color="#ea4a5a">publiczny statyczny void</font> <font color="#fb8532">głowny</font>(<font color="#fb8532">Łańcuch</font>[] <font color="#fb8532">args</font>) {
+        <font color="#fb8532">System</font>.<font color="#fb8532">wyjście</font>.<font color="#fb8532">wydrukovać</font>(<font color="#79b8ff">"Witaj świecie"</font>);
     }
-
+    
 }
-```
+</code>
+</pre>
 
 ## Compiling the Sources
 
