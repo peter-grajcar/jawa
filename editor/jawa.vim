@@ -19,23 +19,30 @@ syn keyword modifiers       rzejściowy rzejściowa                           sk
 syn keyword controlFlow     jeśli albo dla zrob dopóki zwróć spróbuj łap    skipwhite
 syn keyword controlFlow     wreszcie kontyntynuj przełącz domyślna złam     skipwhite
 syn keyword controlFlow     przypad rzuć                                    skipwhite
-syn keyword types           void całość krótki znak bajt                    skipwhite
-syn keyword types           długy podwójny pojedynczy boolowski             skipwhite
-syn keyword classes         klasa urządzenie wyliczenie                     skipwhite
+syn keyword types           void całość krótki znak bajt                    skipwhite, nextgroup=idf
+syn keyword types           długy podwójny pojedynczy boolowski             skipwhite, nextgroup=idf
+syn keyword classes         klasa urządzenie wyliczenie                     skipwhite, nextgroup=classIdf
 syn keyword keywords        nadzbiór przedłuża                              skipwhite
 syn keyword keywords        realizuje to potwierdzić pakiet zaimportuj      skipwhite
 syn keyword keywords        rzuca wystąpienie nowy                          skipwhite
 
-syn keyword boolLit     prawda nieprawda    skipwhite
+syn keyword boolLiteral     prawda nieprawda    skipwhite
 
-syn match numberLit     '\d\+'              display
-syn match numberLit     '0[XxBb]\d\+'       display
-syn match numberLit     '\d\+'              display
-syn match numberLit     '[-+]\d\+'          display
+syn match numberLiteral     '\d\+'              display
+syn match numberLiteral     '0[XxBb]\d\+'       display
+syn match numberLiteral     '\d\+'              display
+syn match numberLiteral     '[-+]\d\+'          display
 
-syn match operators     '[;\+\*\-&\^\|\?\.:%~\!=<>/]'         display
+syn match idf               '\([^[:punct:][:space:]]\|[_$]\)\+' display
+syn match classIdf          '\([^[:punct:][:space:]]\|[_$]\)\+' display
 
-syn region stringLit    start='"' end='"'
+syn match operators         '[;\+\*\-&\^\|\?\.:%~\!=<>/]'       display
+
+syn match comment           '//.*$' display
+
+syn region stringLiteral    start='"'   end='"'
+syn region charLiteral      start='\''  end='\''
+syn region commentMultiline start='/\*' end='\*/' fold
 
 syn keyword todo TODO FIXME
 
@@ -48,6 +55,11 @@ hi def link types                   Type
 hi def link modifiers               StorageClass
 hi def link classes                 Structure
 hi def link operators               Operator
-hi def link boolLit                 Constant
-hi def link stringLit               Constant
-hi def link numberLit               Constant
+hi def link boolLiteral             Keyword
+hi def link stringLiteral           Constant
+hi def link charLiteral             Constant
+hi def link numberLiteral           Constant
+hi def link idf                     Identifier
+hi def link classIdf                Identifier
+hi def link comment                 Comment
+hi def link commentMultiline        Comment
