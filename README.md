@@ -5,7 +5,6 @@ Jawa jest obiektowy język programowania.
 ## Code Examples
 
 <pre lang="jawa">
-<code>
 <span class="pl-k">publiczna klasa</span> <span class="pl-v">WitajŚwiecie</span> {
     
     <span class="pl-k">publiczny statyczny void</span> <span class="pl-v">głowny</span>(<span class="pl-v">Łańcuch</span>[] <span class="pl-v">args</span>) {
@@ -13,7 +12,6 @@ Jawa jest obiektowy język programowania.
     }
     
 }
-</code>
 </pre>
 
 ## Compiling the Sources
