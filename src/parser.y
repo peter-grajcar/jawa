@@ -132,7 +132,6 @@ using namespace jawa;
 %token<operators::comp>     COMP            "+= , -=,  *=,  /=,  &=,  |=,  ^=,  %=,  <<=,  >>=,  >>>="
 
 /* constants */
-%token<Name>                IDENTIFIER      "identyfikator"
 %token<Name>                STR_LIT         "łancuch"
 %token<byte_t>              BYTE_LIT        "literał bajtowy"
 %token<short_t>             SHORT_LIT       "literał krótky"
@@ -145,7 +144,20 @@ using namespace jawa;
 %token                      FALSE           "nieprawda"
 %token                      NULL            "nula"
 
+%token<Name>                IDENTIFIER          "identyfikator"
+%token<Name>                TYPE_VARIABLE       "todo"
+%token<Name>                PACKAGE_NAME        "todo"
+%token<Name>                TYPE_NAME           "todo"
+%token<Name>                EXPRESSION_NAME     "todo"
+%token<Name>                METHOD_NAME         "todo"
+%token<Name>                CLASS_NAME          "todo"
+
 %%
+
+CompilationUnit: Block
+               ;
+
+/* Types */
 
 Type: PrimitiveType
     | ReferenceType
@@ -171,598 +183,47 @@ FloatingPointType: FLOAT
                  ;
 
 ReferenceType: ClassOrInterfaceType
-             | TypeVariable
+             | TYPE_VARIABLE
              | ArrayType
              ;
 
-ClassOrInterfaceType: ClassType
-                    | InterfaceType
+ClassOrInterfaceType: TYPE_NAME
                     ;
 
-ClassType: TypeDeclSpecifier TypeArguments_opt
+ClassType: ClassOrInterfaceType
          ;
 
-InterfaceType: TypeDeclSpecifier TypeArguments_opt
+InterfaceType: ClassOrInterfaceType
              ;
-
-TypeDeclSpecifier: TypeName
-                 | ClassOrInterfaceType DOT IDENTIFIER
-                 ;
-
-TypeVariable: IDENTIFIER
-            ;
-
-TypeParameter: TypeVariable TypeBound_opt
-
-TypeBound_opt: %empty
-             | TypeBound
-             ;
-
-TypeBound: EXTENDS TypeVariable
-         | EXTENDS ClassOrInterfaceType AdditionalBoundList_opt
-         ;
-
-AdditionalBoundList_opt: %empty
-                       | AdditionalBoundList
-                       ;
-
-AdditionalBoundList: AdditionalBound AdditionalBoundList
-                   | AdditionalBound
-                   ;
-
-AdditionalBound: AMP InterfaceType
-               ;
-
-TypeArguments_opt: %empty
-                 | TypeArguments
-                 ;
-
-TypeArguments: LT TypeArgumentList GT
-             ;
-
-TypeArgumentList: TypeArgument
-                | TypeArgumentList COMMA TypeArgument
-                ;
-
-TypeArgument: ReferenceType
-            | Wildcard
-            ;
-
-Wildcard: INTRG WildcardBounds_opt
-        ;
-
-WildcardBounds_opt: %empty
-                  | WildcardBounds
-                  ;
-
-WildcardBounds: EXTENDS ReferenceType
-              | SUPER ReferenceType
-              ;
 
 ArrayType: Type LBRA RBRA
          ;
 
-PackageName: IDENTIFIER
-           | PackageName DOT IDENTIFIER
-           ;
+/* Declarations */
 
-TypeName: IDENTIFIER
-        | PackageOrTypeName DOT IDENTIFIER
+Modifiers_opt: %empty
+             | Modifiers
+             ;
+
+Modifiers: Modifier
+         | Modifiers Modifier
+         ;
+
+Modifier: Annotation
+        | PUBLIC
+        | PROTECTED
+        | PRIVATE
+        | ABSTRACT
+        | STATIC
+        | FINAL
+        | STRICTFP
+        | NATIVE
+        | TRANSIENT
+        | SYNCHRONIZED
+        | VOLATILE
         ;
 
-ExpressionName: IDENTIFIER
-              | AmbiguousName DOT IDENTIFIER
-              ;
-
-MethodName: IDENTIFIER
-          | AmbiguousName DOT IDENTIFIER
-          ;
-
-PackageOrTypeName: IDENTIFIER
-                 | PackageOrTypeName DOT IDENTIFIER
-                 ;
-
-AmbiguousName: IDENTIFIER
-             | AmbiguousName DOT IDENTIFIER
-             ;
-
-
-CompilationUnit: %empty
-               | PackageDeclaration ImportDeclarations TypeDeclarations
-               | PackageDeclaration ImportDeclarations
-               | PackageDeclaration TypeDeclarations
-               | ImportDeclarations TypeDeclarations
-               | PackageDeclaration
-               | ImportDeclarations
-               | TypeDeclarations
-               ;
-
-ImportDeclarations_opt: %empty
-                      | ImportDeclarations
-                      ;
-
-ImportDeclarations: ImportDeclaration
-                  | ImportDeclarations ImportDeclaration
-                  ;
-
-TypeDeclarations_opt: %empty
-                    | TypeDeclarations
-                    ;
-
-TypeDeclarations: TypeDeclaration
-                | TypeDeclarations TypeDeclaration
-                ;
-
-PackageDeclaration_opt: %empty
-                      | PackageDeclaration
-                      ;
-
-PackageDeclaration: Annotations_opt PACKAGE PackageName SEMIC
-                  ;
-
-ImportDeclaration: SingleTypeImportDeclaration
-                 | TypeImportOnDemandDeclaration
-                 | SingleStaticImportDeclaration
-                 | StaticImportOnDemandDeclaration
-                 ;
-
-SingleTypeImportDeclaration: IMPORT TypeName SEMIC
-                           ;
-
-TypeImportOnDemandDeclaration: IMPORT PackageOrTypeName DOT STAR SEMIC
-                             ;
-
-SingleStaticImportDeclaration: IMPORT STATIC TypeName DOT IDENTIFIER SEMIC
-                             ;
-
-StaticImportOnDemandDeclaration: IMPORT STATIC TypeName DOT STAR SEMIC
-                               ;
-
-TypeDeclaration: ClassDeclaration
-               | InterfaceDeclaration
-               | SEMIC
-               ;
-
-ClassDeclaration: NormalClassDeclaration
-                | EnumDeclaration
-                ;
-
-NormalClassDeclaration: ClassModifiers_opt CLASS IDENTIFIER TypeParameters Super Interfaces ClassBody
-                      | ClassModifiers_opt CLASS IDENTIFIER TypeParameters Super ClassBody
-                      | ClassModifiers_opt CLASS IDENTIFIER TypeParameters Interfaces ClassBody
-                      | ClassModifiers_opt CLASS IDENTIFIER Super Interfaces ClassBody
-                      | ClassModifiers_opt CLASS IDENTIFIER TypeParameters ClassBody
-                      | ClassModifiers_opt CLASS IDENTIFIER Super ClassBody
-                      | ClassModifiers_opt CLASS IDENTIFIER Interfaces ClassBody
-                      | ClassModifiers_opt CLASS IDENTIFIER ClassBody
-                      ;
-
-ClassModifiers_opt: %empty
-                  | ClassModifiers
-                  ;
-
-ClassModifiers: ClassModifier
-              | ClassModifiers ClassModifier
-              ;
-
-ClassModifier: Annotation
-             | PUBLIC
-             | PROTECTED
-             | PRIVATE
-             | ABSTRACT
-             | STATIC
-             | FINAL
-             | STRICTFP
-             ;
-
-TypeParameters_opt: %empty
-                  | TypeParameters
-                  ;
-
-TypeParameters: LT TypeParameterList GT
-              ;
-
-TypeParameterList: TypeParameterList COMMA TypeParameter
-                 | TypeParameter
-                 ;
-
-Super_opt: %empty
-         | Super
-         ;
-
-Super: EXTENDS ClassType
-     ;
-
-ClassType: TypeDeclSpecifier TypeArguments_opt
-         ;
-
-Interfaces_opt: %empty
-              | Interfaces
-              ;
-
-Interfaces: IMPLEMENTS InterfaceTypeList
-          ;
-
-InterfaceTypeList: InterfaceType
-                 | InterfaceTypeList COMMA InterfaceType
-                 ;
-
-ClassBody_opt: %empty
-             | ClassBody
-             ;
-
-ClassBody: LCUR ClassBodyDeclarations_opt RCUR
-         ;
-
-ClassBodyDeclarations_opt: %empty
-                         | ClassBodyDeclarations
-                         ;
-
-ClassBodyDeclarations: ClassBodyDeclaration
-                     | ClassBodyDeclarations ClassBodyDeclaration
-
-ClassBodyDeclaration: ClassMemberDeclaration
-                    | InstanceInitializer
-                    | StaticInitializer
-                    | ConstructorDeclaration
-                    ;
-
-ClassMemberDeclaration: FieldDeclaration
-                      | MethodDeclaration
-                      | ClassDeclaration
-                      | InterfaceDeclaration
-                      ;
-
-FieldDeclaration: FieldModifiers_opt Type VariableDeclarators SEMIC
-                ;
-
-VariableDeclarators: VariableDeclarator
-                   | VariableDeclarators COMMA VariableDeclarator
-                   ;
-
-VariableDeclarator: VariableDeclaratorId
-                  | VariableDeclaratorId ASGN VariableInitializer
-                  ;
-
-VariableDeclaratorId: IDENTIFIER
-                    | VariableDeclaratorId LBRA RBRA
-                    ;
-
-VariableInitializer: Expression
-                   | ArrayInitializer
-                   ;
-
-FieldModifiers_opt: %empty
-                  | FieldModifiers
-                  ;
-
-FieldModifiers: FieldModifier
-              | FieldModifiers FieldModifier
-
-FieldModifier: Annotation
-             | PUBLIC
-             | PROTECTED
-             | PRIVATE
-             | STATIC
-             | FINAL
-             | TRANSIENT
-             | VOLATILE
-             ;
-
-MethodDeclaration: MethodHeader MethodBody
-                 ;
-
-MethodHeader: MethodModifiers TypeParameters Result MethodDeclarator Throws_opt
-            | MethodModifiers Result MethodDeclarator Throws_opt
-            | TypeParameters Result MethodDeclarator Throws_opt
-            | Result MethodDeclarator Throws_opt
-            ;
-
-MethodDeclarator: IDENTIFIER LPAR FormalParameterList_opt RPAR
-                ;
-
-MethodDeclarator: MethodDeclarator LBRA RBRA
-                ;
-
-FormalParameterList_opt: %empty
-                       | FormalParameterList
-                       ;
-
-FormalParameterList: LastFormalParameter
-                   | FormalParameters COMMA LastFormalParameter
-                   ;
-
-FormalParameters: FormalParameter
-                | FormalParameters COMMA FormalParameter
-                ;
-
-FormalParameter: VariableModifiers_opt Type VariableDeclaratorId
-               ;
-
-VariableModifiers_opt: %empty
-                     | VariableModifiers
-                     ;
-
-VariableModifiers: VariableModifier
-                 | VariableModifiers VariableModifier
-                 ;
-
-VariableModifier: Annotation
-                | FINAL
-                ;
-
-LastFormalParameter: VariableModifiers_opt Type DOTS VariableDeclaratorId
-                   | FormalParameter
-                   ;
-
-MethodModifiers_opt: %empty
-                   | MethodModifiers
-                   ;
-
-MethodModifiers: MethodModifier
-               | MethodModifiers MethodModifier
-               ;
-
-MethodModifier: Annotation
-              | PUBLIC
-              | PROTECTED
-              | PRIVATE
-              | ABSTRACT
-              | STATIC
-              | FINAL
-              | SYNCHRONIZED
-              | NATIVE
-              | STRICTFP
-              ;
-
-Result: Type
-      | VOID
-      ;
-
-Throws_opt: %empty
-          | Throws
-          ;
-
-Throws: THROWS ExceptionTypeList
-      ;
-
-ExceptionTypeList: ExceptionType
-                 | ExceptionTypeList COMMA ExceptionType
-                 ;
-
-ExceptionType: TypeName
-             | TypeVariable
-             ;
-
-MethodBody: Block
-          ;
-
-InstanceInitializer: Block
-                   ;
-
-StaticInitializer: STATIC Block
-                 ;
-
-ConstructorDeclaration: ConstructorModifiers_opt ConstructorDeclarator Throws_opt ConstructorBody
-
-ConstructorDeclarator: TypeParameters_opt SimpleTypeName LPAR FormalParameterList_opt RPAR
-                     ;
-
-/* TODO: check if the name corresponds to the class name */
-SimpleTypeName: IDENTIFIER
-              ;
-
-ConstructorModifiers_opt: %empty
-                        | ConstructorModifiers
-                        ;
-
-ConstructorModifiers: ConstructorModifier
-                    | ConstructorModifiers ConstructorModifier
-                    ;
-
-ConstructorModifier: Annotation
-                   | PUBLIC
-                   | PROTECTED
-                   | PRIVATE
-                   ;
-
-ConstructorBody: LCUR ExplicitConstructorInvocation BlockStatements RCUR
-               | LCUR ExplicitConstructorInvocation RCUR
-               | LCUR BlockStatements RCUR
-               | LCUR RCUR
-               ;
-
-ExplicitConstructorInvocation_opt: %empty
-                                 | ExplicitConstructorInvocation
-                                 ;
-
-ExplicitConstructorInvocation: NonWildTypeArguments_opt THIS LPAR ArgumentList_opt RPAR SEMIC
-                             | NonWildTypeArguments_opt SUPER LPAR ArgumentList_opt RPAR SEMIC
-                             | Primary DOT NonWildTypeArguments_opt SUPER LPAR ArgumentList_opt RPAR SEMIC
-                             ;
-
-NonWildTypeArguments_opt: %empty
-                        | NonWildTypeArguments
-                        ;
-
-NonWildTypeArguments: LT ReferenceTypeList GT
-                    ;
-
-ReferenceTypeList: ReferenceType
-                 | ReferenceTypeList COMMA ReferenceType
-                 ;
-
-EnumDeclaration: ClassModifiers_opt ENUM IDENTIFIER Interfaces_opt EnumBody
-               ;
-
-COMMA_opt: %empty
-         | COMMA
-         ;
-
-EnumBody: LCUR EnumConstants COMMA EnumBodyDeclarations RCUR
-        | LCUR EnumConstants COMMA RCUR
-        | LCUR EnumConstants EnumBodyDeclarations RCUR
-        | LCUR COMMA EnumBodyDeclarations RCUR
-        | LCUR EnumConstants RCUR
-        | LCUR COMMA RCUR
-        | LCUR EnumBodyDeclarations RCUR
-        | LCUR RCUR
-        ;
-
-EnumConstants_opt: %empty
-                 | EnumConstants
-                 ;
-
-EnumConstants: EnumConstant
-             | EnumConstants COMMA EnumConstant
-             ;
-
-EnumConstant: Annotations_opt IDENTIFIER Arguments ClassBody
-            | Annotations_opt IDENTIFIER Arguments
-            | Annotations_opt IDENTIFIER ClassBody
-            | Annotations_opt IDENTIFIER
-            ;
-
-Arguments_opt: %empty
-             | Arguments
-             ;
-
-Arguments: LPAR ArgumentList_opt RPAR
-         ;
-
-EnumBodyDeclarations_opt: %empty
-                        | EnumBodyDeclarations
-                        ;
-
-EnumBodyDeclarations: SEMIC ClassBodyDeclarations_opt
-                    ;
-
-InterfaceDeclaration: NormalInterfaceDeclaration
-                    | AnnotationTypeDeclaration
-                    ;
-
-NormalInterfaceDeclaration: InterfaceModifiers_opt INTERFACE IDENTIFIER
-                          | TypeParameters ExtendsInterfaces InterfaceBody
-                          | TypeParameters InterfaceBody
-                          | ExtendsInterfaces InterfaceBody
-                          | InterfaceBody
-                          ;
-
-InterfaceModifiers_opt: %empty
-                      | InterfaceModifiers
-                      ;
-
-InterfaceModifiers: InterfaceModifier
-                  | InterfaceModifiers InterfaceModifier
-                  ;
-
-InterfaceModifier: Annotation
-                 | PUBLIC
-                 | PROTECTED
-                 | PRIVATE
-                 | ABSTRACT
-                 | STATIC
-                 | STRICTFP
-                 ;
-
-ExtendsInterfaces_opt: %empty
-                     | ExtendsInterfaces
-                     ;
-
-ExtendsInterfaces: EXTENDS InterfaceTypeList
-                 ;
-
-InterfaceTypeList: InterfaceType
-                 | InterfaceTypeList COMMA InterfaceType
-                 ;
-
-InterfaceType: TypeDeclSpecifier TypeArguments_opt
-             ;
-
-InterfaceBody: LCUR InterfaceMemberDeclarations_opt RCUR
-
-InterfaceMemberDeclarations_opt: %empty
-                               | InterfaceMemberDeclarations
-                               ;
-
-InterfaceMemberDeclarations: InterfaceMemberDeclaration
-                           | InterfaceMemberDeclarations InterfaceMemberDeclaration
-                           ;
-
-InterfaceMemberDeclaration: ConstantDeclaration
-                          | AbstractMethodDeclaration
-                          | ClassDeclaration
-                          | InterfaceDeclaration
-                          | SEMIC
-                          ;
-
-ConstantDeclaration: ConstantModifiers_opt Type VariableDeclarators SEMIC
-                   ;
-
-ConstantModifiers_opt: %empty
-                     | ConstantModifiers
-                     ;
-
-ConstantModifiers: ConstantModifier
-                 | ConstantModifier ConstantModifiers
-                 ;
-
-ConstantModifier: Annotation
-                | PUBLIC
-                | STATIC
-                | FINAL
-                ;
-
-AbstractMethodDeclaration: AbstractMethodModifiers TypeParameters Result MethodDeclarator Throws_opt SEMIC
-                         | AbstractMethodModifiers Result MethodDeclarator Throws_opt SEMIC
-                         | TypeParameters Result MethodDeclarator Throws_opt SEMIC
-                         | Result MethodDeclarator Throws_opt SEMIC
-                         ;
-
-AbstractMethodModifiers_opt: %empty
-                           | AbstractMethodModifiers
-                           ;
-
-AbstractMethodModifiers: AbstractMethodModifier
-                       | AbstractMethodModifiers AbstractMethodModifier
-                       ;
-
-AbstractMethodModifier: Annotation
-                      | PUBLIC
-                      | ABSTRACT
-                      ;
-
-AnnotationTypeDeclaration: InterfaceModifiers_opt AT INTERFACE IDENTIFIER AnnotationTypeBody
-                         ;
-
-AnnotationTypeBody: LCUR AnnotationTypeElementDeclarations_opt RCUR
-                  ;
-
-AnnotationTypeElementDeclarations_opt: %empty
-                                     | AnnotationTypeElementDeclarations
-                                     ;
-
-AnnotationTypeElementDeclarations: AnnotationTypeElementDeclaration
-                                 | AnnotationTypeElementDeclarations AnnotationTypeElementDeclaration
-                                 ;
-
-AnnotationTypeElementDeclaration: AbstractMethodModifiers_opt Type IDENTIFIER LPAR RPAR Dims DefaultValue SEMIC
-                                | AbstractMethodModifiers_opt Type IDENTIFIER LPAR RPAR Dims SEMIC
-                                | AbstractMethodModifiers_opt Type IDENTIFIER LPAR RPAR DefaultValue SEMIC
-                                | AbstractMethodModifiers_opt Type IDENTIFIER LPAR RPAR SEMIC
-                                | ConstantDeclaration
-                                | ClassDeclaration
-                                | InterfaceDeclaration
-                                | EnumDeclaration
-                                | AnnotationTypeDeclaration
-                                ;
-
-DefaultValue_opt: %empty
-                | DefaultValue
-                ;
-
-DefaultValue: DEFAULT ElementValue
-            ;
+/* Annotations */
 
 Annotations_opt: %empty
                | Annotations
@@ -772,13 +233,10 @@ Annotations: Annotation
            | Annotations Annotation
            ;
 
-Annotation: NormalAnnotation
-          | MarkerAnnotation
-          | SingleElementAnnotation
+Annotation: AT TYPE_NAME LPAR ElementValuePairs_opt RPAR
+          | AT IDENTIFIER
+          | AT IDENTIFIER LPAR ElementValue RPAR
           ;
-
-NormalAnnotation: AT TypeName LPAR ElementValuePairs_opt RPAR
-                ;
 
 ElementValuePairs_opt: %empty
                      | ElementValuePairs
@@ -802,29 +260,15 @@ ElementValueArrayInitializer: LCUR ElementValues COMMA RCUR
                             | LCUR RCUR
                             ;
 
-ElementValues_opt: %empty
-             | ElementValues
-             ;
-
 ElementValues: ElementValue
              | ElementValues COMMA ElementValue
              ;
-
-MarkerAnnotation: AT IDENTIFIER
-                ;
-
-SingleElementAnnotation: AT IDENTIFIER LPAR ElementValue RPAR
-                       ;
 
 ArrayInitializer: LCUR VariableInitializers COMMA RCUR
                 | LCUR VariableInitializers RCUR
                 | LCUR COMMA RCUR
                 | LCUR RCUR
                 ;
-
-VariableInitializers_opt: %empty
-                        | VariableInitializers
-                        ;
 
 VariableInitializers: VariableInitializer
                     | VariableInitializers COMMA VariableInitializer
@@ -833,6 +277,8 @@ VariableInitializers: VariableInitializer
 VariableInitializer: Expression
                    | ArrayInitializer
                    ;
+
+/* Statements */
 
 Block: LCUR BlockStatements_opt RCUR
      ;
@@ -846,27 +292,15 @@ BlockStatements: BlockStatement
                ;
 
 BlockStatement: LocalVariableDeclarationStatement
-              | ClassDeclaration
               | Statement
               ;
 
 LocalVariableDeclarationStatement: LocalVariableDeclaration SEMIC
                                  ;
 
-LocalVariableDeclaration: VariableModifiers_opt Type VariableDeclarators
+LocalVariableDeclaration: Modifiers Type VariableDeclarators
+                        | Type VariableDeclarators
                         ;
-
-VariableModifiers_opt: %empty
-                     | VariableModifiers
-                     ;
-
-VariableModifiers: VariableModifier
-                 | VariableModifiers VariableModifier
-                 ;
-
-VariableModifier: Annotation
-                | FINAL
-                ;
 
 VariableDeclarators: VariableDeclarator
                    | VariableDeclarators COMMA VariableDeclarator
@@ -879,10 +313,6 @@ VariableDeclarator: VariableDeclaratorId
 VariableDeclaratorId: IDENTIFIER
                     | VariableDeclaratorId LBRA RBRA
                     ;
-
-VariableInitializer: Expression
-                   | ArrayInitializer
-                   ;
 
 Statement: StatementWithoutTrailingSubstatement
          | LabeledStatement
@@ -938,7 +368,6 @@ StatementExpression: Assignment
                    | PreIncDecExpression
                    | PostIncDecExpression
                    | MethodInvocation
-                   | ClassInstanceCreationExpression
                    ;
 
 AssertStatement: ASSERT Expression SEMIC
@@ -954,20 +383,12 @@ SwitchBlock: LCUR SwitchBlockStatementGroups SwitchLabels RCUR
            | LCUR RCUR
            ;
 
-SwitchBlockStatementGroups_opt: %empty
-                              | SwitchBlockStatementGroups
-                              ;
-
 SwitchBlockStatementGroups: SwitchBlockStatementGroup
                           | SwitchBlockStatementGroups SwitchBlockStatementGroup
                           ;
 
 SwitchBlockStatementGroup: SwitchLabels BlockStatements
                          ;
-
-SwitchLabels_opt: %empty
-                | SwitchLabels
-                ;
 
 SwitchLabels: SwitchLabel
             | SwitchLabels SwitchLabel
@@ -991,7 +412,6 @@ DoStatement: DO Statement WHILE LPAR Expression RPAR SEMIC
            ;
 
 ForStatement: BasicForStatement
-            | EnhancedForStatement
             ;
 
 BasicForStatement: FOR LPAR ForInit_opt SEMIC Expression_opt SEMIC ForUpdate_opt RPAR Statement
@@ -1018,16 +438,6 @@ ForUpdate: StatementExpressionList
 StatementExpressionList: StatementExpression
                        | StatementExpressionList COMMA StatementExpression
                        ;
-
-EnhancedForStatement: FOR LPAR FormalParameter COLON Expression RPAR Statement
-                    ;
-
-FormalParameter: VariableModifiers_opt Type VariableDeclaratorId
-               ;
-
-VariableDeclaratorId: IDENTIFIER
-                    | VariableDeclaratorId LBRA RBRA
-                    ;
 
 IDENTIFIER_opt: %empty
               | IDENTIFIER
@@ -1063,16 +473,12 @@ Catches: CatchClause
 CatchClause: CATCH LPAR CatchFormalParameter RPAR Block
            ;
 
-CatchFormalParameter: VariableModifiers_opt CatchType VariableDeclaratorId
+CatchFormalParameter: Modifiers_opt CatchType VariableDeclaratorId
                     ;
 
 CatchType: ClassType
          | ClassType VERT CatchType
          ;
-
-Finally_opt: %empty
-           | Finally
-           ;
 
 Finally: FINALLY Block
        ;
@@ -1091,10 +497,10 @@ ResourceSpecification: LPAR Resources SEMIC_opt RPAR
                      ;
 
 Resources: Resource
-         | Resource SEMIC Resources
+         | Resources SEMIC Resource
          ;
 
-Resource: VariableModifiers_opt Type VariableDeclaratorId ASGN Expression
+Resource: Modifiers_opt Type VariableDeclaratorId ASGN Expression
         ;
 
 /* Expressions */
@@ -1107,16 +513,12 @@ PrimaryNoNewArray: Literal
                  | Type DOT CLASS
                  | VOID DOT CLASS
                  | THIS
-                 | ClassName DOT THIS
+                 | CLASS_NAME DOT THIS
                  | LPAR Expression RPAR
-                 | ClassInstanceCreationExpression
                  | FieldAccess
                  | MethodInvocation
                  | ArrayAccess
                  ;
-
-ClassName: IDENTIFIER
-         ;
 
 Literal: INT_LIT
        | LONG_LIT
@@ -1130,17 +532,6 @@ Literal: INT_LIT
        | FALSE
        | NULL
        ;
-
-ClassInstanceCreationExpression: NEW TypeArguments_opt TypeDeclSpecifier TypeArgumentsOrDiamond_opt LPAR ArgumentList_opt RPAR ClassBody_opt
-                               | Primary DOT NEW TypeArguments_opt IDENTIFIER TypeArgumentsOrDiamond_opt LPAR ArgumentList_opt RPAR ClassBody_opt
-
-TypeArgumentsOrDiamond_opt: %empty
-                          | TypeArgumentsOrDiamond
-                          ;
-
-TypeArgumentsOrDiamond: TypeArguments
-                      | LT GT
-                      ;
 
 ArgumentList_opt: %empty
                 | ArgumentList
@@ -1172,21 +563,18 @@ Dims: LBRA RBRA
 
 FieldAccess: Primary DOT IDENTIFIER
            | SUPER DOT IDENTIFIER
-           | ClassName DOT SUPER DOT IDENTIFIER
+           | CLASS_NAME DOT SUPER DOT IDENTIFIER
            ;
 
-MethodInvocation: MethodName LPAR ArgumentList_opt RPAR
-                | Primary DOT NonWildTypeArguments_opt IDENTIFIER LPAR ArgumentList_opt RPAR
-                | SUPER DOT NonWildTypeArguments_opt IDENTIFIER LPAR ArgumentList_opt RPAR
-                | ClassName DOT SUPER DOT NonWildTypeArguments_opt IDENTIFIER LPAR ArgumentList_opt RPAR
-                | TypeName DOT NonWildTypeArguments IDENTIFIER LPAR ArgumentList_opt RPAR
+MethodInvocation: METHOD_NAME LPAR ArgumentList_opt RPAR
+                ;
 
-ArrayAccess: ExpressionName LBRA Expression RBRA
+ArrayAccess: EXPRESSION_NAME LBRA Expression RBRA
            | PrimaryNoNewArray LBRA Expression RBRA
            ;
 
 PostfixExpression: Primary
-                 | ExpressionName
+                 | EXPRESSION_NAME
                  | PostIncDecExpression
                  ;
 
@@ -1266,7 +654,7 @@ AssignmentExpression: ConditionalExpression
 Assignment: LeftHandSide AssignmentOperator AssignmentExpression
           ;
 
-LeftHandSide: ExpressionName
+LeftHandSide: EXPRESSION_NAME
             | FieldAccess
             | ArrayAccess
             ;

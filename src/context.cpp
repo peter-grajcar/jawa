@@ -25,22 +25,18 @@ namespace jawa
 
     void context::message_line(loc_t const &loc) const
     {
-        std::cerr << ' ' << std::setw(5) << loc.line << '|';
-        std::cerr << jawa::line_buffer.str() << std::endl
-                  << std::setw(7) << '|';
+        std::cerr << ' ' << std::setw(5) << loc.line << " | "
+                  << jawa::line_buffer.str() << std::endl
+                  << "       | ";
         // column starts at 1, so subtracting 1 is safe
         for (unsigned i = 0; i < loc.column_start - 1; ++i) {
             std::cerr << ' ';
         }
 
-        // point to the erroneous single-character token
-        if (loc.column_end - loc.column_start == 1) {
-            std::cerr << '^' << std::endl;
-            return;
-        }
+        std::cerr << '^';
 
         // underline erroneous token
-        for (unsigned i = loc.column_start; i < loc.column_end - 1; ++i) {
+        for (unsigned i = loc.column_start + 1; i < loc.column_end; ++i) {
             std::cerr << '~';
         }
     }
