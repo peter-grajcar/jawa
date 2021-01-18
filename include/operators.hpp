@@ -52,7 +52,7 @@ namespace jawa::operators
 
     enum relop
     {
-        LT,
+        GTE,
         LTE
     };
 

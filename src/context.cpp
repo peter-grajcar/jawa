@@ -66,4 +66,9 @@ namespace jawa
         message_line(loc);
     }
 
+    bool context::no_spaces_between(const loc_t &lhs, const loc_t &rhs) const
+    {
+        return lhs.column_end == rhs.column_start;
+    }
+
 }

@@ -130,10 +130,11 @@ nowy                        return jawa::parser::make_NEW(ctx->loc());
 =                           return jawa::parser::make_ASGN(ctx->loc());
 :                           return jawa::parser::make_COLON(ctx->loc());
 \?                          return jawa::parser::make_INTRG(ctx->loc());
+\!                          return jawa::parser::make_EMPH(ctx->loc());
 ->                          return jawa::parser::make_ARROW(ctx->loc());
 \*                          return jawa::parser::make_STAR(ctx->loc());
 
-{LETTER}{LETTER_OR_DIGIT}*  return jawa::parser::make_IDF(yytext, ctx->loc());
+{LETTER}{LETTER_OR_DIGIT}*  return jawa::parser::make_IDENTIFIER(yytext, ctx->loc());
 
 <<EOF>>                     return jawa::parser::make_EOF(ctx->loc());
 

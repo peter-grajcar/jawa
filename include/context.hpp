@@ -104,6 +104,15 @@ namespace jawa
          */
         void message(errors::err_n err, const loc_t &loc, const Name &name) const;
 
+        /**
+         * Determines whether there are whitespaces between two tokens.
+         *
+         * @param lhs left hand side token.
+         * @param rhs right hand side token.
+         * @return true if there are no spaces in between the tokens, otherwise false.
+         */
+        bool no_spaces_between(const loc_t &lhs, const loc_t &rhs) const;
+
     };
 
 }
