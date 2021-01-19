@@ -582,7 +582,7 @@ Literal: INT_LIT
        | FLOAT_LIT
        | DOUBLE_LIT
        | CHAR_LIT
-       | STR_LIT
+       | STR_LIT            { std::cout << "STRING " << '\"' << $1 << '\"' << std::endl; }
        | TRUE
        | FALSE
        | NULL
@@ -621,7 +621,7 @@ FieldAccess: Primary DOT IDENTIFIER
            | CLASS_NAME DOT SUPER DOT IDENTIFIER
            ;
 
-MethodInvocation: METHOD_NAME LPAR ArgumentList_opt RPAR
+MethodInvocation: METHOD_NAME LPAR ArgumentList_opt RPAR                                                { std::cout << $1 << "()" << std::endl; }
                 | Primary DOT NonWildTypeArguments METHOD_NAME LPAR ArgumentList_opt RPAR
                 | Primary DOT METHOD_NAME LPAR ArgumentList_opt RPAR
                 | SUPER DOT NonWildTypeArguments METHOD_NAME LPAR ArgumentList_opt RPAR

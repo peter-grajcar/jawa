@@ -189,7 +189,7 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
                                     BEGIN(INITIAL);
                                     IGNORE_MATCHED;
                                     jawa::Name name = name_buffer.str();
-                                    return jawa::parser::make_METHOD_NAME(yytext, ctx->loc());
+                                    return jawa::parser::make_METHOD_NAME(name, ctx->loc());
                                 }
     .                           {
                                     BEGIN(INITIAL);
