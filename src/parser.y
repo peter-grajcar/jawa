@@ -51,7 +51,7 @@ using namespace jawa;
 %token<gender>              SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
 %token<gender>              ABSTRACT        "abstrakcyjny/abstrakcyjna"
 %token<gender>              TRANSIENT       "przejściowy/przejściowa"
-%token                      STRICTFP        "???"
+%token                      STRICTFP        "ścisłezp"
 
 /* control flow */
 %token                      IF              "jeśli"
@@ -146,12 +146,12 @@ using namespace jawa;
 %token                      NULL            "nula"
 
 %token<Name>                IDENTIFIER          "identyfikator"
-%token<Name>                TYPE_VARIABLE       "todo"
-%token<Name>                PACKAGE_NAME        "todo"
-%token<Name>                TYPE_NAME           "todo"
-%token<Name>                EXPRESSION_NAME     "todo"
-%token<Name>                METHOD_NAME         "todo"
-%token<Name>                CLASS_NAME          "todo"
+%token<Name>                TYPE_VARIABLE       "zmienna typu"
+%token<Name>                PACKAGE_NAME        "nazwa pakietu"
+%token<Name>                TYPE_NAME           "nazwa typu"
+%token<Name>                EXPRESSION_NAME     "nazwa wyrażenia"
+%token<Name>                METHOD_NAME         "nazwa metody"
+%token<Name>                CLASS_NAME          "nazwa klasy"
 
 %%
 

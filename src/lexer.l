@@ -38,6 +38,7 @@ zmeinn[ya]                  return jawa::parser::make_VOLATILE(jawa::get_gender(
 zsynchronizowan[ya]         return jawa::parser::make_SYNCHRONIZED(jawa::get_gender(yytext), ctx->loc());
 abstrakcyjn[ya]             return jawa::parser::make_ABSTRACT(jawa::get_gender(yytext), ctx->loc());
 rzejściow[ya]               return jawa::parser::make_TRANSIENT(jawa::get_gender(yytext), ctx->loc());
+ścisłezp                    return jawa::parser::make_STRICTFP(ctx->loc());
 
 jeśli                       return jawa::parser::make_IF(ctx->loc());
 albo                        return jawa::parser::make_ELSE(ctx->loc());
@@ -67,6 +68,7 @@ boolowski                   return jawa::parser::make_BOOLEAN(ctx->loc());
 
 klasa                       return jawa::parser::make_CLASS(ctx->loc());
 urządzenie                  return jawa::parser::make_INTERFACE(ctx->loc());
+\@urządzenie                return jawa::parser::make_AT_INTERFACE(ctx->loc());
 wyliczenie                  return jawa::parser::make_ENUM(ctx->loc());
 nadzbiór                    return jawa::parser::make_SUPER(ctx->loc());
 przedłuża                   return jawa::parser::make_EXTENDS(ctx->loc());
@@ -133,6 +135,7 @@ nowy                        return jawa::parser::make_NEW(ctx->loc());
 \!                          return jawa::parser::make_EMPH(ctx->loc());
 ->                          return jawa::parser::make_ARROW(ctx->loc());
 \*                          return jawa::parser::make_STAR(ctx->loc());
+\@                          return jawa::parser::make_AT(ctx->loc());
 
 {LETTER}{LETTER_OR_DIGIT}*  return jawa::parser::make_IDENTIFIER(yytext, ctx->loc());
 
