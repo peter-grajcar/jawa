@@ -1,7 +1,8 @@
 %{
+#include <sstream>
+
 #include "bisonflex.hpp"
 #include "context.hpp"
-
 #include "parser.hpp"
 %}
 
@@ -19,8 +20,13 @@ WHITESPACE          \x20|\x09|\x0c
 LETTER              [_$a-zA-Z\x7F-\xFF]
 DIGIT               [0-9]
 LETTER_OR_DIGIT     {LETTER}|{DIGIT}
+IDENTIFIER          {LETTER}{LETTER_OR_DIGIT}*
 
 %%
+%{
+   bool part_of_name = false;
+   std::ostringstream name_buffer;
+%}
 
 {WHITESPACE}        /* Do nothing */
 
@@ -86,6 +92,12 @@ nieprawda                   return jawa::parser::make_FALSE(ctx->loc());
 wystąpienie                 return jawa::parser::make_INSTANCEOF(ctx->loc());
 nowy                        return jawa::parser::make_NEW(ctx->loc());
 
+    /* Reserved Keywords */
+
+kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yytext);
+
+    /* Operators */
+
 ==                          return jawa::parser::make_EQOP(jawa::operators::EQ, ctx->loc());
 !=                          return jawa::parser::make_EQOP(jawa::operators::NE, ctx->loc());
 \<=                         return jawa::parser::make_RELOP(jawa::operators::LTE, ctx->loc());
@@ -137,7 +149,21 @@ nowy                        return jawa::parser::make_NEW(ctx->loc());
 \*                          return jawa::parser::make_STAR(ctx->loc());
 \@                          return jawa::parser::make_AT(ctx->loc());
 
-{LETTER}{LETTER_OR_DIGIT}*  return jawa::parser::make_IDENTIFIER(yytext, ctx->loc());
+    /* Names */
+
+{IDENTIFIER}                {
+                                part_of_name = true;
+                                if (ctx->is_type_name(yytext)) {
+                                    return jawa::parser::make_TYPE_NAME(yytext, ctx->loc());
+                                }
+                                return jawa::parser::make_IDENTIFIER(yytext, ctx->loc());
+                            }
+{IDENTIFIER}/\(             {
+                                part_of_name = true;
+                                return jawa::parser::make_METHOD_NAME(yytext, ctx->loc());
+                            }
+
+    /* Other */
 
 <<EOF>>                     return jawa::parser::make_EOF(ctx->loc());
 

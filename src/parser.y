@@ -145,13 +145,13 @@ using namespace jawa;
 %token                      FALSE           "nieprawda"
 %token                      NULL            "nula"
 
-%token<Name>                IDENTIFIER          "identyfikator"
-%token<Name>                TYPE_VARIABLE       "zmienna typu"
-%token<Name>                PACKAGE_NAME        "nazwa pakietu"
-%token<Name>                TYPE_NAME           "nazwa typu"
-%token<Name>                EXPRESSION_NAME     "nazwa wyrażenia"
-%token<Name>                METHOD_NAME         "nazwa metody"
-%token<Name>                CLASS_NAME          "nazwa klasy"
+%token<Name>                IDENTIFIER      "identyfikator"
+%token<Name>                TYPE_VARIABLE   "zmienna typu"
+%token<Name>                PACKAGE_NAME    "nazwa pakietu"
+%token<Name>                TYPE_NAME       "nazwa typu"
+%token<Name>                EXPRESSION_NAME "nazwa wyrażenia"
+%token<Name>                METHOD_NAME     "nazwa metody"
+%token<Name>                CLASS_NAME      "nazwa klasy"
 
 %%
 
@@ -1007,12 +1007,16 @@ namespace jawa {
         int n = parser_ctx.expected_tokens(expected, 3);
 
         std::stringstream msg;
-        msg << "nieoczekiwany znak: " << symbol_name(parser_ctx.token()) << " oczekiwany:";
-        for (int i = 0; i < n; ++i) {
-            msg << ' ';
-            msg << symbol_name(expected[i]);
-            if (i + 1 < n)
-                msg << " or";
+        msg << "nieoczekiwany znak: " << symbol_name(parser_ctx.token());
+
+        if (n) {
+            msg << " oczekiwany znak:";
+            for (int i = 0; i < n; ++i) {
+                msg << ' ';
+                msg << symbol_name(expected[i]);
+                if (i + 1 < n)
+                    msg << " albo";
+            }
         }
 
         ctx->message(errors::SYNTAX, parser_ctx.location(), msg.str());

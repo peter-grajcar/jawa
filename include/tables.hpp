@@ -13,6 +13,11 @@ namespace jawa
 
     using Name = std::string;
 
+    class tables
+    {
+
+    };
+
 }
 
 #endif //JAWA_TABLES_HPP

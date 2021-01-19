@@ -10,6 +10,7 @@
 #include <sstream>
 
 #include "error.hpp"
+#include "tables.hpp"
 
 namespace jawa
 {
@@ -32,6 +33,7 @@ namespace jawa
     {
     private:
         loc_t loc_;
+        tables tables_;
         std::locale locale_;
 
         void message_line(loc_t const &loc) const;
@@ -112,6 +114,14 @@ namespace jawa
          * @return true if there are no spaces in between the tokens, otherwise false.
          */
         bool no_spaces_between(const loc_t &lhs, const loc_t &rhs) const;
+
+        /**
+         * Determines whether a name corresponds to an existing type name.
+         *
+         * @param name the name of potential type.
+         * @return true if the name corresponds to an existing type name, otherwise false.
+         */
+        bool is_type_name(const Name &name) const;
 
     };
 

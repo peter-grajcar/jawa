@@ -39,6 +39,8 @@ namespace jawa
         for (unsigned i = loc.column_start + 1; i < loc.column_end; ++i) {
             std::cerr << '~';
         }
+
+        std::cerr << std::endl;
     }
 
     void context::message(errors::err err, const loc_t &loc) const
@@ -65,6 +67,12 @@ namespace jawa
     bool context::no_spaces_between(const loc_t &lhs, const loc_t &rhs) const
     {
         return lhs.column_end == rhs.column_start;
+    }
+
+    bool context::is_type_name(const Name &name) const
+    {
+        // TODO: implement this method
+        return name == "Łańcuch" || name == "System";
     }
 
 }

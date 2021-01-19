@@ -37,6 +37,7 @@ namespace jawa::errors
     using err_c = error_object<char>;
 
     extern err_n SYNTAX;
+    extern err_n RESERVED;
     extern err_c UNEXPECTED_CHAR;
 
 }
