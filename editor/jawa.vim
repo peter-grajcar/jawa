@@ -16,6 +16,7 @@ syn keyword modifiers       zmeinny zmeinna                                 skip
 syn keyword modifiers       zsynchronizowany zsynchronizowana               skipwhite
 syn keyword modifiers       abstrakcyjny abstrakcyjna                       skipwhite
 syn keyword modifiers       rzejściowy rzejściowa                           skipwhite
+syn keyword modifiers       ścisłezp ścisłezp                               skipwhite
 syn keyword controlFlow     jeśli albo dla zrob dopóki zwróć spróbuj łap    skipwhite
 syn keyword controlFlow     wreszcie kontyntynuj przełącz domyślna złam     skipwhite
 syn keyword controlFlow     przypad rzuć                                    skipwhite
@@ -25,6 +26,7 @@ syn keyword classes         klasa urządzenie wyliczenie                     ski
 syn keyword keywords        nadzbiór przedłuża                              skipwhite
 syn keyword keywords        realizuje to potwierdzić pakiet zaimportuj      skipwhite
 syn keyword keywords        rzuca wystąpienie nowy                          skipwhite
+syn keyword reserved        kurwa                                           skipwhite
 
 syn keyword boolLiteral     prawda nieprawda    skipwhite
 
@@ -63,3 +65,4 @@ hi def link idf                     Identifier
 hi def link classIdf                Identifier
 hi def link comment                 Comment
 hi def link commentMultiline        Comment
+hi def link reserved                Special
