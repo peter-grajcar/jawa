@@ -12,8 +12,10 @@
 
 #define YY_DECL jawa::parser::symbol_type yylex(yyscan_t yyscanner, jawa::context *ctx)
 
-#define YY_USER_ACTION ctx->inc_column(jawa::unicode::utf8_length(yytext)); \
-                       part_of_name = false;
+#define YY_USER_ACTION ctx->inc_column(jawa::unicode::utf8_length(yytext));
+
+#define IGNORE_MATCHED ctx->dec_column(jawa::unicode::utf8_length(yytext)); \
+                       yyless(0);
 
 #define YYLLOC_DEFAULT(res, rhs, N) (res = (N) \
                                      ? YYRHSLOC(rhs, 1) \

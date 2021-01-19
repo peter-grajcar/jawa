@@ -38,6 +38,8 @@ namespace jawa::errors
 
     extern err_n SYNTAX;
     extern err_n RESERVED;
+    extern err_n UNEXPECTED_TOKEN;
+    extern err_n MALFORMED_STRING;
     extern err_c UNEXPECTED_CHAR;
 
 }

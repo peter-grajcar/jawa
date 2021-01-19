@@ -81,6 +81,15 @@ namespace jawa
         }
 
         /**
+         * Increments the line number.
+         */
+        inline void dec_column(unsigned n)
+        {
+            loc_.column_end = loc_.column_start;
+            loc_.column_start = loc_.column_end - n;
+        }
+
+        /**
          * Reports error message.
          *
          * @param err type of the error.

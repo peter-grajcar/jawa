@@ -1,5 +1,6 @@
 %{
 #include <sstream>
+#include <queue>
 
 #include "bisonflex.hpp"
 #include "context.hpp"
@@ -22,15 +23,21 @@ DIGIT               [0-9]
 LETTER_OR_DIGIT     {LETTER}|{DIGIT}
 IDENTIFIER          {LETTER}{LETTER_OR_DIGIT}*
 
+TRAILING_DOT        ({WHITESPACE}|{LINE_TERMINATOR})*\.
+
+STR_CHAR            [^{LINE_TERMINATOR}\"]
+
+%x NAME
+%x STRLIT
+
 %%
 %{
-   bool part_of_name = false;
    std::ostringstream name_buffer;
 %}
 
-{WHITESPACE}        /* Do nothing */
+<INITIAL,NAME>{WHITESPACE}             /* Do nothing */
 
-{LINE_TERMINATOR}   ctx->inc_line();
+<INITIAL,NAME>{LINE_TERMINATOR}        ctx->inc_line();
 
     /* Keywords */
 
@@ -134,7 +141,6 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 \)                          return jawa::parser::make_RPAR(ctx->loc());
 \[                          return jawa::parser::make_LBRA(ctx->loc());
 \]                          return jawa::parser::make_RBRA(ctx->loc());
-\.                          return jawa::parser::make_DOT(ctx->loc());
 &&                          return jawa::parser::make_DAMP(ctx->loc());
 &                           return jawa::parser::make_AMP(ctx->loc());
 \|\|                        return jawa::parser::make_DVERT(ctx->loc());
@@ -148,20 +154,69 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 ->                          return jawa::parser::make_ARROW(ctx->loc());
 \*                          return jawa::parser::make_STAR(ctx->loc());
 \@                          return jawa::parser::make_AT(ctx->loc());
+\.                          return jawa::parser::make_DOT(ctx->loc());
 
     /* Names */
 
 {IDENTIFIER}                {
-                                part_of_name = true;
-                                if (ctx->is_type_name(yytext)) {
-                                    return jawa::parser::make_TYPE_NAME(yytext, ctx->loc());
+                                BEGIN(NAME);
+                                name_buffer.str("");
+                                name_buffer << yytext;
+                            }
+
+<NAME>{
+    \.to                        {
+                                    BEGIN(INITIAL);
+                                    IGNORE_MATCHED;
+                                    jawa::Name name = name_buffer.str();
+                                    if (ctx->is_type_name(name)) {
+                                        return jawa::parser::make_TYPE_NAME(name, ctx->loc());
+                                    }
+                                    return jawa::parser::make_IDENTIFIER(name, ctx->loc());
                                 }
-                                return jawa::parser::make_IDENTIFIER(yytext, ctx->loc());
-                            }
-{IDENTIFIER}/\(             {
-                                part_of_name = true;
-                                return jawa::parser::make_METHOD_NAME(yytext, ctx->loc());
-                            }
+    \.nadzbiór                  {
+                                    BEGIN(INITIAL);
+                                    IGNORE_MATCHED;
+                                    jawa::Name name = name_buffer.str();
+                                    if (ctx->is_type_name(name)) {
+                                        return jawa::parser::make_TYPE_NAME(name, ctx->loc());
+                                    }
+                                    return jawa::parser::make_IDENTIFIER(name, ctx->loc());
+                                }
+    \.                          name_buffer << '.';
+    {IDENTIFIER}                name_buffer << yytext;
+    \(                          {
+                                    BEGIN(INITIAL);
+                                    IGNORE_MATCHED;
+                                    jawa::Name name = name_buffer.str();
+                                    return jawa::parser::make_METHOD_NAME(yytext, ctx->loc());
+                                }
+    .                           {
+                                    BEGIN(INITIAL);
+                                    IGNORE_MATCHED;
+                                    jawa::Name name = name_buffer.str();
+                                    if (ctx->is_type_name(name)) {
+                                        return jawa::parser::make_TYPE_NAME(name, ctx->loc());
+                                    }
+                                    return jawa::parser::make_IDENTIFIER(name, ctx->loc());
+                                }
+}
+
+    /* Strings */
+
+\"          {
+                BEGIN(STRLIT);
+                name_buffer.str("");
+            }
+
+<STRLIT>{
+    {STR_CHAR}+     name_buffer << yytext;
+    \"              {
+                        BEGIN(INITIAL);
+                        return jawa::parser::make_STR_LIT(name_buffer.str(), ctx->loc());
+                    }
+    .               ctx->message(jawa::errors::MALFORMED_STRING, ctx->loc(), name_buffer.str());
+}
 
     /* Other */
 
