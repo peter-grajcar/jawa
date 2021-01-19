@@ -19,7 +19,7 @@ Jawa jest obiektowy język programowania.
 ```
 mkdir build
 cd build
-cmake -DBISON_ROOT=<bison_install_folder> -DFLEX_ROOT=<flex_install_folder> ..
+cmake -DBISON_ROOT=<bison_install_dir> -DFLEX_ROOT=<flex_install_dir> ..
 ```
 
 ## References
