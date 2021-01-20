@@ -155,7 +155,7 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 
     /* Names */
 
-{IDENTIFIER}                return jawa::parser::make_IDENTIFIER(yytext, ctx->loc());
+{IDENTIFIER}                return jawa::parser::make_IDF(yytext, ctx->loc());
 
     /* Strings */
 

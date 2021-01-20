@@ -12,7 +12,6 @@
 %define parse.assert
 %define parse.error custom
 
-
 /* parser.hpp */
 %code requires
 {
@@ -145,7 +144,7 @@ using namespace jawa;
 %token                      FALSE           "nieprawda"
 %token                      NULL            "nula"
 
-%token<Name>                IDENTIFIER      "identyfikator"
+%token<Name>                IDF             "identyfikator"
 
 
 %%
@@ -154,7 +153,7 @@ using namespace jawa;
 
 Identifier_opt: %empty | Identifier ;
 
-Identifier: IDENTIFIER
+Identifier: IDF
           ;
 
 QualifiedIdentifier: Identifier
@@ -227,9 +226,15 @@ Implements: IMPLEMENTS TypeList
 
 /* Types */
 
-Type: BasicType Arrays_opt
-    | ReferenceType Arrays_opt
+Type: BasicType
+    | ReferenceType
+    | ArrayType
     ;
+
+ArrayType: BasicType Array
+         | ReferenceType Array
+         | ArrayType Array
+         ;
 
 Arrays_opt: %empty | Arrays ;
 
@@ -368,12 +373,14 @@ ElementValuePair: Identifier ASGN ElementValue
                 ;
 
 ElementValue: Annotation
-            | Expression1
+            | ConditionalExpression
             | ElementValueArrayInitializer
             ;
 
-ElementValueArrayInitializer: LCUR ElementValues_opt RCUR
-                            | LCUR ElementValues_opt COMMA RCUR
+ElementValueArrayInitializer: LCUR RCUR
+                            | LCUR COMMA RCUR
+                            | LCUR ElementValues RCUR
+                            | LCUR ElementValues COMMA RCUR
                             ;
 
 ElementValues_opt: %empty | ElementValues ;
@@ -496,18 +503,8 @@ FormalParameters: LPAR FormalParameterDecls_opt RPAR
 
 FormalParameterDecls_opt: %empty | FormalParameterDecls ;
 
-FormalParameterDecls: VariableModifiers_opt Type FormalParameterDeclsRest
+FormalParameterDecls: Modifiers_opt Type FormalParameterDeclsRest
                     ;
-
-VariableModifiers_opt: %empty | VariableModifiers ;
-
-VariableModifiers: VariableModifier
-                 | VariableModifiers VariableModifier
-                 ;
-
-VariableModifier: FINAL
-                | Annotation
-                ;
 
 FormalParameterDeclsRest: VariableDeclaratorId
                         | VariableDeclaratorId COMMA FormalParameterDecls
@@ -545,8 +542,10 @@ VariableInitializer: ArrayInitializer
                    | Expression
                    ;
 
-ArrayInitializer: LCUR VariableInitializers_opt RCUR
-                | LCUR VariableInitializers_opt COMMA RCUR
+ArrayInitializer: LCUR RCUR
+                | LCUR COMMA RCUR
+                | LCUR VariableInitializers RCUR
+                | LCUR VariableInitializers COMMA RCUR
                 ;
 
 
@@ -561,19 +560,19 @@ BlockStatements: BlockStatement
 
 BlockStatement: LocalVariableDeclarationStatement
               | ClassOrInterfaceDeclaration
-              | Label Statement
               | Statement
               ;
 
 Label: Identifier COLON
      ;
 
-LocalVariableDeclarationStatement: VariableModifiers_opt  Type VariableDeclarators SEMIC
+LocalVariableDeclarationStatement: Type VariableDeclarators SEMIC
+                                 | Modifiers Type VariableDeclarators SEMIC
                                  ;
 
 Statement: Block
          | SEMIC
-         | Identifier COLON Statement
+         | Label Statement
          | StatementExpression SEMIC
          | IF ParExpression Statement ELSE Statement
          | ASSERT Expression SEMIC
@@ -601,7 +600,7 @@ Catches: CatchClause
        | Catches CatchClause
        ;
 
-CatchClause: CATCH LPAR VariableModifiers_opt CatchType Identifier RPAR Block
+CatchClause: CATCH LPAR Modifiers_opt CatchType Identifier RPAR Block
            ;
 
 CatchType: QualifiedIdentifier
@@ -621,7 +620,7 @@ Resources: Resource
          | Resources SEMIC Resource
          ;
 
-Resource: VariableModifiers_opt ReferenceType VariableDeclaratorId ASGN Expression
+Resource: Modifiers_opt ReferenceType VariableDeclaratorId ASGN Expression
         ;
 
 
@@ -646,16 +645,12 @@ EnumConstantName: Identifier
 
 
 
-ForControl: ForVarControl
-          | ForInit SEMIC Expression_opt SEMIC ForUpdate_opt
+ForControl: ForInit SEMIC Expression_opt SEMIC ForUpdate_opt
+          /* | ForVarControl */
           ;
 
-ForVarControl: VariableModifiers_opt Type VariableDeclaratorId ForVarControlRest
+ForVarControl: Modifiers_opt Type VariableDeclaratorId COLON Expression
              ;
-
-ForVarControlRest: ForVariableDeclaratorsRest SEMIC Expression_opt SEMIC ForUpdate_opt
-                 | COLON Expression
-                 ;
 
 ForVariableDeclaratorsRest: ForVariableDeclaratorsRestHead_opt ForVariableDeclaratorsRestTail_opt
                           ;
@@ -691,88 +686,91 @@ Expressions: Expression
 
 Expression_opt: %empty | Expression ;
 
-Expression: Expression1 ExpressionTail_opt
+Expression: AssignmentExpression
           ;
 
-ExpressionTail_opt: %empty | ExpressionTail ;
-
-ExpressionTail: AssignmentOperator Expression1
-              ;
+AssignmentExpression: ConditionalExpression
+                    | ConditionalExpression AssignmentOperator AssignmentExpression
+                    ;
 
 AssignmentOperator: ASGN
                   | COMP
                   ;
 
-Expression1: Expression2 Expression1Rest_opt
-           ;
+ConditionalExpression: ConditionalOrExpression
+                     | ConditionalOrExpression INTRG Expression COLON ConditionalExpression
+                     ;
 
-Expression1Rest_opt: %empty | Expression1Rest ;
+ConditionalOrExpression: ConditionalAndExpression
+                       | ConditionalOrExpression DVERT ConditionalAndExpression
+                       ;
 
-Expression1Rest: INTRG Expression COLON Expression1
+ConditionalAndExpression: InclusiveOrExpression
+                        | ConditionalAndExpression DAMP InclusiveOrExpression
+                        ;
+
+InclusiveOrExpression: ExclusiveOrExpression
+                     | InclusiveOrExpression VERT ExclusiveOrExpression
+                     ;
+
+ExclusiveOrExpression: AndExpression
+                     | ExclusiveOrExpression HAT AndExpression
+                     ;
+
+AndExpression: EqualityExpression
+             | AndExpression AMP EqualityExpression
+             ;
+
+EqualityExpression: RelationalExpression
+                  | EqualityExpression EQOP RelationalExpression
+                  | EqualityExpression INSTANCEOF ReferenceType
+                  ;
+
+RelationalExpression: ShiftExpression
+                    | RelationalExpression LT ShiftExpression
+                    | RelationalExpression GT ShiftExpression
+                    | RelationalExpression RELOP ShiftExpression
+                    ;
+
+ShiftExpression: AdditiveExpression
+               | ShiftExpression SHIFT AdditiveExpression
                ;
 
-Expression2: Expression3
-           | Expression3 Expression2Rest
-           ;
 
-Expression2Rest_opt: %empty | Expression2Rest ;
+AdditiveExpression: MultiplicativeExpression
+                  | AdditiveExpression ADDOP MultiplicativeExpression
+                  ;
 
-Expression2Rest: Expression2Rests
-               | INSTANCEOF Type
+MultiplicativeExpression: UnaryExpression
+                        | MultiplicativeExpression STAR UnaryExpression
+                        | MultiplicativeExpression DIVOP UnaryExpression
+                        ;
+
+CastExpression: LPAR BasicType RPAR UnaryExpression
+              | LPAR ReferenceType RPAR UnaryExpressionNotPlusMinus
+              ;
+
+UnaryExpressionNotPlusMinus: PostfixExpression
+                           | TILDE UnaryExpression
+                           | EMPH UnaryExpression
+                           /* | CastExpression TODO: resolve the conflict with ParExpression */
+                           ;
+
+PreIncDecExpression: INCDEC UnaryExpression
+                   ;
+
+UnaryExpression: PreIncDecExpression
+               | ADDOP UnaryExpression
+               | UnaryExpressionNotPlusMinus
                ;
 
-Expression2Rests: InfixOp Expression3
-                | Expression2Rests InfixOp Expression3
-                ;
 
-InfixOp: DVERT
-       | DAMP
-       | VERT
-       | HAT
-       | AMP
-       | EQOP
-       | LT
-       | GT
-       | RELOP
-       | SHIFT
-       | ADDOP
-       | STAR
-       | DIVOP
-       ;
+PostIncDecExpression: PostfixExpression INCDEC
+                    ;
 
-Expression3: PrefixOp Expression3
-           | LPAR Expression RPAR Expression3
-           | LPAR Type RPAR Expression3
-           | Primary
-           | PrimaryQualified SelectorsNonDotIdentifier
-           | PrimaryNonQualified Selectors
-           | Primary PostfixOps
-           | PrimaryQualified SelectorsNonDotIdentifier PostfixOps
-           | PrimaryNonQualified Selectors PostfixOps
-           ;
-
-
-PrefixOps_opt: %empty | PrefixOps ;
-
-PrefixOps: PrefixOp
-         | PrefixOps PrefixOp
-         ;
-
-PrefixOp: INCDEC
-        | EMPH
-        | TILDE
-        | ADDOP
-        ;
-
-
-PostfixOps_opt: %empty | PostfixOps ;
-
-PostfixOps: PostfixOp
-          | PostfixOps PostfixOp
-          ;
-
-PostfixOp: INCDEC
-         ;
+PostfixExpression: Primary
+                 | PostIncDecExpression
+                 ;
 
 Primary: PrimaryQualified
        | PrimaryNonQualified
@@ -874,7 +872,7 @@ ExplicitGenericInvocation: NonWildcardTypeArguments ExplicitGenericInvocationSuf
 InnerCreator: Identifier NonWildcardTypeArgumentsOrDiamond_opt ClassCreatorRest
             ;
 
-SelectorsNonDotIdentifier: fSelectorDotNonIdentifier
+SelectorsNonDotIdentifier: SelectorDotNonIdentifier
                          | SelectorsNonDotIdentifier Selector
                          ;
 
@@ -932,8 +930,6 @@ AnnotationTypeElementDeclaration: Modifiers_opt AnnotationTypeElementRest
 AnnotationTypeElementRest: Type Identifier AnnotationMethodOrConstantRest SEMIC
                          | ClassDeclaration
                          | InterfaceDeclaration
-                         | EnumDeclaration
-                         | AnnotationTypeDeclaration
                          ;
 
 AnnotationMethodOrConstantRest: AnnotationMethodRest
