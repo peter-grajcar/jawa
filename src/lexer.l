@@ -23,21 +23,18 @@ DIGIT               [0-9]
 LETTER_OR_DIGIT     {LETTER}|{DIGIT}
 IDENTIFIER          {LETTER}{LETTER_OR_DIGIT}*
 
-TRAILING_DOT        ({WHITESPACE}|{LINE_TERMINATOR})*\.
-
 STR_CHAR            [^{LINE_TERMINATOR}\"]
 
-%x NAME
 %x STRLIT
 
 %%
 %{
-   std::ostringstream name_buffer;
+std::ostringstream str_buffer;
 %}
 
-<INITIAL,NAME>{WHITESPACE}             /* Do nothing */
+{WHITESPACE}                /* Do nothing */
 
-<INITIAL,NAME>{LINE_TERMINATOR}        ctx->inc_line();
+{LINE_TERMINATOR}           ctx->inc_line();
 
     /* Keywords */
 
@@ -158,64 +155,24 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 
     /* Names */
 
-{IDENTIFIER}                {
-                                BEGIN(NAME);
-                                name_buffer.str("");
-                                name_buffer << yytext;
-                            }
-
-<NAME>{
-    \.to                        {
-                                    BEGIN(INITIAL);
-                                    IGNORE_MATCHED;
-                                    jawa::Name name = name_buffer.str();
-                                    if (ctx->is_type_name(name)) {
-                                        return jawa::parser::make_TYPE_NAME(name, ctx->loc());
-                                    }
-                                    return jawa::parser::make_IDENTIFIER(name, ctx->loc());
-                                }
-    \.nadzbiór                  {
-                                    BEGIN(INITIAL);
-                                    IGNORE_MATCHED;
-                                    jawa::Name name = name_buffer.str();
-                                    if (ctx->is_type_name(name)) {
-                                        return jawa::parser::make_TYPE_NAME(name, ctx->loc());
-                                    }
-                                    return jawa::parser::make_IDENTIFIER(name, ctx->loc());
-                                }
-    \.                          name_buffer << '.';
-    {IDENTIFIER}                name_buffer << yytext;
-    \(                          {
-                                    BEGIN(INITIAL);
-                                    IGNORE_MATCHED;
-                                    jawa::Name name = name_buffer.str();
-                                    return jawa::parser::make_METHOD_NAME(name, ctx->loc());
-                                }
-    .                           {
-                                    BEGIN(INITIAL);
-                                    IGNORE_MATCHED;
-                                    jawa::Name name = name_buffer.str();
-                                    if (ctx->is_type_name(name)) {
-                                        return jawa::parser::make_TYPE_NAME(name, ctx->loc());
-                                    }
-                                    return jawa::parser::make_IDENTIFIER(name, ctx->loc());
-                                }
-}
+{IDENTIFIER}                return jawa::parser::make_IDENTIFIER(yytext, ctx->loc());
 
     /* Strings */
 
-\"          {
-                BEGIN(STRLIT);
-                name_buffer.str("");
-            }
+\"                          {
+                                BEGIN(STRLIT);
+                                str_buffer.str("");
+                            }
 
 <STRLIT>{
-    {STR_CHAR}+     name_buffer << yytext;
-    \"              {
-                        BEGIN(INITIAL);
-                        return jawa::parser::make_STR_LIT(name_buffer.str(), ctx->loc());
-                    }
-    .               ctx->message(jawa::errors::MALFORMED_STRING, ctx->loc(), name_buffer.str());
+    {STR_CHAR}+             str_buffer << yytext;
+
+    \"                      {
+                                    BEGIN(INITIAL);
+                                    return jawa::parser::make_STR_LIT(str_buffer.str(), ctx->loc());
+                            }
+
+    .                       ctx->message(jawa::errors::MALFORMED_STRING, ctx->loc(), str_buffer.str());
 }
 
     /* Other */

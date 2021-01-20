@@ -146,81 +146,117 @@ using namespace jawa;
 %token                      NULL            "nula"
 
 %token<Name>                IDENTIFIER      "identyfikator"
-%token<Name>                TYPE_VARIABLE   "zmienna typu"
-%token<Name>                PACKAGE_NAME    "nazwa pakietu"
-%token<Name>                TYPE_NAME       "nazwa typu"
-%token<Name>                EXPRESSION_NAME "nazwa wyrażenia"
-%token<Name>                METHOD_NAME     "nazwa metody"
-%token<Name>                CLASS_NAME      "nazwa klasy"
+
 
 %%
 
-/* Types */
+/* Identifiers */
 
-Type: PrimitiveType
-    | ReferenceType
-    ;
+Identifier_opt: %empty | Identifier ;
 
-PrimitiveType: NumericType
-             | BOOLEAN
-             ;
+Identifier: IDENTIFIER
+          ;
 
-NumericType: IntegralType
-           | FloatingPointType
-           ;
+QualifiedIdentifier: Identifier
+                   | QualifiedIdentifier DOT Identifier
+                   ;
 
-IntegralType: BYTE
-            | SHORT
-            | INT
-            | LONG
-            | CHAR
-            ;
-
-FloatingPointType: FLOAT
-                 | DOUBLE
-                 ;
-
-ReferenceType: ClassOrInterfaceType
-             | TYPE_VARIABLE
-             | ArrayType
-             ;
-
-ClassOrInterfaceType: TYPE_NAME
-                    | TYPE_NAME TypeArguments
-                    ;
-
-ClassType: ClassOrInterfaceType
-         ;
-
-InterfaceType: ClassOrInterfaceType
-             ;
-
-ArrayType: Type LBRA RBRA
-         ;
-
-/* Type Variables  */
-
-TypeVariable: IDENTIFIER
-            ;
-
-TypeParameter: TypeVariable TypeBound_opt
-             ;
-
-TypeBound_opt: %empty
-             | TypeBound
-             ;
-
-TypeBound: EXTENDS TypeVariable
-         | EXTENDS ClassOrInterfaceType AdditionalBoundList_opt
-         ;
-
-AdditionalBoundList_opt: %empty
-                       | AdditionalBoundList
+QualifiedIdentifierList: QualifiedIdentifier
+                       | QualifiedIdentifierList COMMA QualifiedIdentifier
                        ;
 
-AdditionalBoundList: AdditionalBound AdditionalBoundList
-                   | AdditionalBound
-                   ;
+/* Declarations */
+
+CompilationUnit: PackageDeclaration_opt ImportDeclaration_opt TypeDeclaration_opt
+               ;
+
+PackageDeclaration_opt: %empty | PackageDeclaration ;
+
+PackageDeclaration: PACKAGE QualifiedIdentifier SEMIC
+                  ;
+
+ImportDeclaration_opt: %empty | ImportDeclaration ;
+
+ImportDeclaration: IMPORT QualifiedIdentifier SEMIC
+                 ;
+
+TypeDeclaration_opt: %empty | TypeDeclaration ;
+
+TypeDeclaration: ClassOrInterfaceDeclaration
+               | SEMIC
+               ;
+
+ClassOrInterfaceDeclaration: Modifiers_opt ClassDeclaration
+                           | Modifiers_opt InterfaceDeclaration
+                           ;
+
+ClassDeclaration: NormalClassDeclaration
+                | EnumDeclaration
+                ;
+
+InterfaceDeclaration: NormalInterfaceDeclaration
+                    | AnnotationTypeDeclaration
+                    ;
+
+NormalClassDeclaration: CLASS Identifier TypeParameters_opt ClassExtends_opt Implements_opt ClassBody
+                      ;
+
+EnumDeclaration: ENUM Identifier Implements_opt EnumBody
+               ;
+
+NormalInterfaceDeclaration: INTERFACE Identifier TypeParameters_opt InterfaceExtends InterfaceBody
+                          ;
+
+AnnotationTypeDeclaration: AT_INTERFACE Identifier AnnotationTypeBody
+                         ;
+
+ClassExtends_opt: %empty | ClassExtends ;
+
+ClassExtends: EXTENDS Type
+            ;
+
+InterfaceExtends_opt: %empty | InterfaceExtends ;
+
+InterfaceExtends: EXTENDS TypeList
+                ;
+
+Implements_opt: %empty | Implements ;
+
+Implements: IMPLEMENTS TypeList
+          ;
+
+/* Types */
+
+Type: BasicType Arrays_opt
+    | ReferenceType Arrays_opt
+    ;
+
+Arrays_opt: %empty | Arrays ;
+
+Arrays: Array
+      | Arrays Array
+      ;
+
+Array_opt: %empty | Array ;
+
+Array: LBRA RBRA
+     ;
+
+BasicType: BYTE
+         | SHORT
+         | CHAR
+         | INT
+         | LONG
+         | FLOAT
+         | DOUBLE
+         | BOOLEAN
+         ;
+
+ReferenceType: Identifier TypeArguments_opt
+             | ReferenceType DOT Identifier TypeArguments_opt
+             ;
+
+TypeArguments_opt: %empty | TypeArguments ;
 
 TypeArguments: LT TypeArgumentList GT
              ;
@@ -230,35 +266,63 @@ TypeArgumentList: TypeArgument
                 ;
 
 TypeArgument: ReferenceType
-            | Wildcard
+            | INTRG TypeArgumentBounds_opt
             ;
 
-Wildcard: INTRG WildcardBounds_opt
-        ;
+TypeArgumentBounds_opt: %empty | TypeArgumentBounds ;
 
-WildcardBounds_opt: %empty
-                  | WildcardBounds
+TypeArgumentBounds: EXTENDS ReferenceType
+                  | SUPER ReferenceType
                   ;
 
-WildcardBounds: EXTENDS ReferenceType
-              | SUPER ReferenceType
+NonWildcardTypeArguments_opt: %empty | NonWildcardTypeArguments ;
+
+NonWildcardTypeArguments: LT TypeList GT
+                        ;
+
+TypeList: ReferenceType
+        | TypeList COMMA ReferenceType
+        ;
+
+
+
+TypeArgumentsOrDiamond_opt: %empty | TypeArgumentsOrDiamond ;
+
+TypeArgumentsOrDiamond: LT GT
+                      | TypeArguments
+                      ;
+
+NonWildcardTypeArgumentsOrDiamond_opt: %empty | NonWildcardTypeArgumentsOrDiamond ;
+
+NonWildcardTypeArgumentsOrDiamond: LT GT
+                                 | NonWildcardTypeArguments
+                                 ;
+
+
+TypeParameters_opt: %empty | TypeParameters ;
+
+TypeParameters: LT TypeParameterList GT
               ;
 
-AdditionalBound: AMP InterfaceType
-               ;
-
-NonWildTypeArguments: LT ReferenceTypeList GT
-                    ;
-
-ReferenceTypeList: ReferenceType
-                 | ReferenceTypeList COMMA ReferenceType
+TypeParameterList: TypeParameter
+                 | TypeParameterList COMMA TypeParameter
                  ;
 
-/* Declarations */
+TypeParameter_opt: %empty | TypeParameter ;
 
-Modifiers_opt: %empty
-             | Modifiers
+TypeParameter: Identifier TypeParameterBound_opt
              ;
+
+TypeParameterBound_opt: %empty | TypeParameterBound ;
+
+TypeParameterBound: EXTENDS Bound
+                  ;
+
+Bound: ReferenceType
+     | Bound AMP ReferenceType
+     ;
+
+Modifiers_opt: %empty | Modifiers ;
 
 Modifiers: Modifier
          | Modifiers Modifier
@@ -268,175 +332,298 @@ Modifier: Annotation
         | PUBLIC
         | PROTECTED
         | PRIVATE
-        | ABSTRACT
         | STATIC
+        | ABSTRACT
         | FINAL
-        | STRICTFP
         | NATIVE
-        | TRANSIENT
         | SYNCHRONIZED
+        | TRANSIENT
         | VOLATILE
+        | STRICTFP
         ;
 
-/* Annotations */
-
-Annotations_opt: %empty
-               | Annotations
-               ;
+Annotations_opt: %empty | Annotations ;
 
 Annotations: Annotation
            | Annotations Annotation
            ;
 
-Annotation: AT TYPE_NAME LPAR ElementValuePairs_opt RPAR
-          | AT IDENTIFIER
-          | AT IDENTIFIER LPAR ElementValue RPAR
+Annotation: AT QualifiedIdentifier AnnotationParameters
           ;
 
-ElementValuePairs_opt: %empty
-                     | ElementValuePairs
-                     ;
+AnnotationParameters: LPAR AnnotationElement_opt RPAR
+                    ;
+
+AnnotationElement_opt: %empty | AnnotationElement ;
+
+AnnotationElement: ElementValuePairs
+                 | ElementValue
+                 ;
 
 ElementValuePairs: ElementValuePair
                  | ElementValuePairs COMMA ElementValuePair
                  ;
 
-ElementValuePair: IDENTIFIER ASGN ElementValue
+ElementValuePair: Identifier ASGN ElementValue
                 ;
 
-ElementValue: ConditionalExpression
-            | Annotation
+ElementValue: Annotation
+            | Expression1
             | ElementValueArrayInitializer
             ;
 
-ElementValueArrayInitializer: LCUR ElementValues COMMA RCUR
-                            | LCUR ElementValues RCUR
-                            | LCUR COMMA RCUR
-                            | LCUR RCUR
+ElementValueArrayInitializer: LCUR ElementValues_opt RCUR
+                            | LCUR ElementValues_opt COMMA RCUR
                             ;
+
+ElementValues_opt: %empty | ElementValues ;
 
 ElementValues: ElementValue
              | ElementValues COMMA ElementValue
              ;
 
-ArrayInitializer: LCUR VariableInitializers COMMA RCUR
-                | LCUR VariableInitializers RCUR
-                | LCUR COMMA RCUR
-                | LCUR RCUR
+
+
+ClassBody_opt: %empty | ClassBody ;
+
+ClassBody: LCUR ClassBodyDeclarations_opt RCUR
+         ;
+
+ClassBodyDeclarations_opt: %empty | ClassBodyDeclarations ;
+
+ClassBodyDeclarations: ClassBodyDeclaration
+                     | ClassBodyDeclarations ClassBodyDeclaration
+                     ;
+
+ClassBodyDeclaration: SEMIC
+                    | Modifiers_opt MemberDecl
+                    | STATIC Block
+                    ;
+
+MemberDecl: MethodOrFieldDecl
+          | VOID Identifier VoidMethodDeclaratorRest
+          | Identifier ConstructorDeclaratorRest
+          | GenericMethodOrConstructorDecl
+          | ClassDeclaration
+          | InterfaceDeclaration
+          ;
+
+MethodOrFieldDecl: Type Identifier MethodOrFieldRest
+                 ;
+
+MethodOrFieldRest: FieldDeclaratorsRest SEMIC
+                 | MethodDeclaratorRest
+                 ;
+
+FieldDeclaratorsRest: VariableDeclarator
+                    | VariableDeclaratorRest COMMA VariableDeclarator
+                    ;
+
+MethodDeclaratorRest: FormalParameters Arrays_opt Throws_opt Block
+                    | FormalParameters Arrays_opt Throws_opt SEMIC
+                    ;
+
+Throws_opt: %empty | Throws ;
+
+Throws: THROWS QualifiedIdentifierList
+      ;
+
+VoidMethodDeclaratorRest: FormalParameters Throws_opt Block
+                        | FormalParameters Throws_opt SEMIC
+                        ;
+
+ConstructorDeclaratorRest: FormalParameters Throws_opt Block
+                         ;
+
+GenericMethodOrConstructorDecl: TypeParameters GenericMethodOrConstructorRest
+                              ;
+
+GenericMethodOrConstructorRest: Type Identifier MethodDeclaratorRest
+                              | VOID Identifier MethodDeclaratorRest
+                              | Identifier ConstructorDeclaratorRest
+                              ;
+
+
+InterfaceBody: LCUR InterfaceBodyDeclarations_opt RCUR
+             ;
+
+InterfaceBodyDeclarations_opt: %empty | InterfaceBodyDeclarations ;
+
+InterfaceBodyDeclarations: InterfaceBodyDeclaration
+                         | InterfaceBodyDeclarations InterfaceBodyDeclaration
+                         ;
+
+InterfaceBodyDeclaration: SEMIC
+                        | Modifiers_opt InterfaceMemberDecl
+                        ;
+
+InterfaceMemberDecl: InterfaceMethodOrFieldDecl
+                   | VOID Identifier VoidInterfaceMethodDeclaratorRest
+                   | InterfaceGenericMethodDecl
+                   | ClassDeclaration
+                   | InterfaceDeclaration
+                   ;
+
+InterfaceMethodOrFieldDecl: Type Identifier InterfaceMethodOrFieldRest
+                          ;
+
+InterfaceMethodOrFieldRest: ConstantDeclaratorsRest SEMIC
+                          | InterfaceMethodDeclaratorRest
+                          ;
+
+ConstantDeclaratorsRest: ConstantDeclarator
+                       | ConstantDeclaratorRest COMMA ConstantDeclarator
+                       ;
+
+ConstantDeclaratorRest: Arrays_opt ASGN VariableInitializer
+                      ;
+
+ConstantDeclarator: Identifier ConstantDeclaratorRest
+                  ;
+
+InterfaceMethodDeclaratorRest: FormalParameters Arrays_opt Throws_opt SEMIC
+                             ;
+
+VoidInterfaceMethodDeclaratorRest: FormalParameters Throws_opt SEMIC
+
+InterfaceGenericMethodDecl: TypeParameters Type Identifier InterfaceMethodDeclaratorRest
+                          | TypeParameters VOID Identifier InterfaceMethodDeclaratorRest
+                          ;
+
+
+FormalParameters: LPAR FormalParameterDecls_opt RPAR
                 ;
+
+FormalParameterDecls_opt: %empty | FormalParameterDecls ;
+
+FormalParameterDecls: VariableModifiers_opt Type FormalParameterDeclsRest
+                    ;
+
+VariableModifiers_opt: %empty | VariableModifiers ;
+
+VariableModifiers: VariableModifier
+                 | VariableModifiers VariableModifier
+                 ;
+
+VariableModifier: FINAL
+                | Annotation
+                ;
+
+FormalParameterDeclsRest: VariableDeclaratorId
+                        | VariableDeclaratorId COMMA FormalParameterDecls
+                        | DOTS VariableDeclaratorId
+                        ;
+
+
+
+VariableDeclaratorId: Identifier Arrays_opt
+                    ;
+
+
+
+VariableDeclarators: VariableDeclarator
+                   | VariableDeclarators COMMA VariableDeclarator
+                   ;
+
+VariableDeclarator: Identifier VariableDeclaratorRest
+                  ;
+
+VariableDeclaratorRest: Arrays_opt VariableInitializerAssignment_opt
+                      ;
+
+VariableInitializerAssignment_opt: %empty | VariableInitializerAssignment ;
+
+VariableInitializerAssignment: ASGN VariableInitializer
+                             ;
+VariableInitializers_opt: %empty | VariableInitializers ;
 
 VariableInitializers: VariableInitializer
                     | VariableInitializers COMMA VariableInitializer
                     ;
 
-VariableInitializer: Expression
-                   | ArrayInitializer
+VariableInitializer: ArrayInitializer
+                   | Expression
                    ;
 
-/* Statements */
+ArrayInitializer: LCUR VariableInitializers_opt RCUR
+                | LCUR VariableInitializers_opt COMMA RCUR
+                ;
+
 
 Block: LCUR BlockStatements_opt RCUR
      ;
 
-BlockStatements_opt: %empty
-                   | BlockStatements
-                   ;
+BlockStatements_opt: %empty | BlockStatements ;
 
 BlockStatements: BlockStatement
                | BlockStatements BlockStatement
                ;
 
 BlockStatement: LocalVariableDeclarationStatement
+              | ClassOrInterfaceDeclaration
+              | Label Statement
               | Statement
               ;
 
-LocalVariableDeclarationStatement: LocalVariableDeclaration SEMIC
+Label: Identifier COLON
+     ;
+
+LocalVariableDeclarationStatement: VariableModifiers_opt  Type VariableDeclarators SEMIC
                                  ;
 
-LocalVariableDeclaration: Modifiers Type VariableDeclarators
-                        | Type VariableDeclarators
-                        ;
-
-VariableDeclarators: VariableDeclarator
-                   | VariableDeclarators COMMA VariableDeclarator
-                   ;
-
-VariableDeclarator: VariableDeclaratorId
-                  | VariableDeclaratorId ASGN VariableInitializer
-                  ;
-
-VariableDeclaratorId: IDENTIFIER
-                    | VariableDeclaratorId LBRA RBRA
-                    ;
-
-Statement: StatementWithoutTrailingSubstatement
-         | LabeledStatement
-         | IfThenStatement
-         | IfThenElseStatement
-         | WhileStatement
-         | ForStatement
+Statement: Block
+         | SEMIC
+         | Identifier COLON Statement
+         | StatementExpression SEMIC
+         | IF ParExpression Statement ELSE Statement
+         | ASSERT Expression SEMIC
+         | ASSERT Expression COLON Expression SEMIC
+         | SWITCH ParExpression LCUR SwitchBlockStatementGroups RCUR
+         | WHILE ParExpression Statement
+         | DO Statement WHILE ParExpression SEMIC
+         | FOR LPAR ForControl RPAR Statement
+         | BREAK Identifier_opt SEMIC
+         | CONTINUE Identifier_opt SEMIC
+         | RETURN Expression_opt SEMIC
+         | THROW Expression SEMIC
+         | SYNCHRONIZED ParExpression Block
+         | TRY Block Catches
+         | TRY Block Catches_opt Finally
+         | TRY ResourceSpecification Block Catches_opt Finally_opt
          ;
 
-StatementWithoutTrailingSubstatement: Block
-                                    | EmptyStatement
-                                    | ExpressionStatement
-                                    | AssertStatement
-                                    | SwitchStatement
-                                    | DoStatement
-                                    | BreakStatement
-                                    | ContinueStatement
-                                    | ReturnStatement
-                                    | SynchronizedStatement
-                                    | ThrowStatement
-                                    | TryStatement
-                                    ;
-
-StatementNoShortIf: StatementWithoutTrailingSubstatement
-                  | LabeledStatementNoShortIf
-                  | IfThenElseStatementNoShortIf
-                  | WhileStatementNoShortIf
-                  | ForStatementNoShortIf
-                  ;
-
-EmptyStatement: SEMIC
-              ;
-
-IfThenStatement: IF LPAR Expression RPAR Statement
-               ;
-
-IfThenElseStatement: IF LPAR Expression RPAR StatementNoShortIf ELSE Statement
+StatementExpression: Expression
                    ;
 
-IfThenElseStatementNoShortIf: IF LPAR Expression RPAR StatementNoShortIf ELSE StatementNoShortIf
-                            ;
+Catches_opt: %empty | Catches ;
 
-LabeledStatement: IDENTIFIER COLON Statement
-                ;
+Catches: CatchClause
+       | Catches CatchClause
+       ;
 
-LabeledStatementNoShortIf: IDENTIFIER COLON StatementNoShortIf
-                         ;
-
-ExpressionStatement: StatementExpression SEMIC
-                   ;
-
-StatementExpression: Assignment
-                   | PreIncDecExpression
-                   | PostIncDecExpression
-                   | MethodInvocation
-                   ;
-
-AssertStatement: ASSERT Expression SEMIC
-               | ASSERT Expression COLON Expression SEMIC
-               ;
-
-SwitchStatement: SWITCH LPAR Expression RPAR SwitchBlock
-               ;
-
-SwitchBlock: LCUR SwitchBlockStatementGroups SwitchLabels RCUR
-           | LCUR SwitchBlockStatementGroups RCUR
-           | LCUR SwitchLabels RCUR
-           | LCUR RCUR
+CatchClause: CATCH LPAR VariableModifiers_opt CatchType Identifier RPAR Block
            ;
+
+CatchType: QualifiedIdentifier
+         | CatchType VERT QualifiedIdentifier
+         ;
+
+Finally_opt: %empty | Finally ;
+
+Finally: FINALLY Block
+       ;
+
+ResourceSpecification: LPAR Resources RPAR
+                     | LPAR Resources SEMIC RPAR
+                     ;
+
+Resources: Resource
+         | Resources SEMIC Resource
+         ;
+
+Resource: VariableModifiers_opt ReferenceType VariableDeclaratorId ASGN Expression
+        ;
+
 
 SwitchBlockStatementGroups: SwitchBlockStatementGroup
                           | SwitchBlockStatementGroups SwitchBlockStatementGroup
@@ -449,406 +636,272 @@ SwitchLabels: SwitchLabel
             | SwitchLabels SwitchLabel
             ;
 
-SwitchLabel: CASE ConstantExpression COLON
+SwitchLabel: CASE Expression COLON
            | CASE EnumConstantName COLON
            | DEFAULT COLON
            ;
 
-EnumConstantName: IDENTIFIER
+EnumConstantName: Identifier
                 ;
 
-WhileStatement: WHILE LPAR Expression RPAR Statement
-              ;
 
-WhileStatementNoShortIf: WHILE LPAR Expression RPAR StatementNoShortIf
-                       ;
 
-DoStatement: DO Statement WHILE LPAR Expression RPAR SEMIC
-           ;
-
-ForStatement: BasicForStatement
-            ;
-
-BasicForStatement: FOR LPAR ForInit_opt SEMIC Expression_opt SEMIC ForUpdate_opt RPAR Statement
-                 ;
-
-ForStatementNoShortIf: FOR LPAR ForInit_opt SEMIC Expression_opt SEMIC ForUpdate_opt RPAR StatementNoShortIf
-                     ;
-
-ForInit_opt: %empty
-           | ForInit
-           ;
-
-ForInit: StatementExpressionList
-       | LocalVariableDeclaration
-       ;
-
-ForUpdate_opt: %empty
-             | ForUpdate
-             ;
-
-ForUpdate: StatementExpressionList
-         ;
-
-StatementExpressionList: StatementExpression
-                       | StatementExpressionList COMMA StatementExpression
-                       ;
-
-IDENTIFIER_opt: %empty
-              | IDENTIFIER
-              ;
-
-BreakStatement: BREAK IDENTIFIER_opt SEMIC
-              ;
-
-ContinueStatement: CONTINUE IDENTIFIER_opt SEMIC
-                 ;
-
-ReturnStatement: RETURN Expression_opt SEMIC
-               ;
-
-ThrowStatement: THROW Expression SEMIC
-
-SynchronizedStatement: SYNCHRONIZED LPAR Expression RPAR Block
-                     ;
-
-TryStatement: TRY Block Catches
-            | TRY Block Catches_opt Finally
-            | TryWithResourcesStatement
-            ;
-
-Catches_opt: %empty
-           | Catches
-           ;
-
-Catches: CatchClause
-       | Catches CatchClause
-       ;
-
-CatchClause: CATCH LPAR CatchFormalParameter RPAR Block
-           ;
-
-CatchFormalParameter: Modifiers_opt CatchType VariableDeclaratorId
-                    ;
-
-CatchType: ClassType
-         | ClassType VERT CatchType
-         ;
-
-Finally: FINALLY Block
-       ;
-
-TryWithResourcesStatement: TRY ResourceSpecification Block Catches Finally
-                         | TRY ResourceSpecification Block Catches
-                         | TRY ResourceSpecification Block Finally
-                         | TRY ResourceSpecification Block
-                         ;
-
-SEMIC_opt: %empty
-         | SEMIC
-         ;
-
-ResourceSpecification: LPAR Resources SEMIC_opt RPAR
-                     ;
-
-Resources: Resource
-         | Resources SEMIC Resource
-         ;
-
-Resource: Modifiers_opt Type VariableDeclaratorId ASGN Expression
-        ;
-
-/* Expressions */
-
-Primary: PrimaryNoNewArray
-       | ArrayCreationExpression
-       ;
-
-PrimaryNoNewArray: Literal
-                 | Type DOT CLASS
-                 | VOID DOT CLASS
-                 | THIS
-                 | CLASS_NAME DOT THIS
-                 | LPAR Expression RPAR
-                 | FieldAccess
-                 | MethodInvocation
-                 | ArrayAccess
-                 ;
-
-Literal: INT_LIT
-       | LONG_LIT
-       | SHORT_LIT
-       | BYTE_LIT
-       | FLOAT_LIT
-       | DOUBLE_LIT
-       | CHAR_LIT
-       | STR_LIT            { std::cout << "STRING " << '\"' << $1 << '\"' << std::endl; }
-       | TRUE
-       | FALSE
-       | NULL
-       ;
-
-ArgumentList_opt: %empty
-                | ArgumentList
-                ;
-
-ArgumentList: Expression
-            | ArgumentList COMMA Expression
-            ;
-
-ArrayCreationExpression: NEW PrimitiveType DimExprs Dims_opt
-                       | NEW ClassOrInterfaceType DimExprs Dims_opt
-                       | NEW PrimitiveType Dims ArrayInitializer
-                       | NEW ClassOrInterfaceType Dims ArrayInitializer
-
-DimExprs: DimExpr
-        | DimExprs DimExpr
-        ;
-
-DimExpr: LBRA Expression RBRA
-       ;
-
-Dims_opt: %empty
-        | Dims
-        ;
-
-Dims: LBRA RBRA
-    | Dims LBRA RBRA
-    ;
-
-FieldAccess: Primary DOT IDENTIFIER
-           | SUPER DOT IDENTIFIER
-           | CLASS_NAME DOT SUPER DOT IDENTIFIER
-           ;
-
-MethodInvocation: METHOD_NAME LPAR ArgumentList_opt RPAR                                                { std::cout << $1 << "()" << std::endl; }
-                | Primary DOT NonWildTypeArguments METHOD_NAME LPAR ArgumentList_opt RPAR
-                | Primary DOT METHOD_NAME LPAR ArgumentList_opt RPAR
-                | SUPER DOT NonWildTypeArguments METHOD_NAME LPAR ArgumentList_opt RPAR
-                | SUPER DOT METHOD_NAME LPAR ArgumentList_opt RPAR
-                | CLASS_NAME DOT SUPER DOT NonWildTypeArguments METHOD_NAME LPAR ArgumentList_opt RPAR
-                | CLASS_NAME DOT SUPER DOT METHOD_NAME LPAR ArgumentList_opt RPAR
-                ;
-
-ArrayAccess: EXPRESSION_NAME LBRA Expression RBRA
-           | PrimaryNoNewArray LBRA Expression RBRA
-           ;
-
-PostfixExpression: Primary
-                 | EXPRESSION_NAME
-                 | PostIncDecExpression
-                 ;
-
-PostIncDecExpression: PostfixExpression INCDEC
-                    ;
-
-UnaryExpression: PreIncDecExpression
-               | ADDOP UnaryExpression
-               | UnaryExpressionNotPlusMinus
-               ;
-
-PreIncDecExpression: INCDEC UnaryExpression
-                   ;
-
-UnaryExpressionNotPlusMinus: PostfixExpression
-                           | TILDE UnaryExpression
-                           | EMPH UnaryExpression
-                           | CastExpression
-                           ;
-
-CastExpression: LPAR PrimitiveType RPAR UnaryExpression
-              | LPAR ReferenceType RPAR UnaryExpressionNotPlusMinus
-              ;
-
-MultiplicativeExpression: UnaryExpression
-                        | MultiplicativeExpression STAR UnaryExpression
-                        | MultiplicativeExpression DIVOP UnaryExpression
-                        ;
-
-AdditiveExpression: MultiplicativeExpression
-                  | AdditiveExpression ADDOP MultiplicativeExpression
-                  ;
-
-ShiftExpression: AdditiveExpression
-               | ShiftExpression SHIFT AdditiveExpression
-               ;
-
-RelationalExpression: ShiftExpression
-                    | RelationalExpression LT ShiftExpression
-                    | RelationalExpression GT ShiftExpression
-                    | RelationalExpression RELOP ShiftExpression
-
-                    ;
-
-EqualityExpression: RelationalExpression
-                  | EqualityExpression EQOP RelationalExpression
-                  | EqualityExpression INSTANCEOF ReferenceType
-                  ;
-
-AndExpression: EqualityExpression
-             | AndExpression AMP EqualityExpression
-             ;
-
-ExclusiveOrExpression: AndExpression
-                     | ExclusiveOrExpression HAT AndExpression
-                     ;
-
-InclusiveOrExpression: ExclusiveOrExpression
-                     | InclusiveOrExpression VERT ExclusiveOrExpression
-                     ;
-
-ConditionalAndExpression: InclusiveOrExpression
-                        | ConditionalAndExpression DAMP InclusiveOrExpression
-                        ;
-
-ConditionalOrExpression: ConditionalAndExpression
-                       | ConditionalOrExpression DVERT ConditionalAndExpression
-                       ;
-
-ConditionalExpression: ConditionalOrExpression
-                     | ConditionalOrExpression INTRG Expression COLON ConditionalExpression
-                     ;
-
-AssignmentExpression: ConditionalExpression
-                    | Assignment
-                    ;
-
-Assignment: LeftHandSide AssignmentOperator AssignmentExpression
+ForControl: ForVarControl
+          | ForInit SEMIC Expression_opt SEMIC ForUpdate_opt
           ;
 
-LeftHandSide: EXPRESSION_NAME
-            | FieldAccess
-            | ArrayAccess
-            ;
+ForVarControl: VariableModifiers_opt Type VariableDeclaratorId ForVarControlRest
+             ;
+
+ForVarControlRest: ForVariableDeclaratorsRest SEMIC Expression_opt SEMIC ForUpdate_opt
+                 | COLON Expression
+                 ;
+
+ForVariableDeclaratorsRest: ForVariableDeclaratorsRestHead_opt ForVariableDeclaratorsRestTail_opt
+                          ;
+
+ForVariableDeclaratorsRestHead_opt: %empty | ForVariableDeclaratorsRestHead ;
+
+ForVariableDeclaratorsRestHead: ASGN VariableInitializer
+                              ;
+
+ForVariableDeclaratorsRestTail_opt: %empty | ForVariableDeclaratorsRestTail ;
+
+ForVariableDeclaratorsRestTail: COMMA VariableDeclarator
+                              | ForVariableDeclaratorsRestTail COMMA VariableDeclarator
+                              ;
+
+ForInit: StatementExpressions
+       ;
+
+ForUpdate_opt: %empty | ForUpdate ;
+
+ForUpdate: StatementExpressions
+         ;
+
+StatementExpressions: StatementExpression
+                    | StatementExpressions COMMA StatementExpression
+                    ;
+
+Expressions_opt: %empty | Expressions ;
+
+Expressions: Expression
+           | Expressions COMMA Expression
+           ;
+
+Expression_opt: %empty | Expression ;
+
+Expression: Expression1 ExpressionTail_opt
+          ;
+
+ExpressionTail_opt: %empty | ExpressionTail ;
+
+ExpressionTail: AssignmentOperator Expression1
+              ;
 
 AssignmentOperator: ASGN
                   | COMP
                   ;
 
-Expression_opt: %empty
-              | Expression
-              ;
+Expression1: Expression2 Expression1Rest_opt
+           ;
 
-Expression: AssignmentExpression
+Expression1Rest_opt: %empty | Expression1Rest ;
+
+Expression1Rest: INTRG Expression COLON Expression1
+               ;
+
+Expression2: Expression3
+           | Expression3 Expression2Rest
+           ;
+
+Expression2Rest_opt: %empty | Expression2Rest ;
+
+Expression2Rest: Expression2Rests
+               | INSTANCEOF Type
+               ;
+
+Expression2Rests: InfixOp Expression3
+                | Expression2Rests InfixOp Expression3
+                ;
+
+InfixOp: DVERT
+       | DAMP
+       | VERT
+       | HAT
+       | AMP
+       | EQOP
+       | LT
+       | GT
+       | RELOP
+       | SHIFT
+       | ADDOP
+       | STAR
+       | DIVOP
+       ;
+
+Expression3: PrefixOp Expression3
+           | LPAR Expression RPAR Expression3
+           | LPAR Type RPAR Expression3
+           | Primary
+           | PrimaryQualified SelectorsNonDotIdentifier
+           | PrimaryNonQualified Selectors
+           | Primary PostfixOps
+           | PrimaryQualified SelectorsNonDotIdentifier PostfixOps
+           | PrimaryNonQualified Selectors PostfixOps
+           ;
+
+
+PrefixOps_opt: %empty | PrefixOps ;
+
+PrefixOps: PrefixOp
+         | PrefixOps PrefixOp
+         ;
+
+PrefixOp: INCDEC
+        | EMPH
+        | TILDE
+        | ADDOP
+        ;
+
+
+PostfixOps_opt: %empty | PostfixOps ;
+
+PostfixOps: PostfixOp
+          | PostfixOps PostfixOp
           ;
 
-ConstantExpression: Expression
-                  ;
+PostfixOp: INCDEC
+         ;
 
-/* Declarations */
+Primary: PrimaryQualified
+       | PrimaryNonQualified
+       ;
 
-CompilationUnit: %empty
-               | PackageDeclaration ImportDeclarations TypeDeclarations
-               | PackageDeclaration ImportDeclarations
-               | PackageDeclaration TypeDeclarations
-               | ImportDeclarations TypeDeclarations
-               | PackageDeclaration
-               | ImportDeclarations
-               | TypeDeclarations
-               ;
+PrimaryNonQualified: Literal
+                   | ParExpression
+                   | THIS
+                   | THIS Arguments
+                   | SUPER SuperSuffix
+                   | NEW Creator
+                   | NonWildcardTypeArguments ExplicitGenericInvocationSuffix
+                   | NonWildcardTypeArguments THIS Arguments
+                   | BasicType Arrays_opt DOT CLASS
+                   | VOID DOT CLASS
+                   ;
 
-ImportDeclarations: ImportDeclaration
-                  | ImportDeclarations ImportDeclaration
-                  ;
-
-TypeDeclarations: TypeDeclaration
-                | TypeDeclarations TypeDeclaration
+PrimaryQualified: QualifiedIdentifier
+                | QualifiedIdentifier IdentifierSuffix
                 ;
 
-PackageDeclaration: PACKAGE PACKAGE_NAME SEMIC
-                  ;
 
-ImportDeclaration: IMPORT TYPE_NAME SEMIC
-                 ;
+Literal: INT_LIT
+       | FLOAT_LIT
+       | CHAR_LIT
+       | STR_LIT
+       | TRUE
+       | FALSE
+       | NULL
+       ;
 
-TypeDeclaration: Modifiers_opt ClassDeclaration
-               | Modifiers_opt InterfaceDeclaration
-               | Modifiers_opt EnumDeclaration
-               | SEMIC
-               ;
+ParExpression: LPAR Expression RPAR
+             ;
 
-ClassDeclaration: CLASS IDENTIFIER TypeParameters Super Interfaces ClassBody
-                | CLASS IDENTIFIER TypeParameters Super ClassBody
-                | CLASS IDENTIFIER TypeParameters Interfaces ClassBody
-                | CLASS IDENTIFIER Super Interfaces ClassBody
-                | CLASS IDENTIFIER TypeParameters ClassBody
-                | CLASS IDENTIFIER Super ClassBody
-                | CLASS IDENTIFIER Interfaces ClassBody
-                | CLASS IDENTIFIER ClassBody
-                ;
+Arguments_opt: %empty | Arguments ;
 
-InterfaceDeclaration: NormalInterfaceDeclaration
-                    | AnnotationTypeDeclaration
-                    ;
+Arguments: LPAR Expressions_opt RPAR
+         ;
 
-NormalInterfaceDeclaration: INTERFACE IDENTIFIER TypeParameters ExtendsInterfaces InterfaceBody
-                          | INTERFACE IDENTIFIER TypeParameters InterfaceBody
-                          | INTERFACE IDENTIFIER ExtendsInterfaces InterfaceBody
-                          | INTERFACE IDENTIFIER InterfaceBody
-                          ;
+SuperSuffix: Arguments
+           | DOT Identifier
+           | DOT Identifier Arguments
+           ;
 
-ExtendsInterfaces: EXTENDS InterfaceTypeList
-                 ;
-
-InterfaceBody: LCUR InterfaceMemberDeclarations_opt RCUR
-
-InterfaceMemberDeclarations_opt: %empty
-                               | InterfaceMemberDeclarations
+ExplicitGenericInvocationSuffix: SUPER SuperSuffix
+                               | Identifier Arguments
                                ;
 
-InterfaceMemberDeclarations: InterfaceMemberDeclaration
-                           | InterfaceMemberDeclarations InterfaceMemberDeclaration
-                           ;
 
-InterfaceMemberDeclaration: Modifiers_opt ClassDeclaration
-                          | Modifiers_opt InterfaceDeclaration
-                          | Modifiers_opt AbstractMethodDeclaration
-                          | Modifiers_opt Type VariableDeclarators SEMIC
-                          | SEMIC
-                          ;
+Creator: NonWildcardTypeArguments CreatedName ClassCreatorRest
+       | CreatedName ClassCreatorRest
+       | CreatedName ArrayCreatorRest
+       ;
+
+CreatedName: Identifier CreatedNameTail_opt
+           | Identifier TypeArgumentsOrDiamond CreatedNameTail_opt
+           ;
+
+CreatedNameTail_opt: %empty | CreatedNameTail ;
+
+CreatedNameTail: DOT Identifier
+               | DOT Identifier TypeArgumentsOrDiamond
+               | CreatedNameTail DOT Identifier
+               | CreatedNameTail DOT Identifier TypeArgumentsOrDiamond
+               ;
+
+ClassCreatorRest: Arguments
+                | Arguments ClassBody
+                ;
+
+ArrayCreatorRest: LBRA RBRA ArrayInitializer
+                | LBRA RBRA Arrays ArrayInitializer
+                | LBRA Expression RBRA ArrayCreatorExpressions
+                | LBRA Expression RBRA ArrayCreatorExpressions Arrays
+                ;
+
+ArrayCreatorExpressions_opt: %empty | ArrayCreatorExpressions ;
+
+ArrayCreatorExpressions: LBRA Expression RBRA
+                       | ArrayCreatorExpressions LBRA Expression RBRA
+                       ;
 
 
-AbstractMethodDeclaration: TypeParameters Result MethodDeclarator Throws_opt SEMIC
-                         | Result MethodDeclarator Throws_opt SEMIC
+IdentifierSuffix_opt: %empty | IdentifierSuffix ;
+
+IdentifierSuffix: LBRA Expression RBRA
+                | Arguments
+                | DOT CLASS
+                | DOT ExplicitGenericInvocation
+                | DOT THIS
+                | DOT SUPER Arguments
+                | DOT NEW NonWildcardTypeArguments_opt InnerCreator
+                | LBRA Arrays DOT CLASS RBRA
+                ;
+
+ExplicitGenericInvocation: NonWildcardTypeArguments ExplicitGenericInvocationSuffix
                          ;
 
-AnnotationTypeDeclaration: AT_INTERFACE IDENTIFIER AnnotationTypeBody
-                         ;
-
-AnnotationTypeBody: LCUR AnnotationTypeElementDeclarations_opt RCUR
-                  ;
-
-AnnotationTypeElementDeclarations_opt: %empty
-                                     | AnnotationTypeElementDeclarations
-                                     ;
-
-AnnotationTypeElementDeclarations: AnnotationTypeElementDeclaration
-                                 | AnnotationTypeElementDeclarations AnnotationTypeElementDeclaration
-                                 ;
-
-AnnotationTypeElementDeclaration: Modifiers_opt Type METHOD_NAME LPAR RPAR Dims DefaultValue SEMIC
-                                | Modifiers_opt Type METHOD_NAME LPAR RPAR Dims SEMIC
-                                | Modifiers_opt Type METHOD_NAME LPAR RPAR DefaultValue SEMIC
-                                | Modifiers_opt Type METHOD_NAME LPAR RPAR SEMIC
-                                | Modifiers_opt Type VariableDeclarators SEMIC
-                                | Modifiers_opt ClassDeclaration
-                                | Modifiers_opt InterfaceDeclaration
-                                | Modifiers_opt EnumDeclaration
-                                ;
-
-DefaultValue: DEFAULT ElementValue
+InnerCreator: Identifier NonWildcardTypeArgumentsOrDiamond_opt ClassCreatorRest
             ;
 
-EnumDeclaration: ENUM IDENTIFIER Interfaces_opt EnumBody
-               ;
+SelectorsNonDotIdentifier: fSelectorDotNonIdentifier
+                         | SelectorsNonDotIdentifier Selector
+                         ;
+
+Selectors: Selector
+         | Selectors Selector
+         ;
+
+Selector: LBRA Expression RBRA
+        | DOT SelectorDotNonIdentifier
+        | DOT SelectorDotIdentifier
+        ;
+
+SelectorDotNonIdentifier: ExplicitGenericInvocation
+                        | THIS
+                        | SUPER SuperSuffix
+                        | NEW NonWildcardTypeArguments_opt InnerCreator
+                        ;
+
+SelectorDotIdentifier: Identifier
+                     | Identifier Arguments
+                     ;
+
 
 EnumBody: LCUR EnumConstants COMMA EnumBodyDeclarations RCUR
         | LCUR EnumConstants COMMA RCUR
-        | LCUR EnumConstants EnumBodyDeclarations RCUR
         | LCUR COMMA EnumBodyDeclarations RCUR
         | LCUR EnumConstants RCUR
-        | LCUR COMMA RCUR
-        | LCUR EnumBodyDeclarations RCUR
         | LCUR RCUR
         ;
 
@@ -856,145 +909,44 @@ EnumConstants: EnumConstant
              | EnumConstants COMMA EnumConstant
              ;
 
-EnumConstant: Annotations_opt IDENTIFIER Arguments ClassBody
-            | Annotations_opt IDENTIFIER Arguments
-            | Annotations_opt IDENTIFIER ClassBody
-            | Annotations_opt IDENTIFIER
+EnumConstant: Annotations_opt Identifier Arguments_opt ClassBody_opt
             ;
 
-Arguments: LPAR ArgumentList_opt RPAR
-         ;
-
-EnumBodyDeclarations: SEMIC ClassBodyDeclarations_opt
+EnumBodyDeclarations: SEMIC ClassBodyDeclarations
                     ;
 
-Interfaces_opt: %empty
-              | Interfaces
-              ;
 
-Interfaces: IMPLEMENTS InterfaceTypeList
-          ;
 
-InterfaceTypeList: InterfaceType
-                 | InterfaceTypeList COMMA InterfaceType
-                 ;
+AnnotationTypeBody: LCUR AnnotationTypeElementDeclarations_opt RCUR
+                  ;
 
-Super: EXTENDS ClassType
-     ;
+AnnotationTypeElementDeclarations_opt: %empty | AnnotationTypeElementDeclarations ;
 
-TypeParameters: LT TypeParameterList GT
-              ;
+AnnotationTypeElementDeclarations: AnnotationTypeElementDeclaration
+                                 | AnnotationTypeElementDeclarations AnnotationTypeElementDeclaration
+                                 ;
 
-TypeParameterList: TypeParameterList COMMA TypeParameter
-                 | TypeParameter
-                 ;
+AnnotationTypeElementDeclaration: Modifiers_opt AnnotationTypeElementRest
+                                ;
 
-ClassBody: LCUR ClassBodyDeclarations_opt RCUR
-         ;
-
-ClassBodyDeclarations_opt: %empty
-                         | ClassBodyDeclarations
+AnnotationTypeElementRest: Type Identifier AnnotationMethodOrConstantRest SEMIC
+                         | ClassDeclaration
+                         | InterfaceDeclaration
+                         | EnumDeclaration
+                         | AnnotationTypeDeclaration
                          ;
 
-ClassBodyDeclarations: ClassBodyDeclaration
-                     | ClassBodyDeclarations ClassBodyDeclaration
+AnnotationMethodOrConstantRest: AnnotationMethodRest
+                              | ConstantDeclaratorsRest
+                              ;
 
-ClassBodyDeclaration: ClassMemberDeclaration
-                    | InstanceInitializer
-                    | StaticInitializer
-                    | ConstructorDeclaration
+AnnotationMethodRest: LPAR RPAR Array_opt Default_opt
                     ;
 
-ClassMemberDeclaration: FieldDeclaration
-                      | MethodDeclaration
-                      | Modifiers_opt ClassDeclaration
-                      | Modifiers_opt EnumDeclaration
-                      | Modifiers_opt InterfaceDeclaration
-                      ;
+Default_opt: %empty | Default ;
 
-FieldDeclaration: Modifiers Type VariableDeclarators SEMIC
-                ;
-
-MethodDeclaration: MethodHeader MethodBody
-                 ;
-
-MethodHeader: Modifiers TypeParameters Result MethodDeclarator Throws_opt
-            | Modifiers Result MethodDeclarator Throws_opt
-            | TypeParameters Result MethodDeclarator Throws_opt
-            | Result MethodDeclarator Throws_opt
-            ;
-
-MethodDeclarator: METHOD_NAME LPAR FormalParameterList_opt RPAR
-                ;
-
-MethodDeclarator: MethodDeclarator LBRA RBRA
-                ;
-
-FormalParameterList_opt: %empty
-                       | FormalParameterList
-                       ;
-
-FormalParameterList: FormalParameter
-                   | FormalParameterList COMMA FormalParameter
-                   ;
-
-FormalParameter: Modifiers_opt Type VariableDeclaratorId
-               | Modifiers_opt Type DOTS VariableDeclaratorId
-               ;
-
-Result: Type
-      | VOID
-      ;
-
-Throws_opt: %empty
-          | Throws
-          ;
-
-Throws: THROWS ExceptionTypeList
-      ;
-
-ExceptionTypeList: ExceptionType
-                 | ExceptionTypeList COMMA ExceptionType
-                 ;
-
-ExceptionType: TYPE_NAME
-             | TYPE_VARIABLE
-             ;
-
-MethodBody: Block
-          ;
-
-InstanceInitializer: Block
-                   ;
-
-StaticInitializer: STATIC Block
-                 ;
-
-ConstructorDeclaration: Modifiers ConstructorDeclarator Throws_opt ConstructorBody
-
-ConstructorDeclarator: TypeParameters SimpleTypeName LPAR FormalParameterList_opt RPAR
-                     | SimpleTypeName LPAR FormalParameterList_opt RPAR
-                     ;
-
-SimpleTypeName: CLASS_NAME
-              ;
-
-ConstructorBody: LCUR ExplicitConstructorInvocation BlockStatements RCUR
-               | LCUR ExplicitConstructorInvocation RCUR
-               | LCUR BlockStatements RCUR
-               | LCUR RCUR
-               ;
-
-ExplicitConstructorInvocation: NonWildTypeArguments THIS LPAR ArgumentList_opt RPAR SEMIC
-                             | THIS LPAR ArgumentList_opt RPAR SEMIC
-                             | NonWildTypeArguments SUPER LPAR ArgumentList_opt RPAR SEMIC
-                             | SUPER LPAR ArgumentList_opt RPAR SEMIC
-                             | Primary DOT NonWildTypeArguments_opt SUPER LPAR ArgumentList_opt RPAR SEMIC
-                             ;
-
-NonWildTypeArguments_opt: %empty
-                        | NonWildTypeArguments
-                        ;
+Default: DEFAULT ElementValue
+       ;
 
 %%
 
