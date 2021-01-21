@@ -1,8 +1,13 @@
+/*
+ * Test
+ */
 pakiet syntax.test;
 
 zaimportuj jawa.io.StrumieńWydruku;
 
 publiczna klasa SyntaxTest realizuje I {
+
+    całość numer;
 
     publiczny SyntaxTest() {
         A<C>.InnerClass c;
@@ -17,7 +22,8 @@ publiczna klasa SyntaxTest realizuje I {
     publiczny SyntaxTest(długy d) {
         to();
         całość a, b, c;
-        a = b * (c + d);
+        a = (b * (c + d)) % 13;
+        to.numer = a;
     }
 
     prywatny całość cfcc(całość a, całość b) {
@@ -32,8 +38,8 @@ publiczna klasa SyntaxTest realizuje I {
     }
 
     całość cfvc(całość ...n) {
-        całość i, s;
-        dopóki(i < n.długość) {
+        całość s = 0;
+        dla(całość i = 0; i < n.długość; ++i) {
             s += n[i];
             ++i;
         }

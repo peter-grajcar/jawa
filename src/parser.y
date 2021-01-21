@@ -463,9 +463,13 @@ MethodOrFieldRest: FieldDeclaratorsRest SEMIC
                  | MethodDeclaratorRest
                  ;
 
-FieldDeclaratorsRest: VariableDeclarator
-                    | VariableDeclaratorRest COMMA VariableDeclarator
+FieldDeclaratorsRest: VariableDeclaratorRest
+                    | VariableDeclaratorRest FieldDeclaratorsRestTail
                     ;
+
+FieldDeclaratorsRestTail: COMMA VariableDeclarator
+                        | FieldDeclaratorsRestTail COMMA VariableDeclarator
+                        ;
 
 MethodDeclaratorRest: FormalParameters Dims_opt Throws_opt Block
                     | FormalParameters Dims_opt Throws_opt SEMIC
@@ -599,13 +603,13 @@ BlockStatements: BlockStatement
                | BlockStatements BlockStatement
                ;
 
-BlockStatement: LocalVariableDeclarationStatement
+BlockStatement: LocalVariableDeclarationStatement SEMIC
               | ClassOrInterfaceDeclaration
               | Statement
               ;
 
-LocalVariableDeclarationStatement: Type VariableDeclarators SEMIC
-                                 | Modifiers Type VariableDeclarators SEMIC
+LocalVariableDeclarationStatement: Type VariableDeclarators
+                                 | Modifiers Type VariableDeclarators
                                  ;
 /* Statements */
 
@@ -982,8 +986,7 @@ ConstantExpressionNoName: ExpressionNoName
 
 PrimaryNoName: Literal
              | ParExpression
-             | THIS
-             | THIS Arguments
+             | THIS ThisSuffix
              | SUPER SuperSuffix
              | NEW Creator
              | NonWildcardTypeArguments ExplicitGenericInvocationSuffix
@@ -1022,6 +1025,11 @@ SuperSuffix: Arguments
            | DOT Identifier
            | DOT Identifier Arguments
            ;
+
+ThisSuffix: Arguments
+          | DOT Identifier
+          | DOT Identifier Arguments
+          ;
 
 ExplicitGenericInvocationSuffix: SUPER SuperSuffix
                                | Identifier Arguments
