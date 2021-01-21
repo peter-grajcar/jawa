@@ -5,7 +5,10 @@ zaimportuj jawa.io.StrumieńWydruku;
 publiczna klasa SyntaxTest realizuje I {
 
     publiczny SyntaxTest() {
-        A<C> a = nowy A<>();
+        A<C>.InnerClass c;
+
+        A<C> ac = nowy A<>();
+        A<B<C>> abc = nowy A<>();
 
         Łańcuch l = "Test";
         System.wyjście.wydrukovać(l);
@@ -17,8 +20,11 @@ publiczna klasa SyntaxTest realizuje I {
         a = b * (c + d);
     }
 
-    prywatny void fccc(całość a, całość b, całość c) {
-
+    prywatny całość cfcc(całość a, całość b) {
+        jeśli (a < b) {
+            zwróć b - a;
+        }
+        zwróć a - b;
     }
 
     void f() {
@@ -45,6 +51,10 @@ urządzenie I {
 }
 
 klasa A<T> {
+
+    publiczna klasa InnerClass {
+
+    }
 
 }
 

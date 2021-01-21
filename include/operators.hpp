@@ -43,13 +43,6 @@ namespace jawa::operators
         COMP_XOR
     };
 
-    enum shift
-    {
-        SHL,
-        SHR,
-        SHR_U
-    };
-
     enum relop
     {
         GTE,

@@ -127,7 +127,9 @@ using namespace jawa;
 %token<operators::divop>    DIVOP           "/, %"
 %token<operators::incdec>   INCDEC          "++, --"
 %token<operators::eqop>     EQOP            "==, !="
-%token<operators::shift>    SHIFT           "<<, >>, >>>"
+%token                      SHL             "<<,"
+%token                      SHR             ">>"
+%token                      USHR            ">>>"
 %token<operators::relop>    RELOP           "<=, >="
 %token<operators::comp>     COMP            "+= , -=,  *=,  /=,  &=,  |=,  ^=,  %=,  <<=,  >>=,  >>>="
 
@@ -150,8 +152,6 @@ using namespace jawa;
 %%
 
 /* Identifiers */
-
-Identifier_opt: %empty | Identifier ;
 
 Identifier: IDF
           ;
@@ -272,15 +272,16 @@ ReferenceType: ClassOrInterfaceType
              ;
 
 ClassOrInterfaceType: Name
+                    | Name TypeArguments
                     | TypeDeclSpecifier
+                    | TypeDeclSpecifier TypeArguments
                     ;
 
-TypeDeclSpecifier: Name TypeArguments
-                 | Name TypeArguments TypeDeclSpecifierTail
+TypeDeclSpecifier: TypeDeclSpecifierHead Name
                  ;
 
-TypeDeclSpecifierTail: DOT Name TypeArguments
-                     | TypeDeclSpecifierTail DOT Name TypeArguments
+TypeDeclSpecifierHead: Name TypeArguments DOT
+                     | TypeDeclSpecifierHead DOT Name TypeArguments DOT
                      ;
 
 ArrayType: PrimitiveType Dims
@@ -306,10 +307,22 @@ Dims: Dim
 /* Type Arguments */
 
 TypeArguments: LT TypeArgumentList GT
+             | LT Name LT TypeArgumentList SHR
+             | LT TypeDeclSpecifier LT TypeArgumentList SHR
+             | LT TypeArgumentListHeads Name LT TypeArgumentList SHR
+             | LT TypeArgumentListHeads TypeDeclSpecifier LT TypeArgumentList SHR
+             /* TODO: add USHR case, or solve using context */
              ;
 
+TypeArgumentListHeads: TypeArgumentListHead
+                     | TypeArgumentListHeads TypeArgumentListHead
+                     ;
+
+TypeArgumentListHead: TypeArgument COMMA
+                    ;
+
 TypeArgumentList: TypeArgument
-                | TypeArgumentList COMMA TypeArgument
+                | TypeArgumentListHeads TypeArgument
                 ;
 
 TypeArgument: ReferenceType
@@ -383,12 +396,6 @@ Modifier: Annotation
         | VOLATILE
         | STRICTFP
         ;
-
-Annotations_opt: %empty | Annotations ;
-
-Annotations: Annotation
-           | Annotations Annotation
-           ;
 
 Annotation: AT Name
           | AT Name LPAR AnnotationElement_opt RPAR
@@ -597,75 +604,85 @@ BlockStatement: LocalVariableDeclarationStatement
               | Statement
               ;
 
-Label: Identifier COLON
-     ;
-
 LocalVariableDeclarationStatement: Type VariableDeclarators SEMIC
                                  | Modifiers Type VariableDeclarators SEMIC
                                  ;
+/* Statements */
 
-Statement: Block
-         | SEMIC
-         | Label Statement
-         | StatementExpression SEMIC
-         | IF ParExpression Statement ELSE Statement
-         | ASSERT ExpressionNoName SEMIC
-         | ASSERT Name SEMIC
-         | ASSERT ExpressionNoName COLON ExpressionNoName SEMIC
-         | ASSERT Name COLON ExpressionNoName SEMIC
-         | ASSERT ExpressionNoName COLON Name SEMIC
-         | ASSERT Name COLON Name SEMIC
-         | SWITCH ParExpression LCUR SwitchBlockStatementGroups RCUR
-         | WHILE ParExpression Statement
-         | DO Statement WHILE ParExpression SEMIC
-         | FOR LPAR ForControl RPAR Statement
-         | BREAK Identifier_opt SEMIC
-         | CONTINUE Identifier_opt SEMIC
-         | RETURN ExpressionNoName SEMIC
-         | RETURN Name SEMIC
-         | RETURN SEMIC
-         | THROW ExpressionNoName SEMIC
-         | THROW Name SEMIC
-         | SYNCHRONIZED ParExpression Block
-         | TRY Block Catches
-         | TRY Block Catches_opt Finally
-         | TRY ResourceSpecification Block Catches_opt Finally_opt
+Statement: StatementWithoutTrailingSubstatement
+         | LabeledStatement
+         | IfThenStatement
+         | IfThenElseStatement
+         | WhileStatement
+         | ForStatement
          ;
+
+StatementWithoutTrailingSubstatement: Block
+                                    | EmptyStatement
+                                    | ExpressionStatement
+                                    | AssertStatement
+                                    | SwitchStatement
+                                    | DoStatement
+                                    | BreakStatement
+                                    | ContinueStatement
+                                    | ReturnStatement
+                                    | SynchronizedStatement
+                                    | ThrowStatement
+                                    | TryStatement
+                                    ;
+
+StatementNoShortIf: StatementWithoutTrailingSubstatement
+                  | LabeledStatementNoShortIf
+                  | IfThenElseStatementNoShortIf
+                  | WhileStatementNoShortIf
+                  | ForStatementNoShortIf
+                  ;
+
+EmptyStatement: SEMIC
+              ;
+
+IfThenStatement: IF LPAR ExpressionNoName RPAR Statement
+               | IF LPAR Name RPAR Statement
+               ;
+
+IfThenElseStatement: IF LPAR ExpressionNoName RPAR StatementNoShortIf ELSE Statement
+                   | IF LPAR Name RPAR StatementNoShortIf ELSE Statement
+                   ;
+
+IfThenElseStatementNoShortIf: IF LPAR ExpressionNoName RPAR StatementNoShortIf ELSE StatementNoShortIf
+                            | IF LPAR Name RPAR StatementNoShortIf ELSE StatementNoShortIf
+                            ;
+
+LabeledStatement: Identifier COLON Statement
+                ;
+
+LabeledStatementNoShortIf: Identifier COLON StatementNoShortIf
+                         ;
+
+ExpressionStatement: StatementExpression SEMIC
+                   ;
 
 StatementExpression: ExpressionNoName
                    | Name
                    ;
 
-Catches_opt: %empty | Catches ;
+AssertStatement: ASSERT ExpressionNoName SEMIC
+               | ASSERT Name SEMIC
+               | ASSERT ExpressionNoName COLON ExpressionNoName SEMIC
+               | ASSERT ExpressionNoName COLON Name SEMIC
+               | ASSERT Name COLON ExpressionNoName SEMIC
+               | ASSERT Name COLON Name SEMIC
+               ;
 
-Catches: CatchClause
-       | Catches CatchClause
-       ;
+SwitchStatement: SWITCH LPAR ExpressionNoName RPAR SwitchBlock
+               | SWITCH LPAR Name RPAR SwitchBlock
+               ;
 
-CatchClause: CATCH LPAR Modifiers_opt CatchType Identifier RPAR Block
+SwitchBlock: LCUR SwitchBlockStatementGroups SwitchLabels RCUR
+           | LCUR SwitchBlockStatementGroups RCUR
+           | LCUR SwitchLabels RCUR
+           | LCUR RCUR
            ;
-
-CatchType: Name
-         | CatchType VERT Name
-         ;
-
-Finally_opt: %empty | Finally ;
-
-Finally: FINALLY Block
-       ;
-
-ResourceSpecification: LPAR Resources RPAR
-                     | LPAR Resources SEMIC RPAR
-                     ;
-
-Resources: Resource
-         | Resources SEMIC Resource
-         ;
-
-Resource: Modifiers_opt ReferenceType VariableDeclaratorId ASGN ExpressionNoName
-        | Modifiers_opt ReferenceType VariableDeclaratorId ASGN Name
-        ;
-
 
 SwitchBlockStatementGroups: SwitchBlockStatementGroup
                           | SwitchBlockStatementGroups SwitchBlockStatementGroup
@@ -678,45 +695,123 @@ SwitchLabels: SwitchLabel
             | SwitchLabels SwitchLabel
             ;
 
-SwitchLabel: CASE ExpressionNoName COLON
+SwitchLabel: CASE ConstantExpressionNoName COLON
            | CASE Name COLON
            | DEFAULT COLON
            ;
 
-ForControl: ForInit SEMIC ExpressionNoName_opt SEMIC ForUpdate_opt
-          | ForInit SEMIC Name SEMIC ForUpdate_opt
-          /* | ForVarControl */
-          ;
+WhileStatement: WHILE LPAR ExpressionNoName RPAR Statement
+              | WHILE LPAR Name RPAR Statement
+              ;
 
-ForVarControl: Modifiers_opt Type VariableDeclaratorId COLON ExpressionNoName
-             | Modifiers_opt Type VariableDeclaratorId COLON Name
-             ;
+WhileStatementNoShortIf: WHILE LPAR ExpressionNoName RPAR StatementNoShortIf
+                       | WHILE LPAR Name RPAR StatementNoShortIf
+                       ;
 
-ForVariableDeclaratorsRest: ForVariableDeclaratorsRestHead_opt ForVariableDeclaratorsRestTail_opt
-                          ;
+DoStatement: DO Statement WHILE LPAR ExpressionNoName RPAR SEMIC
+           | DO Statement WHILE LPAR Name RPAR SEMIC
+           ;
 
-ForVariableDeclaratorsRestHead_opt: %empty | ForVariableDeclaratorsRestHead ;
+ForStatement: BasicForStatement
+            ;
 
-ForVariableDeclaratorsRestHead: ASGN VariableInitializer
-                              ;
+BasicForStatement: FOR LPAR ForInit_opt SEMIC ExpressionNoName_opt SEMIC ForUpdate_opt RPAR Statement
+                 | FOR LPAR ForInit_opt SEMIC Name SEMIC ForUpdate_opt RPAR Statement
+                 ;
 
-ForVariableDeclaratorsRestTail_opt: %empty | ForVariableDeclaratorsRestTail ;
+ForStatementNoShortIf: FOR LPAR ForInit_opt SEMIC ExpressionNoName_opt SEMIC ForUpdate_opt RPAR StatementNoShortIf
+                     | FOR LPAR ForInit_opt SEMIC Name SEMIC ForUpdate_opt RPAR StatementNoShortIf
+                     ;
 
-ForVariableDeclaratorsRestTail: COMMA VariableDeclarator
-                              | ForVariableDeclaratorsRestTail COMMA VariableDeclarator
-                              ;
+ForInit_opt: %empty
+           | ForInit
+           ;
 
-ForInit: StatementExpressions
+ForInit: LocalVariableDeclarationStatement
+       /* | StatementExpression */
        ;
 
-ForUpdate_opt: %empty | ForUpdate ;
+ForUpdate_opt: %empty
+             | ForUpdate
+             ;
 
-ForUpdate: StatementExpressions
+ForUpdate: StatementExpressionList
          ;
 
-StatementExpressions: StatementExpression
-                    | StatementExpressions COMMA StatementExpression
+StatementExpressionList: StatementExpression
+                       | StatementExpressionList COMMA StatementExpression
+                       ;
+
+BreakStatement: BREAK SEMIC
+              | BREAK Identifier SEMIC
+              ;
+
+ContinueStatement: CONTINUE SEMIC
+                 | CONTINUE Identifier SEMIC
+                 ;
+
+ReturnStatement: RETURN ExpressionNoName SEMIC
+               | RETURN Name SEMIC
+               | RETURN SEMIC
+               ;
+
+ThrowStatement: THROW ExpressionNoName SEMIC
+              | THROW Name SEMIC
+              ;
+
+SynchronizedStatement: SYNCHRONIZED LPAR ExpressionNoName RPAR Block
+                     | SYNCHRONIZED LPAR Name RPAR Block
+                     ;
+
+TryStatement: TRY Block Catches
+            | TRY Block Catches_opt Finally
+            | TryWithResourcesStatement
+            ;
+
+Catches_opt: %empty
+           | Catches
+           ;
+
+Catches: CatchClause
+       | Catches CatchClause
+       ;
+
+CatchClause: CATCH LPAR CatchFormalParameter RPAR Block
+           ;
+
+CatchFormalParameter: Modifiers_opt CatchType VariableDeclaratorId
                     ;
+
+CatchType: ClassOrInterfaceType
+         | ClassOrInterfaceType VERT CatchType
+         ;
+
+Finally: FINALLY Block
+       ;
+
+TryWithResourcesStatement: TRY ResourceSpecification Block Catches Finally
+                         | TRY ResourceSpecification Block Catches
+                         | TRY ResourceSpecification Block Finally
+                         | TRY ResourceSpecification Block
+                         ;
+
+SEMIC_opt: %empty
+         | SEMIC
+         ;
+
+ResourceSpecification: LPAR Resources SEMIC_opt RPAR
+                     ;
+
+Resources: Resource
+         | Resources SEMIC Resource
+         ;
+
+Resource: Modifiers_opt Type VariableDeclaratorId ASGN ExpressionNoName
+        | Modifiers_opt Type VariableDeclaratorId ASGN Name
+        ;
+
+
+/* Expressions */
 
 Expressions_opt: %empty | Expressions ;
 
@@ -817,10 +912,18 @@ RelationalExpressionNoName: ShiftExpressionNoName
                     ;
 
 ShiftExpressionNoName: AdditiveExpressionNoName
-               | ShiftExpressionNoName SHIFT AdditiveExpressionNoName
-               | ShiftExpressionNoName SHIFT Name
-               | Name SHIFT AdditiveExpressionNoName
-               | Name SHIFT Name
+               | ShiftExpressionNoName SHL AdditiveExpressionNoName
+               | ShiftExpressionNoName SHL Name
+               | ShiftExpressionNoName SHR AdditiveExpressionNoName
+               | ShiftExpressionNoName SHR Name
+               | ShiftExpressionNoName USHR AdditiveExpressionNoName
+               | ShiftExpressionNoName USHR Name
+               | Name SHL AdditiveExpressionNoName
+               | Name SHL Name
+               | Name SHR AdditiveExpressionNoName
+               | Name SHR Name
+               | Name USHR AdditiveExpressionNoName
+               | Name USHR Name
                ;
 
 
@@ -873,6 +976,9 @@ PostIncDecExpression: PostfixExpressionNoName INCDEC
 PostfixExpressionNoName: PrimaryNoName
                        | PostIncDecExpression
                        ;
+
+ConstantExpressionNoName: ExpressionNoName
+                        ;
 
 PrimaryNoName: Literal
              | ParExpression

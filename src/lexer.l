@@ -124,9 +124,9 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 -                           return jawa::parser::make_ADDOP(jawa::operators::SUB, ctx->loc());
 \/                          return jawa::parser::make_DIVOP(jawa::operators::DIV, ctx->loc());
 \%                          return jawa::parser::make_DIVOP(jawa::operators::MOD, ctx->loc());
->>>                         return jawa::parser::make_SHIFT(jawa::operators::SHR_U, ctx->loc());
->>                          return jawa::parser::make_SHIFT(jawa::operators::SHR, ctx->loc());
-\<\<                        return jawa::parser::make_SHIFT(jawa::operators::SHL, ctx->loc());
+>>>                         return jawa::parser::make_USHR(ctx->loc());
+>>                          return jawa::parser::make_SHR(ctx->loc());
+\<\<                        return jawa::parser::make_SHL(ctx->loc());
 \.\.\.                      return jawa::parser::make_DOTS(ctx->loc());
 ;                           return jawa::parser::make_SEMIC(ctx->loc());
 ,                           return jawa::parser::make_COMMA(ctx->loc());
