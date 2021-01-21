@@ -11,30 +11,49 @@
 %option batch never-interactive reentrant
 %option nounistd
 
+LETTER              [_$a-zA-Z\x7F-\xFF]
+DIGIT               [0-9]
 HEX_DIGIT           [0-9a-fA-F]
+LETTER_OR_DIGIT     {LETTER}|{DIGIT}
+IDENTIFIER          {LETTER}{LETTER_OR_DIGIT}*
+
 UNICODE_MARKER      u+
 UNICODE_ESCAPE      \\{UNICODE_MARKER}{HEX_DIGIT}{4}
 
 LINE_TERMINATOR     \n|\r|\r\n
 WHITESPACE          \x20|\x09|\x0c
 
-LETTER              [_$a-zA-Z\x7F-\xFF]
-DIGIT               [0-9]
-LETTER_OR_DIGIT     {LETTER}|{DIGIT}
-IDENTIFIER          {LETTER}{LETTER_OR_DIGIT}*
+BIN_PREFIX          0[Bb]
+OCT_PREFIX          0
+HEX_PREFIX          0[Xx]
+LONG_SUFFIX         [Ll]
+FLOAT_SUFFIX        [Ff]
+DOUBLE_SUFFIX       [Dd]
 
 STR_CHAR            [^\n\r\"]
 
 %x STRLIT
+%x COMMENT
 
 %%
 %{
 std::ostringstream str_buffer;
 %}
 
+<INITIAL,COMMENT>{LINE_TERMINATOR}  ctx->inc_line();
+
 {WHITESPACE}                /* Do nothing */
 
-{LINE_TERMINATOR}           ctx->inc_line();
+    /* Comments */
+
+\/\/[^\n\r]*                /* Do nothing */
+
+\/\*                        BEGIN(COMMENT);
+
+<COMMENT>{
+    \*\/                    BEGIN(INITIAL);
+    .                       /* Do nothing */
+}
 
     /* Keywords */
 
@@ -124,9 +143,6 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 -                           return jawa::parser::make_ADDOP(jawa::operators::SUB, ctx->loc());
 \/                          return jawa::parser::make_DIVOP(jawa::operators::DIV, ctx->loc());
 \%                          return jawa::parser::make_DIVOP(jawa::operators::MOD, ctx->loc());
->>>                         return jawa::parser::make_USHR(ctx->loc());
->>                          return jawa::parser::make_SHR(ctx->loc());
-\<\<                        return jawa::parser::make_SHL(ctx->loc());
 \.\.\.                      return jawa::parser::make_DOTS(ctx->loc());
 ;                           return jawa::parser::make_SEMIC(ctx->loc());
 ,                           return jawa::parser::make_COMMA(ctx->loc());
@@ -153,6 +169,10 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 \@                          return jawa::parser::make_AT(ctx->loc());
 \.                          return jawa::parser::make_DOT(ctx->loc());
 
+>>>                         return jawa::parser::make_USHR(ctx->loc());
+>>                          return jawa::parser::make_SHR(ctx->loc());
+\<\<                        return jawa::parser::make_SHL(ctx->loc());
+
     /* Names */
 
 {IDENTIFIER}                return jawa::parser::make_IDF(yytext, ctx->loc());
@@ -174,6 +194,21 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 
     .                       ctx->message(jawa::errors::MALFORMED_STRING, ctx->loc(), str_buffer.str());
 }
+
+    /* Numbers */
+
+    /*
+    {BIN_PREFIX}{DIGIT}+{LONG_SUFFIX}
+    {OCT_PREFIX}{DIGIT}+{LONG_SUFFIX}
+    {HEX_PREFIX}{DIGIT}+{LONG_SUFFIX}
+    {BIN_PREFIX}{DIGIT}+
+    {OCT_PREFIX}{DIGIT}+
+    {HEX_PREFIX}{DIGIT}+
+    {DIGIT}+{LONG_SUFFIX}
+    */
+                            /* TODO: replace std::stoi and chceck for overflow */
+{DIGIT}+                    return jawa::parser::make_INT_LIT(std::stoi(yytext), ctx->loc());
+
 
     /* Other */
 
