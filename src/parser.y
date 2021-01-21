@@ -156,13 +156,13 @@ Identifier_opt: %empty | Identifier ;
 Identifier: IDF
           ;
 
-QualifiedIdentifier: Identifier
-                   | QualifiedIdentifier DOT Identifier
-                   ;
+Name: Identifier
+    | Name DOT Identifier
+    ;
 
-QualifiedIdentifierList: QualifiedIdentifier
-                       | QualifiedIdentifierList COMMA QualifiedIdentifier
-                       ;
+NameList: Name
+        | NameList COMMA Name
+        ;
 
 /* Declarations */
 
@@ -171,12 +171,12 @@ CompilationUnit: PackageDeclaration_opt ImportDeclaration_opt TypeDeclaration_op
 
 PackageDeclaration_opt: %empty | PackageDeclaration ;
 
-PackageDeclaration: PACKAGE QualifiedIdentifier SEMIC
+PackageDeclaration: PACKAGE Name SEMIC
                   ;
 
 ImportDeclaration_opt: %empty | ImportDeclaration ;
 
-ImportDeclaration: IMPORT QualifiedIdentifier SEMIC
+ImportDeclaration: IMPORT Name SEMIC
                  ;
 
 TypeDeclaration_opt: %empty | TypeDeclaration ;
@@ -226,40 +226,85 @@ Implements: IMPLEMENTS TypeList
 
 /* Types */
 
-Type: BasicType
+Type: PrimitiveType
     | ReferenceType
-    | ArrayType
     ;
 
-ArrayType: BasicType Array
-         | ReferenceType Array
-         | ArrayType Array
-         ;
+TypeNoArguments: PrimitiveType
+               | ReferenceTypeNoArguments
+               ;
 
-Arrays_opt: %empty | Arrays ;
-
-Arrays: Array
-      | Arrays Array
-      ;
-
-Array_opt: %empty | Array ;
-
-Array: LBRA RBRA
-     ;
-
-BasicType: BYTE
-         | SHORT
-         | CHAR
-         | INT
-         | LONG
-         | FLOAT
-         | DOUBLE
-         | BOOLEAN
-         ;
-
-ReferenceType: Identifier TypeArguments_opt
-             | ReferenceType DOT Identifier TypeArguments_opt
+PrimitiveType: NumericType
+             | BOOLEAN
              ;
+
+NumericType: IntegralType
+           | FloatingPointType
+           ;
+
+IntegralType: BYTE
+            | SHORT
+            | INT
+            | LONG
+            | CHAR
+            ;
+
+FloatingPointType: FLOAT
+                 | DOUBLE
+                 ;
+
+ReferenceType: ClassOrInterfaceType
+             | ArrayType
+             ;
+
+ReferenceTypeNoArguments: ClassOrInterfaceTypeNoArguments
+                        | ArrayTypeNoArguments
+                        ;
+
+ClassOrInterfaceTypeNoArguments: Name
+                               ;
+
+ClassOrInterfaceType: Name
+                    | TypeDeclSpecifier
+                    ;
+
+ClassType: TypeDeclSpecifier
+         ;
+
+InterfaceType: TypeDeclSpecifier
+             ;
+
+TypeDeclSpecifier: Name TypeArguments TypeDeclSpecifierTail;
+
+TypeDeclSpecifierTail: DOT Name TypeArguments
+                     | TypeDeclSpecifierTail DOT Name TypeArguments
+                     ;
+
+ArrayType: PrimitiveType Dims
+         | Name Dims
+         | TypeDeclSpecifier Dims
+         ;
+
+ArrayTypeNoArguments: PrimitiveType Dims
+                    | ClassOrInterfaceTypeNoArguments Dims
+                    ;
+
+Dim_opt: %empty
+       | Dim
+       ;
+
+Dim: LBRA RBRA
+   ;
+
+Dims_opt: %empty
+        | Dims
+        ;
+
+Dims: Dim
+    | Dims Dim
+    ;
+
+/* Type Arguments */
 
 TypeArguments_opt: %empty | TypeArguments ;
 
@@ -353,7 +398,7 @@ Annotations: Annotation
            | Annotations Annotation
            ;
 
-Annotation: AT QualifiedIdentifier AnnotationParameters
+Annotation: AT Name AnnotationParameters
           ;
 
 AnnotationParameters: LPAR AnnotationElement_opt RPAR
@@ -426,13 +471,13 @@ FieldDeclaratorsRest: VariableDeclarator
                     | VariableDeclaratorRest COMMA VariableDeclarator
                     ;
 
-MethodDeclaratorRest: FormalParameters Arrays_opt Throws_opt Block
-                    | FormalParameters Arrays_opt Throws_opt SEMIC
+MethodDeclaratorRest: FormalParameters Dims_opt Throws_opt Block
+                    | FormalParameters Dims_opt Throws_opt SEMIC
                     ;
 
 Throws_opt: %empty | Throws ;
 
-Throws: THROWS QualifiedIdentifierList
+Throws: THROWS NameList
       ;
 
 VoidMethodDeclaratorRest: FormalParameters Throws_opt Block
@@ -482,13 +527,13 @@ ConstantDeclaratorsRest: ConstantDeclarator
                        | ConstantDeclaratorRest COMMA ConstantDeclarator
                        ;
 
-ConstantDeclaratorRest: Arrays_opt ASGN VariableInitializer
+ConstantDeclaratorRest: Dims_opt ASGN VariableInitializer
                       ;
 
 ConstantDeclarator: Identifier ConstantDeclaratorRest
                   ;
 
-InterfaceMethodDeclaratorRest: FormalParameters Arrays_opt Throws_opt SEMIC
+InterfaceMethodDeclaratorRest: FormalParameters Dims_opt Throws_opt SEMIC
                              ;
 
 VoidInterfaceMethodDeclaratorRest: FormalParameters Throws_opt SEMIC
@@ -513,7 +558,7 @@ FormalParameterDeclsRest: VariableDeclaratorId
 
 
 
-VariableDeclaratorId: Identifier Arrays_opt
+VariableDeclaratorId: Identifier Dims_opt
                     ;
 
 
@@ -525,7 +570,7 @@ VariableDeclarators: VariableDeclarator
 VariableDeclarator: Identifier VariableDeclaratorRest
                   ;
 
-VariableDeclaratorRest: Arrays_opt VariableInitializerAssignment_opt
+VariableDeclaratorRest: Dims_opt VariableInitializerAssignment_opt
                       ;
 
 VariableInitializerAssignment_opt: %empty | VariableInitializerAssignment ;
@@ -603,8 +648,8 @@ Catches: CatchClause
 CatchClause: CATCH LPAR Modifiers_opt CatchType Identifier RPAR Block
            ;
 
-CatchType: QualifiedIdentifier
-         | CatchType VERT QualifiedIdentifier
+CatchType: Name
+         | CatchType VERT Name
          ;
 
 Finally_opt: %empty | Finally ;
@@ -636,7 +681,6 @@ SwitchLabels: SwitchLabel
             ;
 
 SwitchLabel: CASE Expression COLON
-           | CASE EnumConstantName COLON
            | DEFAULT COLON
            ;
 
@@ -746,7 +790,7 @@ MultiplicativeExpression: UnaryExpression
                         | MultiplicativeExpression DIVOP UnaryExpression
                         ;
 
-CastExpression: LPAR BasicType RPAR UnaryExpression
+CastExpression: LPAR PrimitiveType RPAR UnaryExpression
               | LPAR ReferenceType RPAR UnaryExpressionNotPlusMinus
               ;
 
@@ -772,26 +816,29 @@ PostfixExpression: Primary
                  | PostIncDecExpression
                  ;
 
-Primary: PrimaryQualified
-       | PrimaryNonQualified
+Primary: Name
+       | PrimaryNoName
        ;
 
-PrimaryNonQualified: Literal
-                   | ParExpression
-                   | THIS
-                   | THIS Arguments
-                   | SUPER SuperSuffix
-                   | NEW Creator
-                   | NonWildcardTypeArguments ExplicitGenericInvocationSuffix
-                   | NonWildcardTypeArguments THIS Arguments
-                   | BasicType Arrays_opt DOT CLASS
-                   | VOID DOT CLASS
-                   ;
-
-PrimaryQualified: QualifiedIdentifier
-                | QualifiedIdentifier IdentifierSuffix
-                ;
-
+PrimaryNoName: Literal
+             | ParExpression
+             | THIS
+             | THIS Arguments
+             | SUPER SuperSuffix
+             | NEW Creator
+             | NonWildcardTypeArguments ExplicitGenericInvocationSuffix
+             | NonWildcardTypeArguments THIS Arguments
+             | PrimitiveType Dims_opt DOT CLASS
+             | VOID DOT CLASS
+             | Name LBRA Expression RBRA
+             | Name Arguments
+             | Name DOT CLASS
+             | Name DOT ExplicitGenericInvocation
+             | Name DOT THIS
+             | Name DOT SUPER Arguments
+             | Name DOT NEW NonWildcardTypeArguments_opt InnerCreator
+             | Name LBRA Dims DOT CLASS RBRA
+             ;
 
 Literal: INT_LIT
        | FLOAT_LIT
@@ -842,9 +889,9 @@ ClassCreatorRest: Arguments
                 ;
 
 ArrayCreatorRest: LBRA RBRA ArrayInitializer
-                | LBRA RBRA Arrays ArrayInitializer
+                | LBRA RBRA Dims ArrayInitializer
                 | LBRA Expression RBRA ArrayCreatorExpressions
-                | LBRA Expression RBRA ArrayCreatorExpressions Arrays
+                | LBRA Expression RBRA ArrayCreatorExpressions Dims
                 ;
 
 ArrayCreatorExpressions_opt: %empty | ArrayCreatorExpressions ;
@@ -863,7 +910,7 @@ IdentifierSuffix: LBRA Expression RBRA
                 | DOT THIS
                 | DOT SUPER Arguments
                 | DOT NEW NonWildcardTypeArguments_opt InnerCreator
-                | LBRA Arrays DOT CLASS RBRA
+                | LBRA Dims DOT CLASS RBRA
                 ;
 
 ExplicitGenericInvocation: NonWildcardTypeArguments ExplicitGenericInvocationSuffix
@@ -936,7 +983,7 @@ AnnotationMethodOrConstantRest: AnnotationMethodRest
                               | ConstantDeclaratorsRest
                               ;
 
-AnnotationMethodRest: LPAR RPAR Array_opt Default_opt
+AnnotationMethodRest: LPAR RPAR Dim_opt Default_opt
                     ;
 
 Default_opt: %empty | Default ;
