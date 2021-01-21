@@ -166,7 +166,7 @@ NameList: Name
 
 /* Declarations */
 
-CompilationUnit: PackageDeclaration_opt ImportDeclaration_opt TypeDeclaration_opt
+CompilationUnit: PackageDeclaration_opt ImportDeclarations_opt TypeDeclarations_opt
                ;
 
 PackageDeclaration_opt: %empty | PackageDeclaration ;
@@ -174,12 +174,24 @@ PackageDeclaration_opt: %empty | PackageDeclaration ;
 PackageDeclaration: PACKAGE Name SEMIC
                   ;
 
-ImportDeclaration_opt: %empty | ImportDeclaration ;
+ImportDeclarations_opt: %empty
+                      | ImportDeclarations
+                      ;
+
+ImportDeclarations: ImportDeclaration
+                  | ImportDeclarations ImportDeclaration
+                  ;
 
 ImportDeclaration: IMPORT Name SEMIC
                  ;
 
-TypeDeclaration_opt: %empty | TypeDeclaration ;
+TypeDeclarations_opt: %empty
+                    | TypeDeclarations
+                    ;
+
+TypeDeclarations: TypeDeclaration
+                | TypeDeclarations TypeDeclaration
+                ;
 
 TypeDeclaration: ClassOrInterfaceDeclaration
                | SEMIC
@@ -203,21 +215,29 @@ NormalClassDeclaration: CLASS Identifier TypeParameters_opt ClassExtends_opt Imp
 EnumDeclaration: ENUM Identifier Implements_opt EnumBody
                ;
 
-NormalInterfaceDeclaration: INTERFACE Identifier TypeParameters_opt InterfaceExtends InterfaceBody
+NormalInterfaceDeclaration: INTERFACE Identifier TypeParameters_opt InterfaceExtends_opt InterfaceBody
                           ;
 
 AnnotationTypeDeclaration: AT_INTERFACE Identifier AnnotationTypeBody
                          ;
 
-ClassExtends_opt: %empty | ClassExtends ;
+ClassExtends_opt: %empty
+                | ClassExtends
+                ;
 
 ClassExtends: EXTENDS Type
             ;
 
+InterfaceExtends_opt: %empty
+                    | InterfaceExtends
+                    ;
+
 InterfaceExtends: EXTENDS TypeList
                 ;
 
-Implements_opt: %empty | Implements ;
+Implements_opt: %empty
+              | Implements
+              ;
 
 Implements: IMPLEMENTS TypeList
           ;
@@ -255,7 +275,9 @@ ClassOrInterfaceType: Name
                     | TypeDeclSpecifier
                     ;
 
-TypeDeclSpecifier: Name TypeArguments TypeDeclSpecifierTail;
+TypeDeclSpecifier: Name TypeArguments
+                 | Name TypeArguments TypeDeclSpecifierTail
+                 ;
 
 TypeDeclSpecifierTail: DOT Name TypeArguments
                      | TypeDeclSpecifierTail DOT Name TypeArguments

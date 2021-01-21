@@ -1,0 +1,58 @@
+pakiet syntax.test;
+
+zaimportuj jawa.io.StrumieńWydruku;
+
+publiczna klasa SyntaxTest realizuje I {
+
+    publiczny SyntaxTest() {
+        A<C> a = nowy A<>();
+    }
+
+    publiczny SyntaxTest(długy d) {
+        to();
+        całość a, b, c;
+        a = b * (c + d);
+    }
+
+    znak f() {
+        znak[] pole = { };
+    }
+
+    całość var(całość ...n) {
+        całość i, s;
+        dopóki(i < n.długość) {
+            s += n[i];
+            ++i;
+        }
+        zwróć s;
+    }
+
+    publiczny statyczny <T> całość test(T t) {
+
+    }
+
+}
+
+urządzenie I {
+    znak f();
+}
+
+klasa A<T> {
+
+}
+
+klasa B<T przedłuża C> {
+
+}
+
+klasa C przedłuża D {
+
+    publiczny C() {
+        nadzbiór();
+    }
+
+}
+
+klasa D {
+
+}
