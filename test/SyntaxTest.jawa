@@ -6,6 +6,9 @@ publiczna klasa SyntaxTest realizuje I {
 
     publiczny SyntaxTest() {
         A<C> a = nowy A<>();
+
+        Łańcuch l = "Test";
+        System.wyjście.wydrukovać(l);
     }
 
     publiczny SyntaxTest(długy d) {
@@ -14,11 +17,15 @@ publiczna klasa SyntaxTest realizuje I {
         a = b * (c + d);
     }
 
-    znak f() {
+    prywatny void fccc(całość a, całość b, całość c) {
+
+    }
+
+    void f() {
         znak[] pole = { };
     }
 
-    całość var(całość ...n) {
+    całość cfvc(całość ...n) {
         całość i, s;
         dopóki(i < n.długość) {
             s += n[i];
@@ -27,14 +34,14 @@ publiczna klasa SyntaxTest realizuje I {
         zwróć s;
     }
 
-    publiczny statyczny <T> całość test(T t) {
+    publiczny statyczny <T> całość cfT(T t) {
 
     }
 
 }
 
 urządzenie I {
-    znak f();
+    void f();
 }
 
 klasa A<T> {

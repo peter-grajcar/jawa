@@ -23,7 +23,7 @@ DIGIT               [0-9]
 LETTER_OR_DIGIT     {LETTER}|{DIGIT}
 IDENTIFIER          {LETTER}{LETTER_OR_DIGIT}*
 
-STR_CHAR            [^{LINE_TERMINATOR}\"]
+STR_CHAR            [^\n\r\"]
 
 %x STRLIT
 
