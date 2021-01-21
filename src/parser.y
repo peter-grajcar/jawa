@@ -214,8 +214,6 @@ ClassExtends_opt: %empty | ClassExtends ;
 ClassExtends: EXTENDS Type
             ;
 
-InterfaceExtends_opt: %empty | InterfaceExtends ;
-
 InterfaceExtends: EXTENDS TypeList
                 ;
 
@@ -229,10 +227,6 @@ Implements: IMPLEMENTS TypeList
 Type: PrimitiveType
     | ReferenceType
     ;
-
-TypeNoArguments: PrimitiveType
-               | ReferenceTypeNoArguments
-               ;
 
 PrimitiveType: NumericType
              | BOOLEAN
@@ -257,22 +251,9 @@ ReferenceType: ClassOrInterfaceType
              | ArrayType
              ;
 
-ReferenceTypeNoArguments: ClassOrInterfaceTypeNoArguments
-                        | ArrayTypeNoArguments
-                        ;
-
-ClassOrInterfaceTypeNoArguments: Name
-                               ;
-
 ClassOrInterfaceType: Name
                     | TypeDeclSpecifier
                     ;
-
-ClassType: TypeDeclSpecifier
-         ;
-
-InterfaceType: TypeDeclSpecifier
-             ;
 
 TypeDeclSpecifier: Name TypeArguments TypeDeclSpecifierTail;
 
@@ -284,10 +265,6 @@ ArrayType: PrimitiveType Dims
          | Name Dims
          | TypeDeclSpecifier Dims
          ;
-
-ArrayTypeNoArguments: PrimitiveType Dims
-                    | ClassOrInterfaceTypeNoArguments Dims
-                    ;
 
 Dim_opt: %empty
        | Dim
@@ -305,8 +282,6 @@ Dims: Dim
     ;
 
 /* Type Arguments */
-
-TypeArguments_opt: %empty | TypeArguments ;
 
 TypeArguments: LT TypeArgumentList GT
              ;
@@ -335,9 +310,6 @@ TypeList: ReferenceType
         ;
 
 
-
-TypeArgumentsOrDiamond_opt: %empty | TypeArgumentsOrDiamond ;
-
 TypeArgumentsOrDiamond: LT GT
                       | TypeArguments
                       ;
@@ -357,8 +329,6 @@ TypeParameters: LT TypeParameterList GT
 TypeParameterList: TypeParameter
                  | TypeParameterList COMMA TypeParameter
                  ;
-
-TypeParameter_opt: %empty | TypeParameter ;
 
 TypeParameter: Identifier TypeParameterBound_opt
              ;
@@ -398,11 +368,9 @@ Annotations: Annotation
            | Annotations Annotation
            ;
 
-Annotation: AT Name AnnotationParameters
+Annotation: AT Name
+          | AT Name LPAR AnnotationElement_opt RPAR
           ;
-
-AnnotationParameters: LPAR AnnotationElement_opt RPAR
-                    ;
 
 AnnotationElement_opt: %empty | AnnotationElement ;
 
@@ -418,7 +386,8 @@ ElementValuePair: Identifier ASGN ElementValue
                 ;
 
 ElementValue: Annotation
-            | ConditionalExpression
+            | ConditionalExpressionNoName
+            | Name
             | ElementValueArrayInitializer
             ;
 
@@ -427,8 +396,6 @@ ElementValueArrayInitializer: LCUR RCUR
                             | LCUR ElementValues RCUR
                             | LCUR ElementValues COMMA RCUR
                             ;
-
-ElementValues_opt: %empty | ElementValues ;
 
 ElementValues: ElementValue
              | ElementValues COMMA ElementValue
@@ -577,14 +544,14 @@ VariableInitializerAssignment_opt: %empty | VariableInitializerAssignment ;
 
 VariableInitializerAssignment: ASGN VariableInitializer
                              ;
-VariableInitializers_opt: %empty | VariableInitializers ;
 
 VariableInitializers: VariableInitializer
                     | VariableInitializers COMMA VariableInitializer
                     ;
 
 VariableInitializer: ArrayInitializer
-                   | Expression
+                   | ExpressionNoName
+                   | Name
                    ;
 
 ArrayInitializer: LCUR RCUR
@@ -620,23 +587,31 @@ Statement: Block
          | Label Statement
          | StatementExpression SEMIC
          | IF ParExpression Statement ELSE Statement
-         | ASSERT Expression SEMIC
-         | ASSERT Expression COLON Expression SEMIC
+         | ASSERT ExpressionNoName SEMIC
+         | ASSERT Name SEMIC
+         | ASSERT ExpressionNoName COLON ExpressionNoName SEMIC
+         | ASSERT Name COLON ExpressionNoName SEMIC
+         | ASSERT ExpressionNoName COLON Name SEMIC
+         | ASSERT Name COLON Name SEMIC
          | SWITCH ParExpression LCUR SwitchBlockStatementGroups RCUR
          | WHILE ParExpression Statement
          | DO Statement WHILE ParExpression SEMIC
          | FOR LPAR ForControl RPAR Statement
          | BREAK Identifier_opt SEMIC
          | CONTINUE Identifier_opt SEMIC
-         | RETURN Expression_opt SEMIC
-         | THROW Expression SEMIC
+         | RETURN ExpressionNoName SEMIC
+         | RETURN Name SEMIC
+         | RETURN SEMIC
+         | THROW ExpressionNoName SEMIC
+         | THROW Name SEMIC
          | SYNCHRONIZED ParExpression Block
          | TRY Block Catches
          | TRY Block Catches_opt Finally
          | TRY ResourceSpecification Block Catches_opt Finally_opt
          ;
 
-StatementExpression: Expression
+StatementExpression: ExpressionNoName
+                   | Name
                    ;
 
 Catches_opt: %empty | Catches ;
@@ -665,7 +640,8 @@ Resources: Resource
          | Resources SEMIC Resource
          ;
 
-Resource: Modifiers_opt ReferenceType VariableDeclaratorId ASGN Expression
+Resource: Modifiers_opt ReferenceType VariableDeclaratorId ASGN ExpressionNoName
+        | Modifiers_opt ReferenceType VariableDeclaratorId ASGN Name
         ;
 
 
@@ -680,20 +656,18 @@ SwitchLabels: SwitchLabel
             | SwitchLabels SwitchLabel
             ;
 
-SwitchLabel: CASE Expression COLON
+SwitchLabel: CASE ExpressionNoName COLON
+           | CASE Name COLON
            | DEFAULT COLON
            ;
 
-EnumConstantName: Identifier
-                ;
-
-
-
-ForControl: ForInit SEMIC Expression_opt SEMIC ForUpdate_opt
+ForControl: ForInit SEMIC ExpressionNoName_opt SEMIC ForUpdate_opt
+          | ForInit SEMIC Name SEMIC ForUpdate_opt
           /* | ForVarControl */
           ;
 
-ForVarControl: Modifiers_opt Type VariableDeclaratorId COLON Expression
+ForVarControl: Modifiers_opt Type VariableDeclaratorId COLON ExpressionNoName
+             | Modifiers_opt Type VariableDeclaratorId COLON Name
              ;
 
 ForVariableDeclaratorsRest: ForVariableDeclaratorsRestHead_opt ForVariableDeclaratorsRestTail_opt
@@ -724,101 +698,159 @@ StatementExpressions: StatementExpression
 
 Expressions_opt: %empty | Expressions ;
 
-Expressions: Expression
-           | Expressions COMMA Expression
+Expressions: ExpressionNoName
+           | Name
+           | Expressions COMMA ExpressionNoName
+           | Expressions COMMA Name
            ;
 
-Expression_opt: %empty | Expression ;
-
-Expression: AssignmentExpression
+Expression: ExpressionNoName
+          | Name
           ;
 
-AssignmentExpression: ConditionalExpression
-                    | ConditionalExpression AssignmentOperator AssignmentExpression
+ExpressionNoName_opt: %empty | ExpressionNoName ;
+
+ExpressionNoName: AssignmentExpressionNoName
+          ;
+
+AssignmentExpressionNoName: ConditionalExpressionNoName
+                    | ConditionalExpressionNoName AssignmentOperator AssignmentExpressionNoName
+                    | ConditionalExpressionNoName AssignmentOperator Name
+                    | Name AssignmentOperator AssignmentExpressionNoName
+                    | Name AssignmentOperator Name
                     ;
 
 AssignmentOperator: ASGN
                   | COMP
                   ;
 
-ConditionalExpression: ConditionalOrExpression
-                     | ConditionalOrExpression INTRG Expression COLON ConditionalExpression
+ConditionalExpressionNoName: ConditionalOrExpressionNoName
+                     | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON ConditionalExpressionNoName
+                     | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON Name
+                     | ConditionalOrExpressionNoName INTRG Name COLON ConditionalExpressionNoName
+                     | Name INTRG ExpressionNoName COLON ConditionalExpressionNoName
+                     | ConditionalOrExpressionNoName INTRG Name COLON Name
+                     | Name INTRG ExpressionNoName COLON Name
+                     | Name INTRG Name COLON ConditionalExpressionNoName
+                     | Name INTRG Name COLON Name
                      ;
 
-ConditionalOrExpression: ConditionalAndExpression
-                       | ConditionalOrExpression DVERT ConditionalAndExpression
+ConditionalOrExpressionNoName: ConditionalAndExpressionNoName
+                       | ConditionalOrExpressionNoName DVERT ConditionalAndExpressionNoName
+                       | ConditionalOrExpressionNoName DVERT Name
+                       | Name DVERT ConditionalAndExpressionNoName
+                       | Name DVERT Name
                        ;
 
-ConditionalAndExpression: InclusiveOrExpression
-                        | ConditionalAndExpression DAMP InclusiveOrExpression
+ConditionalAndExpressionNoName: InclusiveOrExpressionNoName
+                        | ConditionalAndExpressionNoName DAMP InclusiveOrExpressionNoName
+                        | ConditionalAndExpressionNoName DAMP Name
+                        | Name DAMP InclusiveOrExpressionNoName
+                        | Name DAMP Name
                         ;
 
-InclusiveOrExpression: ExclusiveOrExpression
-                     | InclusiveOrExpression VERT ExclusiveOrExpression
+InclusiveOrExpressionNoName: ExclusiveOrExpressionNoName
+                     | InclusiveOrExpressionNoName VERT ExclusiveOrExpressionNoName
+                     | InclusiveOrExpressionNoName VERT Name
+                     | Name VERT ExclusiveOrExpressionNoName
+                     | Name VERT Name
                      ;
 
-ExclusiveOrExpression: AndExpression
-                     | ExclusiveOrExpression HAT AndExpression
+ExclusiveOrExpressionNoName: AndExpressionNoName
+                     | ExclusiveOrExpressionNoName HAT AndExpressionNoName
+                     | ExclusiveOrExpressionNoName HAT Name
+                     | Name HAT AndExpressionNoName
+                     | Name HAT Name
                      ;
 
-AndExpression: EqualityExpression
-             | AndExpression AMP EqualityExpression
+AndExpressionNoName: EqualityExpressionNoName
+             | AndExpressionNoName AMP EqualityExpressionNoName
+             | AndExpressionNoName AMP Name
+             | Name AMP EqualityExpressionNoName
+             | Name AMP Name
              ;
 
-EqualityExpression: RelationalExpression
-                  | EqualityExpression EQOP RelationalExpression
-                  | EqualityExpression INSTANCEOF ReferenceType
+EqualityExpressionNoName: RelationalExpressionNoName
+                  | EqualityExpressionNoName EQOP RelationalExpressionNoName
+                  | EqualityExpressionNoName EQOP Name
+                  | Name EQOP RelationalExpressionNoName
+                  | Name EQOP Name
+                  | EqualityExpressionNoName INSTANCEOF ReferenceType
+                  | Name INSTANCEOF ReferenceType
                   ;
 
-RelationalExpression: ShiftExpression
-                    | RelationalExpression LT ShiftExpression
-                    | RelationalExpression GT ShiftExpression
-                    | RelationalExpression RELOP ShiftExpression
+RelationalExpressionNoName: ShiftExpressionNoName
+                    | ShiftExpressionNoName LT ShiftExpressionNoName
+                    | ShiftExpressionNoName LT Name
+                    | Name LT ShiftExpressionNoName
+                    | Name LT Name
+                    | ShiftExpressionNoName GT ShiftExpressionNoName
+                    | ShiftExpressionNoName GT Name
+                    | Name GT ShiftExpressionNoName
+                    | Name GT Name
+                    | ShiftExpressionNoName RELOP ShiftExpressionNoName
+                    | ShiftExpressionNoName RELOP Name
+                    | Name RELOP ShiftExpressionNoName
+                    | Name RELOP Name
                     ;
 
-ShiftExpression: AdditiveExpression
-               | ShiftExpression SHIFT AdditiveExpression
+ShiftExpressionNoName: AdditiveExpressionNoName
+               | ShiftExpressionNoName SHIFT AdditiveExpressionNoName
+               | ShiftExpressionNoName SHIFT Name
+               | Name SHIFT AdditiveExpressionNoName
+               | Name SHIFT Name
                ;
 
 
-AdditiveExpression: MultiplicativeExpression
-                  | AdditiveExpression ADDOP MultiplicativeExpression
+AdditiveExpressionNoName: MultiplicativeExpressionNoName
+                  | AdditiveExpressionNoName ADDOP MultiplicativeExpressionNoName
+                  | AdditiveExpressionNoName ADDOP Name
+                  | Name ADDOP MultiplicativeExpressionNoName
+                  | Name ADDOP Name
                   ;
 
-MultiplicativeExpression: UnaryExpression
-                        | MultiplicativeExpression STAR UnaryExpression
-                        | MultiplicativeExpression DIVOP UnaryExpression
+MultiplicativeExpressionNoName: UnaryExpressionNoName
+                        | MultiplicativeExpressionNoName STAR UnaryExpressionNoName
+                        | MultiplicativeExpressionNoName STAR Name
+                        | Name STAR UnaryExpressionNoName
+                        | Name STAR Name
+                        | MultiplicativeExpressionNoName DIVOP UnaryExpressionNoName
+                        | MultiplicativeExpressionNoName DIVOP Name
+                        | Name DIVOP UnaryExpressionNoName
+                        | Name DIVOP Name
                         ;
 
-CastExpression: LPAR PrimitiveType RPAR UnaryExpression
-              | LPAR ReferenceType RPAR UnaryExpressionNotPlusMinus
+CastExpressionNoName: LPAR PrimitiveType RPAR UnaryExpressionNoName
+              | LPAR ReferenceType RPAR UnaryExpressionNotPlusMinusNoName
+              | LPAR ReferenceType RPAR Name
               ;
 
-UnaryExpressionNotPlusMinus: PostfixExpression
-                           | TILDE UnaryExpression
-                           | EMPH UnaryExpression
+UnaryExpressionNotPlusMinusNoName: PostfixExpressionNoName
+                           | TILDE UnaryExpressionNoName
+                           | TILDE Name
+                           | EMPH UnaryExpressionNoName
+                           | EMPH Name
                            /* | CastExpression TODO: resolve the conflict with ParExpression */
                            ;
 
-PreIncDecExpression: INCDEC UnaryExpression
+PreIncDecExpression: INCDEC UnaryExpressionNoName
+                   | INCDEC Name
                    ;
 
-UnaryExpression: PreIncDecExpression
-               | ADDOP UnaryExpression
-               | UnaryExpressionNotPlusMinus
+UnaryExpressionNoName: PreIncDecExpression
+               | ADDOP UnaryExpressionNoName
+               | ADDOP Name
+               | UnaryExpressionNotPlusMinusNoName
                ;
 
 
-PostIncDecExpression: PostfixExpression INCDEC
+PostIncDecExpression: PostfixExpressionNoName INCDEC
+                    | Name INCDEC
                     ;
 
-PostfixExpression: Primary
-                 | PostIncDecExpression
-                 ;
-
-Primary: Name
-       | PrimaryNoName
-       ;
+PostfixExpressionNoName: PrimaryNoName
+                       | PostIncDecExpression
+                       ;
 
 PrimaryNoName: Literal
              | ParExpression
@@ -830,7 +862,8 @@ PrimaryNoName: Literal
              | NonWildcardTypeArguments THIS Arguments
              | PrimitiveType Dims_opt DOT CLASS
              | VOID DOT CLASS
-             | Name LBRA Expression RBRA
+             | Name LBRA ExpressionNoName RBRA
+             | Name LBRA Name RBRA
              | Name Arguments
              | Name DOT CLASS
              | Name DOT ExplicitGenericInvocation
@@ -890,58 +923,19 @@ ClassCreatorRest: Arguments
 
 ArrayCreatorRest: LBRA RBRA ArrayInitializer
                 | LBRA RBRA Dims ArrayInitializer
-                | LBRA Expression RBRA ArrayCreatorExpressions
-                | LBRA Expression RBRA ArrayCreatorExpressions Dims
+                | LBRA ExpressionNoName RBRA ArrayCreatorExpressions
+                | LBRA ExpressionNoName RBRA ArrayCreatorExpressions Dims
                 ;
 
-ArrayCreatorExpressions_opt: %empty | ArrayCreatorExpressions ;
-
-ArrayCreatorExpressions: LBRA Expression RBRA
-                       | ArrayCreatorExpressions LBRA Expression RBRA
+ArrayCreatorExpressions: LBRA ExpressionNoName RBRA
+                       | ArrayCreatorExpressions LBRA ExpressionNoName RBRA
                        ;
-
-
-IdentifierSuffix_opt: %empty | IdentifierSuffix ;
-
-IdentifierSuffix: LBRA Expression RBRA
-                | Arguments
-                | DOT CLASS
-                | DOT ExplicitGenericInvocation
-                | DOT THIS
-                | DOT SUPER Arguments
-                | DOT NEW NonWildcardTypeArguments_opt InnerCreator
-                | LBRA Dims DOT CLASS RBRA
-                ;
 
 ExplicitGenericInvocation: NonWildcardTypeArguments ExplicitGenericInvocationSuffix
                          ;
 
 InnerCreator: Identifier NonWildcardTypeArgumentsOrDiamond_opt ClassCreatorRest
             ;
-
-SelectorsNonDotIdentifier: SelectorDotNonIdentifier
-                         | SelectorsNonDotIdentifier Selector
-                         ;
-
-Selectors: Selector
-         | Selectors Selector
-         ;
-
-Selector: LBRA Expression RBRA
-        | DOT SelectorDotNonIdentifier
-        | DOT SelectorDotIdentifier
-        ;
-
-SelectorDotNonIdentifier: ExplicitGenericInvocation
-                        | THIS
-                        | SUPER SuperSuffix
-                        | NEW NonWildcardTypeArguments_opt InnerCreator
-                        ;
-
-SelectorDotIdentifier: Identifier
-                     | Identifier Arguments
-                     ;
-
 
 EnumBody: LCUR EnumConstants COMMA EnumBodyDeclarations RCUR
         | LCUR EnumConstants COMMA RCUR
@@ -954,7 +948,7 @@ EnumConstants: EnumConstant
              | EnumConstants COMMA EnumConstant
              ;
 
-EnumConstant: Annotations_opt Identifier Arguments_opt ClassBody_opt
+EnumConstant: Modifiers_opt Identifier Arguments_opt ClassBody_opt
             ;
 
 EnumBodyDeclarations: SEMIC ClassBodyDeclarations
