@@ -2,8 +2,9 @@
  * @file type.cpp
  * Copyright (c) 2021 Peter Grajcar
  */
-#include "type.hpp"
 #include <sstream>
+#include "type.hpp"
+#include "byte_code/byte_code.hpp"
 
 namespace jasm
 {
@@ -25,7 +26,7 @@ namespace jasm
 
     char ClassType::prefix() const
     {
-        return 'L';
+        return byte_code::CLASS_TYPE_PREFIX;
     }
 
     std::string ClassType::descriptor() const
@@ -35,7 +36,7 @@ namespace jasm
 
     char ArrayType::prefix() const
     {
-        return '[';
+        return byte_code::ARRAY_TYPE_PREFIX;
     }
 
     std::string ArrayType::descriptor() const
@@ -57,11 +58,11 @@ namespace jasm
         return std::string(1, prefix());
     }
 
-    PrimitiveType BooleanType('Z');
-    PrimitiveType CharType('C');
-    PrimitiveType ShortType('S');
-    PrimitiveType IntType('I');
-    PrimitiveType LongType('J');
-    PrimitiveType FloatType('F');
-    PrimitiveType DoubleType('D');
+    PrimitiveType BooleanType(byte_code::BOOLEAN_TYPE_PREFIX);
+    PrimitiveType CharType(byte_code::CHAR_TYPE_PREFIX);
+    PrimitiveType ShortType(byte_code::SHORT_TYPE_PREFIX);
+    PrimitiveType IntType(byte_code::INTEGER_TYPE_PREFIX);
+    PrimitiveType LongType(byte_code::LONG_TYPE_PREFIX);
+    PrimitiveType FloatType(byte_code::FLOAT_TYPE_PREFIX);
+    PrimitiveType DoubleType(byte_code::DOUBLE_TYPE_PREFIX);
 }

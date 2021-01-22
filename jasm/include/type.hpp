@@ -77,6 +77,8 @@ namespace jasm
         std::string descriptor() const override;
     };
 
+    // TODO: class VariableType
+
     extern PrimitiveType BooleanType;
     extern PrimitiveType CharType;
     extern PrimitiveType ShortType;
