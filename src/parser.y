@@ -1131,26 +1131,21 @@ namespace jawa {
         symbol_kind_type expected[3];
         int n = parser_ctx.expected_tokens(expected, 3);
 
-        std::stringstream msg;
-        msg << "nieoczekiwany znak: " << symbol_name(parser_ctx.token());
+        Name unexpected_token = symbol_name(parser_ctx.token());
 
+        std::stringstream expected_tokens;
         if (n) {
-            msg << " oczekiwany znak:";
             for (int i = 0; i < n; ++i) {
-                msg << ' ';
-                msg << symbol_name(expected[i]);
+                expected_tokens << symbol_name(expected[i]);
                 if (i + 1 < n)
-                    msg << " albo";
+                    expected_tokens << " albo ";
             }
         }
 
-        ctx->message(errors::SYNTAX, parser_ctx.location(), msg.str());
+        ctx->message(errors::SYNTAX, parser_ctx.location(), unexpected_token, expected_tokens.str());
     }
 
-    void parser::error(const location_type& loc, const std::string& msg)
-    {
-         ctx->message(errors::SYNTAX, loc, msg);
-    }
+    void parser::error(const location_type& loc, const std::string& msg) {}
 
 }
 

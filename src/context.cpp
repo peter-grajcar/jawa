@@ -43,27 +43,6 @@ namespace jawa
         std::cerr << std::endl;
     }
 
-    void context::message(errors::err err, const loc_t &loc) const
-    {
-        std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": "
-                  << err.msg() << std::endl;
-        message_line(loc);
-    }
-
-    void context::message(errors::err_c err, const loc_t &loc, char ch) const
-    {
-        std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": "
-                  << err.msg() << '\'' << escape(ch) << '\'' << std::endl;
-        message_line(loc);
-    }
-
-    void context::message(errors::err_n err, const loc_t &loc, const Name &name) const
-    {
-        std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": "
-                  << err.msg() << '\"' << name << '\"' << std::endl;
-        message_line(loc);
-    }
-
     bool context::no_spaces_between(const loc_t &lhs, const loc_t &rhs) const
     {
         return lhs.column_end == rhs.column_start;

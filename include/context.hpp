@@ -9,6 +9,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "format.hpp"
 #include "error.hpp"
 #include "tables.hpp"
 
@@ -95,25 +96,13 @@ namespace jawa
          * @param err type of the error.
          * @param loc location of the error.
          */
-        void message(errors::err err, const loc_t &loc) const;
-
-        /**
-         * Reports an error with character that caused the error.
-         *
-         * @param err type of the error.
-         * @param loc location of the error.
-         * @param c character that caused the error.
-         */
-        void message(errors::err_c err, const loc_t &loc, char c) const;
-
-        /**
-         * Reports an error with name that caused the error.
-         *
-         * @param err type of the error.
-         * @param loc location of the error.
-         * @param n name that caused the error.
-         */
-        void message(errors::err_n err, const loc_t &loc, const Name &name) const;
+        template <typename ...Args>
+        void message(errors::error_object<Args...> err, const loc_t &loc, Args... args) const
+        {
+            std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": ";
+            format(std::cerr, err.msg(), args...) << std::endl;
+            message_line(loc);
+        }
 
         /**
          * Determines whether there are whitespaces between two tokens.

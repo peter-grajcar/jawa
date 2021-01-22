@@ -16,15 +16,9 @@ namespace jawa::errors
     class error_object
     {
     private:
-        const char *name_;
         const char *msg_;
     public:
-        error_object(const char *name, const char *msg) : name_(name), msg_(msg) {}
-
-        inline const char *name() const
-        {
-            return name_;
-        }
+        error_object(const char *msg) : msg_(msg) {}
 
         inline const char *msg() const
         {
@@ -33,12 +27,13 @@ namespace jawa::errors
     };
 
     using err = error_object<>;
-    using err_n = error_object<Name>;
     using err_c = error_object<char>;
+    using err_s = error_object<char *>;
+    using err_n = error_object<Name>;
+    using err_nn = error_object<Name, Name>;
 
-    extern err_n SYNTAX;
-    extern err_n RESERVED;
-    extern err_n UNEXPECTED_TOKEN;
+    extern err_s RESERVED;
+    extern err_nn SYNTAX;
     extern err_n MALFORMED_STRING;
     extern err_c UNEXPECTED_CHAR;
 

@@ -7,9 +7,8 @@
 
 namespace jawa::errors
 {
-    err_n SYNTAX{"Syntax Error", "błąd składni: "};
-    err_n RESERVED{"Reserved Keyword", "zarezerwowane słowo kluczowe: "};
-    err_n UNEXPECTED_TOKEN{"Unexpected Character", "nieoczekiwany znak: "};
-    err_n MALFORMED_STRING{"Malformed String", "zniekształcony łańcuch: "};
-    err_c UNEXPECTED_CHAR{"Unexpected Character", "nieoczekiwany znak: "};
+    err_nn SYNTAX{"błąd składni: nieoczekiwany znak: \"%\", oczekiwany znak: \"%\""};
+    err_s RESERVED{"zarezerwowane słowo kluczowe: \"%\""};
+    err_n MALFORMED_STRING{"zniekształcony łańcuch: \"%\""};
+    err_c UNEXPECTED_CHAR{"nieoczekiwany znak: \'%\'"};
 }
