@@ -40,16 +40,16 @@ using namespace jawa;
 %token                      EOF     0       "koniec pliku"
 
 /* modifiers */
-%token<gender>              PRIVATE         "prywatny/prywatna"
-%token<gender>              PROTECTED       "chroniony/chroniona"
-%token<gender>              PUBLIC          "publiczny/publiczna"
-%token<gender>              STATIC          "statyczny/statyczna"
-%token<gender>              FINAL           "końcowy/końcowa"
-%token<gender>              NATIVE          "ojczysty/ojczysta"
-%token<gender>              VOLATILE        "zmeinny/zmeinna"
-%token<gender>              SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
-%token<gender>              ABSTRACT        "abstrakcyjny/abstrakcyjna"
-%token<gender>              TRANSIENT       "przejściowy/przejściowa"
+%token<Gender>              PRIVATE         "prywatny/prywatna"
+%token<Gender>              PROTECTED       "chroniony/chroniona"
+%token<Gender>              PUBLIC          "publiczny/publiczna"
+%token<Gender>              STATIC          "statyczny/statyczna"
+%token<Gender>              FINAL           "końcowy/końcowa"
+%token<Gender>              NATIVE          "ojczysty/ojczysta"
+%token<Gender>              VOLATILE        "zmeinny/zmeinna"
+%token<Gender>              SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
+%token<Gender>              ABSTRACT        "abstrakcyjny/abstrakcyjna"
+%token<Gender>              TRANSIENT       "przejściowy/przejściowa"
 %token                      STRICTFP        "ścisłezp"
 
 /* control flow */
@@ -149,19 +149,22 @@ using namespace jawa;
 %token<Name>                IDF             "identyfikator"
 
 
+%type<Name>                 Identifier Name
+%type<NameList>             NameList
+
 %%
 
 /* Identifiers */
 
-Identifier: IDF
+Identifier: IDF             { $$ = $1; }
           ;
 
-Name: Identifier
-    | Name DOT Identifier
+Name: Identifier            { $$ = $1;  }
+    | Name DOT Identifier   { $$ = $1 + "/" + $3; }
     ;
 
-NameList: Name
-        | NameList COMMA Name
+NameList: Name                  { $$.push_back($1); }
+        | NameList COMMA Name   { $$ = $1; $$.push_back($3); }
         ;
 
 /* Declarations */
@@ -169,7 +172,9 @@ NameList: Name
 CompilationUnit: PackageDeclaration_opt ImportDeclarations_opt TypeDeclarations_opt
                ;
 
-PackageDeclaration_opt: %empty | PackageDeclaration ;
+PackageDeclaration_opt: %empty
+                      | PackageDeclaration
+                      ;
 
 PackageDeclaration: PACKAGE Name SEMIC
                   ;
@@ -365,7 +370,9 @@ NonWildcardTypeArgumentsOrDiamond: LT GT
                                  ;
 
 
-TypeParameters_opt: %empty | TypeParameters ;
+TypeParameters_opt: %empty
+                  | TypeParameters
+                  ;
 
 TypeParameters: LT TypeParameterList GT
               ;
@@ -377,7 +384,9 @@ TypeParameterList: TypeParameter
 TypeParameter: Identifier TypeParameterBound_opt
              ;
 
-TypeParameterBound_opt: %empty | TypeParameterBound ;
+TypeParameterBound_opt: %empty
+                      | TypeParameterBound
+                      ;
 
 TypeParameterBound: EXTENDS Bound
                   ;
@@ -386,7 +395,9 @@ Bound: ReferenceType
      | Bound AMP ReferenceType
      ;
 
-Modifiers_opt: %empty | Modifiers ;
+Modifiers_opt: %empty
+             | Modifiers
+             ;
 
 Modifiers: Modifier
          | Modifiers Modifier
@@ -410,7 +421,9 @@ Annotation: AT Name
           | AT Name LPAR AnnotationElement_opt RPAR
           ;
 
-AnnotationElement_opt: %empty | AnnotationElement ;
+AnnotationElement_opt: %empty
+                     | AnnotationElement
+                     ;
 
 AnnotationElement: ElementValuePairs
                  | ElementValue
@@ -441,12 +454,16 @@ ElementValues: ElementValue
 
 
 
-ClassBody_opt: %empty | ClassBody ;
+ClassBody_opt: %empty
+             | ClassBody
+             ;
 
 ClassBody: LCUR ClassBodyDeclarations_opt RCUR
          ;
 
-ClassBodyDeclarations_opt: %empty | ClassBodyDeclarations ;
+ClassBodyDeclarations_opt: %empty
+                         | ClassBodyDeclarations
+                         ;
 
 ClassBodyDeclarations: ClassBodyDeclaration
                      | ClassBodyDeclarations ClassBodyDeclaration
@@ -484,7 +501,9 @@ MethodDeclaratorRest: FormalParameters Dims_opt Throws_opt Block
                     | FormalParameters Dims_opt Throws_opt SEMIC
                     ;
 
-Throws_opt: %empty | Throws ;
+Throws_opt: %empty
+          | Throws
+          ;
 
 Throws: THROWS NameList
       ;
@@ -555,7 +574,9 @@ InterfaceGenericMethodDecl: TypeParameters Type Identifier InterfaceMethodDeclar
 FormalParameters: LPAR FormalParameterDecls_opt RPAR
                 ;
 
-FormalParameterDecls_opt: %empty | FormalParameterDecls ;
+FormalParameterDecls_opt: %empty
+                        | FormalParameterDecls
+                        ;
 
 FormalParameterDecls: Modifiers_opt Type FormalParameterDeclsRest
                     ;
@@ -582,7 +603,9 @@ VariableDeclarator: Identifier VariableDeclaratorRest
 VariableDeclaratorRest: Dims_opt VariableInitializerAssignment_opt
                       ;
 
-VariableInitializerAssignment_opt: %empty | VariableInitializerAssignment ;
+VariableInitializerAssignment_opt: %empty
+                                 | VariableInitializerAssignment
+                                 ;
 
 VariableInitializerAssignment: ASGN VariableInitializer
                              ;
@@ -606,7 +629,9 @@ ArrayInitializer: LCUR RCUR
 Block: LCUR BlockStatements_opt RCUR
      ;
 
-BlockStatements_opt: %empty | BlockStatements ;
+BlockStatements_opt: %empty
+                   | BlockStatements
+                   ;
 
 BlockStatements: BlockStatement
                | BlockStatements BlockStatement
@@ -834,7 +859,9 @@ Expressions: ExpressionNoName
            | Expressions COMMA Name
            ;
 
-ExpressionNoName_opt: %empty | ExpressionNoName ;
+ExpressionNoName_opt: %empty
+                    | ExpressionNoName
+                    ;
 
 ExpressionNoName: AssignmentExpressionNoName
           ;
@@ -851,108 +878,108 @@ AssignmentOperator: ASGN
                   ;
 
 ConditionalExpressionNoName: ConditionalOrExpressionNoName
-                     | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON ConditionalExpressionNoName
-                     | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON Name
-                     | ConditionalOrExpressionNoName INTRG Name COLON ConditionalExpressionNoName
-                     | Name INTRG ExpressionNoName COLON ConditionalExpressionNoName
-                     | ConditionalOrExpressionNoName INTRG Name COLON Name
-                     | Name INTRG ExpressionNoName COLON Name
-                     | Name INTRG Name COLON ConditionalExpressionNoName
-                     | Name INTRG Name COLON Name
-                     ;
+                           | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON ConditionalExpressionNoName
+                           | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON Name
+                           | ConditionalOrExpressionNoName INTRG Name COLON ConditionalExpressionNoName
+                           | Name INTRG ExpressionNoName COLON ConditionalExpressionNoName
+                           | ConditionalOrExpressionNoName INTRG Name COLON Name
+                           | Name INTRG ExpressionNoName COLON Name
+                           | Name INTRG Name COLON ConditionalExpressionNoName
+                           | Name INTRG Name COLON Name
+                           ;
 
 ConditionalOrExpressionNoName: ConditionalAndExpressionNoName
-                       | ConditionalOrExpressionNoName DVERT ConditionalAndExpressionNoName
-                       | ConditionalOrExpressionNoName DVERT Name
-                       | Name DVERT ConditionalAndExpressionNoName
-                       | Name DVERT Name
-                       ;
+                             | ConditionalOrExpressionNoName DVERT ConditionalAndExpressionNoName
+                             | ConditionalOrExpressionNoName DVERT Name
+                             | Name DVERT ConditionalAndExpressionNoName
+                             | Name DVERT Name
+                             ;
 
 ConditionalAndExpressionNoName: InclusiveOrExpressionNoName
-                        | ConditionalAndExpressionNoName DAMP InclusiveOrExpressionNoName
-                        | ConditionalAndExpressionNoName DAMP Name
-                        | Name DAMP InclusiveOrExpressionNoName
-                        | Name DAMP Name
-                        ;
+                              | ConditionalAndExpressionNoName DAMP InclusiveOrExpressionNoName
+                              | ConditionalAndExpressionNoName DAMP Name
+                              | Name DAMP InclusiveOrExpressionNoName
+                              | Name DAMP Name
+                              ;
 
 InclusiveOrExpressionNoName: ExclusiveOrExpressionNoName
-                     | InclusiveOrExpressionNoName VERT ExclusiveOrExpressionNoName
-                     | InclusiveOrExpressionNoName VERT Name
-                     | Name VERT ExclusiveOrExpressionNoName
-                     | Name VERT Name
-                     ;
+                           | InclusiveOrExpressionNoName VERT ExclusiveOrExpressionNoName
+                           | InclusiveOrExpressionNoName VERT Name
+                           | Name VERT ExclusiveOrExpressionNoName
+                           | Name VERT Name
+                           ;
 
 ExclusiveOrExpressionNoName: AndExpressionNoName
-                     | ExclusiveOrExpressionNoName HAT AndExpressionNoName
-                     | ExclusiveOrExpressionNoName HAT Name
-                     | Name HAT AndExpressionNoName
-                     | Name HAT Name
-                     ;
+                           | ExclusiveOrExpressionNoName HAT AndExpressionNoName
+                           | ExclusiveOrExpressionNoName HAT Name
+                           | Name HAT AndExpressionNoName
+                           | Name HAT Name
+                           ;
 
 AndExpressionNoName: EqualityExpressionNoName
-             | AndExpressionNoName AMP EqualityExpressionNoName
-             | AndExpressionNoName AMP Name
-             | Name AMP EqualityExpressionNoName
-             | Name AMP Name
-             ;
+                   | AndExpressionNoName AMP EqualityExpressionNoName
+                   | AndExpressionNoName AMP Name
+                   | Name AMP EqualityExpressionNoName
+                   | Name AMP Name
+                   ;
 
 EqualityExpressionNoName: RelationalExpressionNoName
-                  | EqualityExpressionNoName EQOP RelationalExpressionNoName
-                  | EqualityExpressionNoName EQOP Name
-                  | Name EQOP RelationalExpressionNoName
-                  | Name EQOP Name
-                  | EqualityExpressionNoName INSTANCEOF ReferenceType
-                  | Name INSTANCEOF ReferenceType
-                  ;
+                        | EqualityExpressionNoName EQOP RelationalExpressionNoName
+                        | EqualityExpressionNoName EQOP Name
+                        | Name EQOP RelationalExpressionNoName
+                        | Name EQOP Name
+                        | EqualityExpressionNoName INSTANCEOF ReferenceType
+                        | Name INSTANCEOF ReferenceType
+                        ;
 
 RelationalExpressionNoName: ShiftExpressionNoName
-                    | ShiftExpressionNoName LT ShiftExpressionNoName
-                    | ShiftExpressionNoName LT Name
-                    | Name LT ShiftExpressionNoName
-                    | Name LT Name
-                    | ShiftExpressionNoName GT ShiftExpressionNoName
-                    | ShiftExpressionNoName GT Name
-                    | Name GT ShiftExpressionNoName
-                    | Name GT Name
-                    | ShiftExpressionNoName RELOP ShiftExpressionNoName
-                    | ShiftExpressionNoName RELOP Name
-                    | Name RELOP ShiftExpressionNoName
-                    | Name RELOP Name
-                    ;
+                          | ShiftExpressionNoName LT ShiftExpressionNoName
+                          | ShiftExpressionNoName LT Name
+                          | Name LT ShiftExpressionNoName
+                          | Name LT Name
+                          | ShiftExpressionNoName GT ShiftExpressionNoName
+                          | ShiftExpressionNoName GT Name
+                          | Name GT ShiftExpressionNoName
+                          | Name GT Name
+                          | ShiftExpressionNoName RELOP ShiftExpressionNoName
+                          | ShiftExpressionNoName RELOP Name
+                          | Name RELOP ShiftExpressionNoName
+                          | Name RELOP Name
+                          ;
 
 ShiftExpressionNoName: AdditiveExpressionNoName
-               | ShiftExpressionNoName SHL AdditiveExpressionNoName
-               | ShiftExpressionNoName SHL Name
-               | ShiftExpressionNoName SHR AdditiveExpressionNoName
-               | ShiftExpressionNoName SHR Name
-               | ShiftExpressionNoName USHR AdditiveExpressionNoName
-               | ShiftExpressionNoName USHR Name
-               | Name SHL AdditiveExpressionNoName
-               | Name SHL Name
-               | Name SHR AdditiveExpressionNoName
-               | Name SHR Name
-               | Name USHR AdditiveExpressionNoName
-               | Name USHR Name
-               ;
+                     | ShiftExpressionNoName SHL AdditiveExpressionNoName
+                     | ShiftExpressionNoName SHL Name
+                     | ShiftExpressionNoName SHR AdditiveExpressionNoName
+                     | ShiftExpressionNoName SHR Name
+                     | ShiftExpressionNoName USHR AdditiveExpressionNoName
+                     | ShiftExpressionNoName USHR Name
+                     | Name SHL AdditiveExpressionNoName
+                     | Name SHL Name
+                     | Name SHR AdditiveExpressionNoName
+                     | Name SHR Name
+                     | Name USHR AdditiveExpressionNoName
+                     | Name USHR Name
+                     ;
 
 
 AdditiveExpressionNoName: MultiplicativeExpressionNoName
-                  | AdditiveExpressionNoName ADDOP MultiplicativeExpressionNoName
-                  | AdditiveExpressionNoName ADDOP Name
-                  | Name ADDOP MultiplicativeExpressionNoName
-                  | Name ADDOP Name
-                  ;
+                        | AdditiveExpressionNoName ADDOP MultiplicativeExpressionNoName
+                        | AdditiveExpressionNoName ADDOP Name
+                        | Name ADDOP MultiplicativeExpressionNoName
+                        | Name ADDOP Name
+                        ;
 
 MultiplicativeExpressionNoName: UnaryExpressionNoName
-                        | MultiplicativeExpressionNoName STAR UnaryExpressionNoName
-                        | MultiplicativeExpressionNoName STAR Name
-                        | Name STAR UnaryExpressionNoName
-                        | Name STAR Name
-                        | MultiplicativeExpressionNoName DIVOP UnaryExpressionNoName
-                        | MultiplicativeExpressionNoName DIVOP Name
-                        | Name DIVOP UnaryExpressionNoName
-                        | Name DIVOP Name
-                        ;
+                              | MultiplicativeExpressionNoName STAR UnaryExpressionNoName
+                              | MultiplicativeExpressionNoName STAR Name
+                              | Name STAR UnaryExpressionNoName
+                              | Name STAR Name
+                              | MultiplicativeExpressionNoName DIVOP UnaryExpressionNoName
+                              | MultiplicativeExpressionNoName DIVOP Name
+                              | Name DIVOP UnaryExpressionNoName
+                              | Name DIVOP Name
+                              ;
 
 CastExpressionNoName: LPAR PrimitiveType RPAR UnaryExpressionNoName
                     | LPAR PrimitiveType RPAR Name
@@ -963,22 +990,22 @@ CastExpressionNoName: LPAR PrimitiveType RPAR UnaryExpressionNoName
                     ;
 
 UnaryExpressionNotPlusMinusNoName: PostfixExpressionNoName
-                           | TILDE UnaryExpressionNoName
-                           | TILDE Name
-                           | EMPH UnaryExpressionNoName
-                           | EMPH Name
-                           | CastExpressionNoName
-                           ;
+                                 | TILDE UnaryExpressionNoName
+                                 | TILDE Name
+                                 | EMPH UnaryExpressionNoName
+                                 | EMPH Name
+                                 | CastExpressionNoName
+                                 ;
 
 PreIncDecExpression: INCDEC UnaryExpressionNoName
                    | INCDEC Name
                    ;
 
 UnaryExpressionNoName: PreIncDecExpression
-               | ADDOP UnaryExpressionNoName
-               | ADDOP Name
-               | UnaryExpressionNotPlusMinusNoName
-               ;
+                     | ADDOP UnaryExpressionNoName
+                     | ADDOP Name
+                     | UnaryExpressionNotPlusMinusNoName
+                     ;
 
 
 PostIncDecExpression: PostfixExpressionNoName INCDEC

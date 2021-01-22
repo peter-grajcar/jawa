@@ -6,8 +6,10 @@
 #ifndef JAWA_ERROR_HPP
 #define JAWA_ERROR_HPP
 
-#include "tables.hpp"
+#include <string>
 #include <array>
+
+#include "types.hpp"
 
 namespace jawa::errors
 {

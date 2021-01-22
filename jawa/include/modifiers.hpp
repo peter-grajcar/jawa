@@ -11,14 +11,46 @@
 namespace jawa
 {
 
-    enum class gender
+    enum class Gender
     {
         FEM,
         MASC,
         NEUT,
     };
 
-    gender get_gender(Name name);
+    Gender get_gender(Name name);
+
+    enum class Modifier
+    {
+        PUBLIC = 0,
+        PROTECTED = 1,
+        PRIVATE = 2,
+        STATIC = 3,
+        ABSTRACT = 4,
+        FINAL = 5,
+        NATIVE = 6,
+        SYNCHRONIZED = 7,
+        TRANSIENT = 8,
+        VOLATILE = 9,
+        STRICTFP = 10,
+    };
+
+    class ModifierPack
+    {
+    private:
+        uint32_t mod_flags_masc_;
+        uint32_t mod_flags_fem_;
+    public:
+        void set(Modifier mod, Gender gender = Gender::NEUT);
+
+        bool is_set(Modifier mod, Gender gender) const;
+    };
+
+    struct ModifierAndAnnotationPack
+    {
+        ModifierPack modifier_pack_;
+        // TODO: AnnotationPack annotation_pack_;
+    };
 
 }
 

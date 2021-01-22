@@ -7,6 +7,7 @@
 #define JAWA_TYPES_HPP
 
 #include <cinttypes>
+#include <vector>
 
 namespace jawa
 {
@@ -19,6 +20,9 @@ namespace jawa
     using float_t = float;
     using double_t = double;
     using char_t = uint16_t;
+
+    using Name = std::string;
+    using NameList = std::vector<Name>;
 
 }
 
