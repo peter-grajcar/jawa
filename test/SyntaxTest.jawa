@@ -24,7 +24,7 @@ publiczna klasa SyntaxTest realizuje I {
     publiczny SyntaxTest(długy d) {
         to();
         całość a, b, c;
-        a = (b * (c + d)) % 13;
+        a = (b * (c + (całość) d)) % 13;
         to.numer = a;
     }
 
