@@ -22,7 +22,7 @@ syn keyword controlFlow     wreszcie kontyntynuj przełącz domyślna złam     
 syn keyword controlFlow     przypad rzuć                                    skipwhite
 syn keyword types           void całość krótki znak bajt                    skipwhite, nextgroup=idf
 syn keyword types           długy podwójny pojedynczy boolowski             skipwhite, nextgroup=idf
-syn keyword classes         klasa urządzenie wyliczenie                     skipwhite, nextgroup=classIdf
+syn keyword classes         klasa międzymordzie @międzymordzie wyliczenie   skipwhite, nextgroup=classIdf
 syn keyword keywords        nadzbiór przedłuża                              skipwhite
 syn keyword keywords        realizuje to potwierdzić pakiet zaimportuj      skipwhite
 syn keyword keywords        rzuca wystąpienie nowy                          skipwhite
@@ -35,6 +35,7 @@ syn match numberLiteral     '0[XxBb]\d\+'       display
 syn match numberLiteral     '\d\+'              display
 syn match numberLiteral     '[-+]\d\+'          display
 
+syn match annotation        '@\([^[:punct:][:space:]]\|[_$]\)\+' display
 syn match idf               '\([^[:punct:][:space:]]\|[_$]\)\+' display
 syn match classIdf          '\([^[:punct:][:space:]]\|[_$]\)\+' display
 
@@ -65,4 +66,5 @@ hi def link idf                     Identifier
 hi def link classIdf                Identifier
 hi def link comment                 Comment
 hi def link commentMultiline        Comment
+hi def link annotation              Special
 hi def link reserved                Special

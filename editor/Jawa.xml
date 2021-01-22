@@ -9,7 +9,7 @@
             <option name="HAS_STRING_ESCAPES" value="true"/>
         </options>
         <keywords
-                keywords="abstrakcyjna;abstrakcyjny;albo;bajt;boolowski;całość;chroniona;chroniony;dla;domyślna;dopóki;długy;jeśli;klasa;kontyntynuj;końcowa;końcowy;krótki;nadzbiór;nowy;ojczysta;ojczysty;pakiet;podwójny;pojedynczy;potwierdzić;prywatny;przedłuża;przełącz;przypad;publiczna;publiczny;realizuje;rzejściowa;rzejściowy;rzuca;rzuć;spróbuj;statyczna;statyczny;to;urządzenie;void;wreszcie;wyliczenie;wystąpienie;zaimportuj;zmeinna;zmeinny;znak;zrob;zsynchronizowana;zsynchronizowany;zwróć;złam;łap;ścisłezp;kurwa"
+                keywords="abstrakcyjna;abstrakcyjny;albo;bajt;boolowski;całość;chroniona;chroniony;dla;domyślna;dopóki;długy;jeśli;klasa;kontyntynuj;końcowa;końcowy;krótki;nadzbiór;nowy;ojczysta;ojczysty;pakiet;podwójny;pojedynczy;potwierdzić;prywatny;przedłuża;przełącz;przypad;publiczna;publiczny;realizuje;rzejściowa;rzejściowy;rzuca;rzuć;spróbuj;statyczna;statyczny;to;międzymordzie;void;wreszcie;wyliczenie;wystąpienie;zaimportuj;zmeinna;zmeinny;znak;zrob;zsynchronizowana;zsynchronizowany;zwróć;złam;łap;ścisłezp;kurwa"
                 ignore_case="false"/>
         <keywords2/>
         <keywords3/>

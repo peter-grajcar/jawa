@@ -9,8 +9,26 @@
 #include <iostream>
 #include <string>
 
+/**
+ * TODO:
+ *
+ * @param os output stream.
+ * @param fmt format.
+ * @return output stream.
+ */
 std::ostream &format(std::ostream &os, const char *fmt);
 
+/**
+ * TODO:
+ *
+ * @tparam T type of the first argument.
+ * @tparam Args types of the other arguments.
+ * @param os output stream.
+ * @param fmt format.
+ * @param arg first argument.
+ * @param args other arguments.
+ * @return output stream.
+ */
 template <typename T, typename ...Args>
 std::ostream &format(std::ostream &os, const char *fmt, T arg, Args ...args)
 {

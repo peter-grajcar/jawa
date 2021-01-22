@@ -96,8 +96,8 @@ pojedynczy                  return jawa::parser::make_FLOAT(ctx->loc());
 boolowski                   return jawa::parser::make_BOOLEAN(ctx->loc());
 
 klasa                       return jawa::parser::make_CLASS(ctx->loc());
-urządzenie                  return jawa::parser::make_INTERFACE(ctx->loc());
-\@urządzenie                return jawa::parser::make_AT_INTERFACE(ctx->loc());
+międzymordzie               return jawa::parser::make_INTERFACE(ctx->loc());
+\@międzymordzie             return jawa::parser::make_AT_INTERFACE(ctx->loc());
 wyliczenie                  return jawa::parser::make_ENUM(ctx->loc());
 nadzbiór                    return jawa::parser::make_SUPER(ctx->loc());
 przedłuża                   return jawa::parser::make_EXTENDS(ctx->loc());
@@ -123,8 +123,10 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 
 ==                          return jawa::parser::make_EQOP(jawa::operators::EQ, ctx->loc());
 !=                          return jawa::parser::make_EQOP(jawa::operators::NE, ctx->loc());
+
 \<=                         return jawa::parser::make_RELOP(jawa::operators::LTE, ctx->loc());
 >=                          return jawa::parser::make_RELOP(jawa::operators::GTE, ctx->loc());
+
 \+=                         return jawa::parser::make_COMP(jawa::operators::COMP_ADD, ctx->loc());
 -=                          return jawa::parser::make_COMP(jawa::operators::COMP_SUB, ctx->loc());
 \*=                         return jawa::parser::make_COMP(jawa::operators::COMP_MUL, ctx->loc());
@@ -137,12 +139,20 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 \|=                         return jawa::parser::make_COMP(jawa::operators::COMP_OR, ctx->loc());
 \^=                         return jawa::parser::make_COMP(jawa::operators::COMP_XOR, ctx->loc());
 ~=                          return jawa::parser::make_COMP(jawa::operators::COMP_NOT, ctx->loc());
+
 \+\+                        return jawa::parser::make_INCDEC(jawa::operators::INC, ctx->loc());
 --                          return jawa::parser::make_INCDEC(jawa::operators::DEC, ctx->loc());
+
 \+                          return jawa::parser::make_ADDOP(jawa::operators::ADD, ctx->loc());
 -                           return jawa::parser::make_ADDOP(jawa::operators::SUB, ctx->loc());
+
 \/                          return jawa::parser::make_DIVOP(jawa::operators::DIV, ctx->loc());
 \%                          return jawa::parser::make_DIVOP(jawa::operators::MOD, ctx->loc());
+
+>>>                         return jawa::parser::make_USHR(ctx->loc());
+>>                          return jawa::parser::make_SHR(ctx->loc());
+\<\<                        return jawa::parser::make_SHL(ctx->loc());
+
 \.\.\.                      return jawa::parser::make_DOTS(ctx->loc());
 ;                           return jawa::parser::make_SEMIC(ctx->loc());
 ,                           return jawa::parser::make_COMMA(ctx->loc());
@@ -168,10 +178,6 @@ kurwa                       ctx->message(jawa::errors::RESERVED, ctx->loc(), yyt
 \*                          return jawa::parser::make_STAR(ctx->loc());
 \@                          return jawa::parser::make_AT(ctx->loc());
 \.                          return jawa::parser::make_DOT(ctx->loc());
-
->>>                         return jawa::parser::make_USHR(ctx->loc());
->>                          return jawa::parser::make_SHR(ctx->loc());
-\<\<                        return jawa::parser::make_SHL(ctx->loc());
 
     /* Names */
 

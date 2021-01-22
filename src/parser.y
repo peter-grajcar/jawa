@@ -127,7 +127,7 @@ using namespace jawa;
 %token<operators::divop>    DIVOP           "/, %"
 %token<operators::incdec>   INCDEC          "++, --"
 %token<operators::eqop>     EQOP            "==, !="
-%token                      SHL             "<<,"
+%token                      SHL             "<<"
 %token                      SHR             ">>"
 %token                      USHR            ">>>"
 %token<operators::relop>    RELOP           "<=, >="
@@ -271,6 +271,15 @@ ReferenceType: ClassOrInterfaceType
              | ArrayType
              ;
 
+ReferenceTypeNoName: ClassOrInterfaceTypeNoName
+                   | ArrayType
+                   ;
+
+ClassOrInterfaceTypeNoName: Name TypeArguments
+                          | TypeDeclSpecifier
+                          | TypeDeclSpecifier TypeArguments
+                          ;
+
 ClassOrInterfaceType: Name
                     | Name TypeArguments
                     | TypeDeclSpecifier
@@ -311,7 +320,7 @@ TypeArguments: LT TypeArgumentList GT
              | LT TypeDeclSpecifier LT TypeArgumentList SHR
              | LT TypeArgumentListHeads Name LT TypeArgumentList SHR
              | LT TypeArgumentListHeads TypeDeclSpecifier LT TypeArgumentList SHR
-             /* TODO: add USHR case, or solve using context */
+             /* TODO: add USHR */
              ;
 
 TypeArgumentListHeads: TypeArgumentListHead
@@ -825,10 +834,6 @@ Expressions: ExpressionNoName
            | Expressions COMMA Name
            ;
 
-Expression: ExpressionNoName
-          | Name
-          ;
-
 ExpressionNoName_opt: %empty | ExpressionNoName ;
 
 ExpressionNoName: AssignmentExpressionNoName
@@ -950,16 +955,19 @@ MultiplicativeExpressionNoName: UnaryExpressionNoName
                         ;
 
 CastExpressionNoName: LPAR PrimitiveType RPAR UnaryExpressionNoName
-              | LPAR ReferenceType RPAR UnaryExpressionNotPlusMinusNoName
-              | LPAR ReferenceType RPAR Name
-              ;
+                    | LPAR PrimitiveType RPAR Name
+                    | LPAR ReferenceTypeNoName RPAR UnaryExpressionNotPlusMinusNoName
+                    | LPAR ReferenceTypeNoName RPAR Name
+                    | LPAR Name RPAR UnaryExpressionNotPlusMinusNoName
+                    | LPAR Name RPAR Name
+                    ;
 
 UnaryExpressionNotPlusMinusNoName: PostfixExpressionNoName
                            | TILDE UnaryExpressionNoName
                            | TILDE Name
                            | EMPH UnaryExpressionNoName
                            | EMPH Name
-                           /* | CastExpression TODO: resolve the conflict with ParExpression */
+                           | CastExpressionNoName
                            ;
 
 PreIncDecExpression: INCDEC UnaryExpressionNoName
@@ -985,12 +993,13 @@ ConstantExpressionNoName: ExpressionNoName
                         ;
 
 PrimaryNoName: Literal
-             | ParExpression
+             | LPAR ExpressionNoName RPAR
+             | LPAR Name RPAR
              | THIS ThisSuffix
              | SUPER SuperSuffix
              | NEW Creator
-             | NonWildcardTypeArguments ExplicitGenericInvocationSuffix
-             | NonWildcardTypeArguments THIS Arguments
+             /* | NonWildcardTypeArguments ExplicitGenericInvocationSuffix */
+             /* | NonWildcardTypeArguments THIS Arguments */
              | PrimitiveType Dims_opt DOT CLASS
              | VOID DOT CLASS
              | Name LBRA ExpressionNoName RBRA
@@ -1012,9 +1021,6 @@ Literal: INT_LIT
        | FALSE
        | NULL
        ;
-
-ParExpression: LPAR Expression RPAR
-             ;
 
 Arguments_opt: %empty | Arguments ;
 
@@ -1138,7 +1144,7 @@ namespace jawa {
             for (int i = 0; i < n; ++i) {
                 expected_tokens << symbol_name(expected[i]);
                 if (i + 1 < n)
-                    expected_tokens << " albo ";
+                    expected_tokens << ", ";
             }
         }
 

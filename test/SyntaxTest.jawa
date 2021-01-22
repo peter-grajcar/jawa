@@ -10,13 +10,15 @@ publiczna klasa SyntaxTest realizuje I {
     całość numer;
 
     publiczny SyntaxTest() {
-        A<C>.InnerClass c;
+        A<C>.KlasaWewnętrzna c;
 
         A<C> ac = nowy A<>();
         A<B<C>> abc = nowy A<>();
 
         Łańcuch l = "Test";
         System.wyjście.wydrukovać(l);
+
+        SyntaxTest.<Łańcuch>cfT(l);
     }
 
     publiczny SyntaxTest(długy d) {
@@ -33,6 +35,7 @@ publiczna klasa SyntaxTest realizuje I {
         zwróć a - b;
     }
 
+    @Nadpisanie
     void f() {
         znak[] pole = { };
     }
@@ -52,13 +55,14 @@ publiczna klasa SyntaxTest realizuje I {
 
 }
 
-urządzenie I {
+@FunkcjonalneMiędzymordzie
+międzymordzie I {
     void f();
 }
 
 klasa A<T> {
 
-    publiczna klasa InnerClass {
+    publiczna klasa KlasaWewnętrzna {
 
     }
 
