@@ -22,4 +22,4 @@ add_executable(jawac
 
 target_include_directories(jawac PUBLIC include)
 target_include_directories(jawac PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(jawac PRIVATE jasm)
+target_link_libraries(jawac PUBLIC jasm)
