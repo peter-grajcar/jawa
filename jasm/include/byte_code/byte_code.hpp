@@ -8,6 +8,7 @@
 
 #include <bit>
 #include <iostream>
+#include <fstream>
 
 namespace jasm::byte_code
 {
@@ -23,7 +24,7 @@ namespace jasm::byte_code
     constexpr char BYTE_TYPE_PREFIX = 'B';
     constexpr char CHAR_TYPE_PREFIX = 'C';
     constexpr char SHORT_TYPE_PREFIX = 'S';
-    constexpr char INTEGER_TYPE_PREFIX = 'I';
+    constexpr char INT_TYPE_PREFIX = 'I';
     constexpr char LONG_TYPE_PREFIX = 'J';
     constexpr char FLOAT_TYPE_PREFIX = 'F';
     constexpr char DOUBLE_TYPE_PREFIX = 'D';
@@ -60,12 +61,14 @@ namespace jasm::byte_code
     T read_big_endian(std::istream &is)
     {
         T dst;
-        is.read(&dst, sizeof(T));
+        is.read((char *) &dst, sizeof(T));
 #ifdef IS_LITTLE_ENDIAN
         dst = swap_endianness(dst);
 #endif
         return dst;
     }
+
+    void read_class(std::istream &is);
 
 }
 

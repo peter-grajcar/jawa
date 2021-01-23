@@ -13,7 +13,7 @@
 namespace jasm::byte_code::constant_pool
 {
 
-    enum class Tag : u1
+    enum tag : u1
     {
         UTF_8 = 1,
         INTEGER = 3,
@@ -42,80 +42,80 @@ namespace jasm::byte_code::constant_pool
         u1 tag;
         u2 class_index;
         u2 name_and_type_index;
-    }
+    };
 
     struct MethodRefInfo
     {
         u1 tag;
         u2 class_index;
         u2 name_and_type_index;
-    }
+    };
 
     struct InterfaceMethodRefInfo
     {
         u1 tag;
         u2 class_index;
         u2 name_and_type_index;
-    }
+    };
 
     struct StringInfo
     {
         u1 tag;
         u2 string_index;
-    }
+    };
 
     struct IntegerInfo
     {
         u1 tag;
         u4 bytes;
-    }
+    };
 
     struct FloatInfo
     {
         u1 tag;
         u4 bytes;
-    }
+    };
 
     struct LongInfo
     {
         u1 tag;
         u4 high_bytes;
         u4 low_bytes;
-    }
+    };
 
     struct DoubleInfo
     {
         u1 tag;
         u4 high_bytes;
         u4 low_bytes;
-    }
+    };
 
     struct NameAndTypeInfo
     {
         u1 tag;
         u2 name_index;
         u2 descriptor_index;
-    }
+    };
 
     struct Utf8Info
     {
         u1 tag;
         u2 length;
         u1 bytes[];
-    }
+    };
 
     struct MethodTypeInfo
     {
         u1 tag;
         u2 descriptor_index;
-    }
+    };
 
     struct InvokeDynamicInfo
     {
         u1 tag;
         u2 bootstrap_method_attr_index;
         u2 name_and_type_index;
-    }
+    };
 
 }
 

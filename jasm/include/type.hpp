@@ -8,8 +8,33 @@
 
 #include <string>
 
+#include "byte_code/byte_code.hpp"
+
 namespace jasm
 {
+
+    class BaseType;
+
+    template <char p>
+    class PrimitiveType;
+
+    class ReferenceType;
+
+    class ClassType;
+
+    class ArrayType;
+
+    using Type = BaseType;
+
+    using BooleanType = PrimitiveType<byte_code::BOOLEAN_TYPE_PREFIX>;
+    using CharType = PrimitiveType<byte_code::CHAR_TYPE_PREFIX>;
+    using ByteType = PrimitiveType<byte_code::BYTE_TYPE_PREFIX>;
+    using ShortType = PrimitiveType<byte_code::SHORT_TYPE_PREFIX>;
+    using IntType = PrimitiveType<byte_code::INT_TYPE_PREFIX>;
+    using LongType = PrimitiveType<byte_code::LONG_TYPE_PREFIX>;
+    using FloatType = PrimitiveType<byte_code::FLOAT_TYPE_PREFIX>;
+    using DoubleType = PrimitiveType<byte_code::DOUBLE_TYPE_PREFIX>;
+
 
     /**
      * Abstract type class.
@@ -17,6 +42,8 @@ namespace jasm
     class BaseType
     {
     public:
+        virtual ~BaseType() = default;
+
         /**
          * Detrmines whether a type is a reference type.
          *
@@ -24,36 +51,58 @@ namespace jasm
          */
         virtual bool is_reference_type() const = 0;
 
+        /**
+         * Returns the type prefix which will be used in the byte code.
+         *
+         * @return type prefix.
+         */
         virtual char prefix() const = 0;
 
+        /**
+         * Returns the type descriptor used in the byte code.
+         *
+         * @return type descriptor.
+         */
         virtual std::string descriptor() const;
     };
 
-    class PrimitiveType : BaseType
+    template <char p>
+    class PrimitiveType : public BaseType
     {
-    private:
-        char prefix_;
     public:
-        explicit PrimitiveType(char prefix) : prefix_(prefix) {}
+        explicit PrimitiveType() {}
+
+        bool is_reference_type() const override
+        {
+            return true;
+        }
+
+        char prefix() const override
+        {
+            return p;
+        }
+
+        std::string descriptor() const override
+        {
+            return std::string(1, p);
+        }
+    };
+
+    class ReferenceType : public BaseType
+    {
+    public:
+        virtual ~ReferenceType() = default;
 
         bool is_reference_type() const override;
-
-        char prefix() const override;
-
-        std::string descriptor() const override;
     };
 
-    class ReferenceType : BaseType
-    {
-    public:
-        bool is_reference_type() const override = 0;
-    };
-
-    class ClassType : ReferenceType
+    class ClassType : public ReferenceType
     {
     private:
         std::string class_name_;
     public:
+        explicit ClassType(const char *name) : class_name_(name) {}
+
         explicit ClassType(std::string &name) : class_name_(name) {}
 
         char prefix() const override;
@@ -61,13 +110,14 @@ namespace jasm
         std::string descriptor() const override;
     };
 
-    class ArrayType : ReferenceType
+    class ArrayType : public ReferenceType
     {
     private:
         size_t dimension_;
-        jasm::BaseType *type_;
+        Type *element_type_;
     public:
-        explicit ArrayType(jasm::BaseType *type, size_t dim = 1) : type_(type), dimension_(dim)
+        explicit ArrayType(Type *element_type, size_t dim = 1) : element_type_(element_type),
+                                                                 dimension_(dim)
         {
             assert(dim != 0);
         }
@@ -78,14 +128,6 @@ namespace jasm
     };
 
     // TODO: class VariableType
-
-    extern PrimitiveType BooleanType;
-    extern PrimitiveType CharType;
-    extern PrimitiveType ShortType;
-    extern PrimitiveType IntType;
-    extern PrimitiveType LongType;
-    extern PrimitiveType FloatType;
-    extern PrimitiveType DoubleType;
 
 }
 
