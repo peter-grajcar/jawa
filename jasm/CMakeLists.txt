@@ -15,5 +15,4 @@ else ()
     target_compile_definitions(jasm PUBLIC IS_LITTLE_ENDIAN=1)
 endif ()
 
-add_executable(endianess_test test/endianness_test.cpp)
-target_link_libraries(endianess_test PUBLIC jasm)
+add_subdirectory(test)
