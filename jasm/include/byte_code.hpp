@@ -68,7 +68,6 @@ namespace jasm::byte_code
         return dst;
     }
 
-    void read_class(std::istream &is);
 
 }
 

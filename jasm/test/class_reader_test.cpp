@@ -7,12 +7,12 @@
 #include <fstream>
 #include <ios>
 
-#include "byte_code/byte_code.hpp"
-
+#include "class.hpp"
 
 int main()
 {
-    std::ifstream is("/Users/petergrajcar/Desktop/Test.class", std::ios::in | std::ios::binary);
-    jasm::byte_code::read_class(is);
+    std::ifstream is("/Users/petergrajcar/Desktop/jasmin-2.4/examples/HelloWorld.class",
+                     std::ios::in | std::ios::binary);
+    jasm::Class c(is);
     return 0;
 }

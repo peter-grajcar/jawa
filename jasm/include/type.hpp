@@ -8,7 +8,7 @@
 
 #include <string>
 
-#include "byte_code/byte_code.hpp"
+#include "byte_code.hpp"
 
 namespace jasm
 {

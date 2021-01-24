@@ -6,7 +6,7 @@
 #include <iostream>
 #include <iomanip>
 
-#include "byte_code/byte_code.hpp"
+#include "byte_code.hpp"
 
 using namespace jasm::byte_code;
 
