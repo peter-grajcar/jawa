@@ -13,6 +13,14 @@ int main()
 {
     std::ifstream is("/Users/petergrajcar/Desktop/jasmin-2.4/examples/HelloWorld.class",
                      std::ios::in | std::ios::binary);
-    jasm::Class c(is);
+    jasm::Class clazz(is);
+
+    // dump the constant pool
+    size_t i = 1;
+    for (auto &c : clazz.constant_pool()) {
+        std::cout << '#' << std::setw(4) << std::left << i++ << " = ";
+        c->jasm(std::cout);
+    }
+
     return 0;
 }

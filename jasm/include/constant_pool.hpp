@@ -55,6 +55,17 @@ namespace jasm
         {
             pool_.push_back(std::make_unique<T>(args...));
         }
+
+        std::vector<std::unique_ptr<Constant>>::iterator begin()
+        {
+            return pool_.begin();
+        }
+
+        std::vector<std::unique_ptr<Constant>>::iterator end()
+        {
+            return pool_.end();
+        }
+
     };
 
 

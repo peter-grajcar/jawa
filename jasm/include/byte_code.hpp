@@ -61,7 +61,7 @@ namespace jasm::byte_code
     T read_big_endian(std::istream &is)
     {
         T dst;
-        is.read((char *) &dst, sizeof(T));
+        is.read(reinterpret_cast<char *>(&dst), sizeof(T));
 #ifdef IS_LITTLE_ENDIAN
         dst = swap_endianness(dst);
 #endif

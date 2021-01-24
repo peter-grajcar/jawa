@@ -17,7 +17,12 @@ namespace jasm
         u2 minor_version = read_big_endian<u2>(is);
         u2 major_version = read_big_endian<u2>(is);
         u2 constant_pool_count = read_big_endian<u2>(is);
-        for (u2 i = 0; i < constant_pool_count; ++i) {
+
+        // The value of the constant_pool_count item is equal to the number of entries in the
+        // constant_pool table plus one
+        assert(constant_pool_count > 0);
+
+        for (u2 i = 1; i < constant_pool_count; ++i) {
             u1 tag = read_big_endian<u1>(is);
             read_constant(is, tag);
         }
@@ -26,48 +31,88 @@ namespace jasm
     void Class::read_constant(std::istream &is, u1 tag)
     {
         switch (tag) {
-            case ConstantPool::CONSTANT_UTF_8:
-                // TODO:
+            case ConstantPool::CONSTANT_UTF_8: {
+                u2 length = read_big_endian<u2>(is);
+                u1 bytes[length];
+                is.read((char *) bytes, length);
+                constant_pool_.make_constant<Utf8Constant>(length, bytes);
                 break;
-            case ConstantPool::CONSTANT_INTEGER:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_INTEGER: {
+                u4 bytes = read_big_endian<u4>(is);
+                constant_pool_.make_constant<IntegerConstant>(bytes);
                 break;
-            case ConstantPool::CONSTANT_FLOAT:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_FLOAT: {
+                u4 bytes = read_big_endian<u4>(is);
+                constant_pool_.make_constant<FloatConstant>(bytes);
                 break;
-            case ConstantPool::CONSTANT_LONG:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_LONG: {
+                u4 high_bytes = read_big_endian<u4>(is);
+                u4 low_bytes = read_big_endian<u4>(is);
+                constant_pool_.make_constant<LongConstant>(high_bytes, low_bytes);
                 break;
-            case ConstantPool::CONSTANT_DOUBLE:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_DOUBLE: {
+                u4 high_bytes = read_big_endian<u4>(is);
+                u4 low_bytes = read_big_endian<u4>(is);
+                constant_pool_.make_constant<DoubleConstant>(high_bytes, low_bytes);
                 break;
-            case ConstantPool::CONSTANT_CLASS:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_CLASS: {
+                u2 name_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<ClassConstant>(name_index);
                 break;
-            case ConstantPool::CONSTANT_STRING:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_STRING: {
+                u2 string_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<StringConstant>(string_index);
                 break;
-            case ConstantPool::CONSTANT_FIELD_REF:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_FIELD_REF: {
+                u2 class_index = read_big_endian<u2>(is);
+                u2 name_and_type_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<FieldRefConstant>(class_index, name_and_type_index);
                 break;
-            case ConstantPool::CONSTANT_METHOD_REF:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_METHOD_REF: {
+                u2 class_index = read_big_endian<u2>(is);
+                u2 name_and_type_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<MethodRefConstant>(class_index, name_and_type_index);
                 break;
-            case ConstantPool::CONSTANT_INTERFACE_METHOD_REF:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_INTERFACE_METHOD_REF: {
+                u2 class_index = read_big_endian<u2>(is);
+                u2 name_and_type_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<InterfaceMethodRefConstant>(class_index,
+                                                                         name_and_type_index);
                 break;
-            case ConstantPool::CONSTANT_NAME_AND_TYPE:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_NAME_AND_TYPE: {
+                u2 name_index = read_big_endian<u2>(is);
+                u2 descriptor_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<NameAndTypeConstant>(name_index, descriptor_index);
                 break;
-            case ConstantPool::CONSTANT_METHOD_HANDLE:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_METHOD_HANDLE: {
+                u2 reference_kind = read_big_endian<u2>(is);
+                u2 reference_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<MethodHandleConstant>(reference_kind, reference_index);
                 break;
-            case ConstantPool::CONSTANT_METHOD_TYPE:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_METHOD_TYPE: {
+                u2 descriptor_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<MethodTypeConstant>(descriptor_index);
                 break;
-            case ConstantPool::CONSTANT_INVOKE_DYNAMIC:
-                // TODO:
+            }
+            case ConstantPool::CONSTANT_INVOKE_DYNAMIC: {
+                u2 bootstrap_method_attr_index = read_big_endian<u2>(is);
+                u2 name_and_type_index = read_big_endian<u2>(is);
+                constant_pool_.make_constant<InvokeDynamicConstant>(bootstrap_method_attr_index,
+                                                                    name_and_type_index);
                 break;
+            }
             default:
                 assert(false);
         }
