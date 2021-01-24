@@ -6,4 +6,16 @@
 #ifndef JAWA_METHOD_HPP
 #define JAWA_METHOD_HPP
 
+#include "attributes.hpp"
+
+namespace jasm
+{
+
+    class Method : Attributable
+    {
+
+    };
+
+}
+
 #endif //JAWA_METHOD_HPP

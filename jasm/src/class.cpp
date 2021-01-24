@@ -26,6 +26,29 @@ namespace jasm
             u1 tag = read_big_endian<u1>(is);
             read_constant(is, tag);
         }
+
+        u2 access_flags = read_big_endian<u2>(is);
+        u2 this_class = read_big_endian<u2>(is);
+        u2 super_class = read_big_endian<u2>(is);
+        u2 interfaces_count = read_big_endian<u2>(is);
+
+        for (u2 i = 0; i < interfaces_count; ++i) {
+            u2 interface_index = read_big_endian<u2>(is);
+            assert(dynamic_cast<ClassConstant *>(constant_pool_[interface_index].get()) != nullptr);
+            // TODO:
+        }
+
+        u2 fields_count = read_big_endian<u2>(is);
+
+        for (u2 i = 0; i < fields_count; ++i) {
+            u2 access_flags = read_big_endian<u2>(is);
+            u2 name_index = read_big_endian<u2>(is);
+            u2 descriptor_index = read_big_endian<u2>(is);
+            u2 attributes_count = read_big_endian<u2>(is);
+            for (u2 j = 0; j < attributes_count; ++j) {
+                read_attribute(is, nullptr); // TODO
+            }
+        }
     }
 
     void Class::read_constant(std::istream &is, u1 tag)
@@ -116,6 +139,11 @@ namespace jasm
             default:
                 assert(false);
         }
+    }
+
+    void Class::read_attribute(std::istream &is, Attributable *atr)
+    {
+
     }
 
 }

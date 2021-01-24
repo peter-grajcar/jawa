@@ -45,7 +45,7 @@ namespace jasm
 
         void jasm(std::ostream &os) override
         {
-            os << std::setw(20) << std::left << "FieldRef" << '#' << class_index_ << ':'
+            os << std::setw(20) << std::left << "FieldRef" << '#' << class_index_ << '.'
                << '#' << name_and_type_index_ << std::endl;
         }
     };
@@ -61,7 +61,7 @@ namespace jasm
 
         void jasm(std::ostream &os) override
         {
-            os << std::setw(20) << std::left << "MethodRef" << '#' << class_index_ << ':'
+            os << std::setw(20) << std::left << "MethodRef" << '#' << class_index_ << '.'
                << '#' << name_and_type_index_ << std::endl;
         }
     };
@@ -77,8 +77,8 @@ namespace jasm
 
         void jasm(std::ostream &os) override
         {
-            os << std::setw(20) << std::left << "InterfaceMethodRef" << '#' << class_index_ << ':'
-               << '#' << name_and_type_index_ << std::endl;
+            os << std::setw(20) << std::left << "InterfaceMethodRef" << '#' << class_index_
+               << '.' << '#' << name_and_type_index_ << std::endl;
         }
     };
 
@@ -104,7 +104,7 @@ namespace jasm
 
         void jasm(std::ostream &os) override
         {
-            os << std::setw(20) << std::left << "Integer" << bytes_ << std::endl;
+            os << std::setw(20) << std::left << "Integer" << std::hex << bytes_ << std::endl;
         }
     };
 
@@ -117,7 +117,7 @@ namespace jasm
 
         void jasm(std::ostream &os) override
         {
-            os << std::setw(20) << std::left << "Float" << bytes_ << std::endl;
+            os << std::setw(20) << std::left << "Float" << std::hex << bytes_ << std::endl;
         }
     };
 
@@ -132,7 +132,8 @@ namespace jasm
 
         void jasm(std::ostream &os) override
         {
-            os << std::setw(20) << std::left << "Long" << high_bytes_ << low_bytes_ << std::endl;
+            os << std::setw(20) << std::left << "Long" << std::hex << high_bytes_ << low_bytes_
+               << std::endl;
         }
     };
 
@@ -147,7 +148,8 @@ namespace jasm
 
         void jasm(std::ostream &os) override
         {
-            os << std::setw(20) << std::left << "Double" << high_bytes_ << low_bytes_ << std::endl;
+            os << std::setw(20) << std::left << "Double" << std::hex << high_bytes_ << low_bytes_
+               << std::endl;
         }
     };
 

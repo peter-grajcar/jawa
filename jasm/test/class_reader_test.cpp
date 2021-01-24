@@ -11,7 +11,7 @@
 
 int main()
 {
-    std::ifstream is("/Users/petergrajcar/Desktop/jasmin-2.4/examples/HelloWorld.class",
+    std::ifstream is("jasm/test/classes/HelloWorld.class",
                      std::ios::in | std::ios::binary);
     jasm::Class clazz(is);
 
@@ -21,6 +21,12 @@ int main()
         std::cout << '#' << std::setw(4) << std::left << i++ << " = ";
         c->jasm(std::cout);
     }
+
+    std::cout << '{' << std::endl;
+
+    // TODO:
+
+    std::cout << '}' << std::endl;
 
     return 0;
 }

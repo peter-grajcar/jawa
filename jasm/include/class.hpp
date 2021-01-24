@@ -7,11 +7,12 @@
 #define JAWA_CLASS_HPP
 
 #include "constant_pool.hpp"
+#include "attributes.hpp"
 
 namespace jasm
 {
 
-    class Class
+    class Class : protected Attributable
     {
     private:
         ConstantPool constant_pool_;
@@ -31,6 +32,8 @@ namespace jasm
          * @see ConstantPool::Tag
          */
         void read_constant(std::istream &is, u1 tag);
+
+        void read_attribute(std::istream &is, Attributable *atr);
 
     public:
         enum AccessFlag : u2
