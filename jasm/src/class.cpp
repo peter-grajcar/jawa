@@ -44,14 +44,14 @@ namespace jasm
             u2 name_index = read_big_endian<u2>(is);
             u2 descriptor_index = read_big_endian<u2>(is);
 
-            auto field = std::make_unique<Field>(field_access_flags, name_index, descriptor_index);
+            Field field = Field(field_access_flags, name_index, descriptor_index);
 
             u2 attributes_count = read_big_endian<u2>(is);
             for (u2 j = 0; j < attributes_count; ++j) {
-                read_attribute(is, field.get());
+                read_attribute(is, &field);
             }
 
-            add_field(field);
+            add_field(std::move(field));
         }
 
         u2 methods_count = read_big_endian<u2>(is);
@@ -60,15 +60,14 @@ namespace jasm
             u2 name_index = read_big_endian<u2>(is);
             u2 descriptor_index = read_big_endian<u2>(is);
 
-            auto method = std::make_unique<Method>(method_access_flags, name_index,
-                                                   descriptor_index);
+            Method method = Method(method_access_flags, name_index, descriptor_index);
 
             u2 attributes_count = read_big_endian<u2>(is);
             for (u2 j = 0; j < attributes_count; ++j) {
-                read_attribute(is, method.get());
+                read_attribute(is, &method);
             }
 
-            add_method(method);
+            add_method(std::move(method));
         }
 
         u2 attributes_count = read_big_endian<u2>(is);

@@ -36,6 +36,12 @@ namespace jasm
     protected:
         std::vector<std::unique_ptr<Attribute>> attributes_;
     public:
+        Attributable() = default;
+
+        Attributable(Attributable &) = delete;
+
+        Attributable(Attributable &&) = default;
+
         virtual ~Attributable() = default;
 
         inline std::vector<std::unique_ptr<Attribute>> &attributes()
@@ -55,9 +61,9 @@ namespace jasm
         }
 
         template <typename T>
-        inline void add_attribute(std::unique_ptr<T> &attr)
+        inline void add_attribute(T &&attr)
         {
-            attributes_.push_back(std::move(attr));
+            attributes_.push_back(std::make_unique<T>(std::forward<T>(attr)));
         }
     };
 

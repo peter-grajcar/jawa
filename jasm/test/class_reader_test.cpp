@@ -24,12 +24,12 @@ int main()
     std::cout << std::endl;
 
     for (auto &field : clazz.fields()) {
-        field->jasm(std::cout, &clazz.constant_pool());
+        field.jasm(std::cout, &clazz.constant_pool());
         std::cout << std::endl;
     }
 
     for (auto &method : clazz.methods()) {
-        method->jasm(std::cout, &clazz.constant_pool());
+        method.jasm(std::cout, &clazz.constant_pool());
         std::cout << std::endl;
     }
 

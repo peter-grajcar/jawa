@@ -20,8 +20,8 @@ namespace jasm
     {
     private:
         ConstantPool constant_pool_;
-        std::vector<std::unique_ptr<Field>> fields_;
-        std::vector<std::unique_ptr<Method>> methods_;
+        std::vector<Field> fields_;
+        std::vector<Method> methods_;
 
         /**
          * Reads a class file from a class file input stream.
@@ -69,22 +69,22 @@ namespace jasm
             return constant_pool_;
         }
 
-        inline void add_field(std::unique_ptr<Field> &field)
+        inline void add_field(Field &&field)
         {
-            fields_.push_back(std::move(field));
+            fields_.push_back(std::forward<Field>(field));
         }
 
-        inline void add_method(std::unique_ptr<Method> &method)
+        inline void add_method(Method &&method)
         {
-            methods_.push_back(std::move(method));
+            methods_.push_back(std::forward<Method>(method));
         }
 
-        inline std::vector<std::unique_ptr<Field>> &fields()
+        inline std::vector<Field> &fields()
         {
             return fields_;
         }
 
-        inline std::vector<std::unique_ptr<Method>> &methods()
+        inline std::vector<Method> &methods()
         {
             return methods_;
         }
