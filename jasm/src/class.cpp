@@ -34,7 +34,7 @@ namespace jasm
 
         for (u2 i = 0; i < interfaces_count; ++i) {
             u2 interface_index = read_big_endian<u2>(is);
-            assert(dynamic_cast<ClassConstant *>(constant_pool_[interface_index].get()) != nullptr);
+            assert(dynamic_cast<ClassConstant *>(constant_pool_[interface_index]) != nullptr);
             // TODO:
         }
 
@@ -173,7 +173,7 @@ namespace jasm
         u4 attribute_length = read_big_endian<u4>(is);
 
         auto *attribute_name_const = dynamic_cast<Utf8Constant *>(
-                constant_pool_[attribute_name_index].get()
+                constant_pool_[attribute_name_index]
         );
         assert(attribute_name_const != nullptr);
 
@@ -182,11 +182,11 @@ namespace jasm
         if (attribute_name == "SourceFile") {
             u2 source_file_index = read_big_endian<u2>(is);
             atr->make_attribute<SourceFileAttribute>(attribute_name_index, source_file_index);
-        }
-
-        // debug only, delete later
-        for (u4 i = 0; i < attribute_length; ++i) {
-            read_big_endian<u1>(is);
+        } else {
+            // debug only, delete later
+            for (u4 i = 0; i < attribute_length; ++i) {
+                read_big_endian<u1>(is);
+            }
         }
     }
 

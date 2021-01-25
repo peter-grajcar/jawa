@@ -76,10 +76,26 @@ namespace jasm
             return pool_.end();
         }
 
-        inline const std::unique_ptr<Constant> &operator[](u2 index) const
+        inline const Constant *operator[](u2 index) const
+        {
+            return get(index);
+        }
+
+        inline Constant *operator[](u2 index)
+        {
+            return get(index);
+        }
+
+        inline const Constant *get(u2 index) const
         {
             assert(index > 0);
-            return pool_[index - 1];
+            return pool_[index - 1].get();
+        }
+
+        inline Constant *get(u2 index)
+        {
+            assert(index > 0);
+            return pool_[index - 1].get();
         }
 
     };

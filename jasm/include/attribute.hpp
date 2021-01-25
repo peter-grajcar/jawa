@@ -8,10 +8,14 @@
 
 #include <vector>
 
+#include "byte_code.hpp"
 #include "instruction.hpp"
+#include "constant_pool.hpp"
 
 namespace jasm
 {
+
+    using namespace byte_code;
 
     class Attribute
     {
@@ -22,7 +26,7 @@ namespace jasm
 
         explicit Attribute(u2 attribute_name_index) : attribute_name_index_(attribute_name_index) {}
 
-        virtual void jasm(std::ostream &os) const = 0;
+        virtual void jasm(std::ostream &os, ConstantPool *pool = nullptr) const = 0;
 
         virtual u4 length() const = 0;
     };
@@ -35,6 +39,11 @@ namespace jasm
         virtual ~Attributable() = default;
 
         inline std::vector<std::unique_ptr<Attribute>> &attributes()
+        {
+            return attributes_;
+        }
+
+        inline const std::vector<std::unique_ptr<Attribute>> &attributes() const
         {
             return attributes_;
         }
@@ -140,12 +149,9 @@ namespace jasm
         SourceFileAttribute(u2 attribute_name_index, u2 source_file_index)
                 : Attribute(attribute_name_index), source_file_index_(source_file_index) {}
 
-        inline void jasm(std::ostream &os) const override
-        {
-            os << "SourceFile: #" << source_file_index_ << std::endl;
-        }
+        void jasm(std::ostream &os, ConstantPool *pool = nullptr) const override;
 
-        u4 length() const override
+        inline u4 length() const override
         {
             return 2;
         }

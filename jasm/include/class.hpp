@@ -78,6 +78,16 @@ namespace jasm
         {
             methods_.push_back(std::move(method));
         }
+
+        inline std::vector<std::unique_ptr<Field>> &fields()
+        {
+            return fields_;
+        }
+
+        inline std::vector<std::unique_ptr<Method>> &methods()
+        {
+            return methods_;
+        }
     };
 
 }
