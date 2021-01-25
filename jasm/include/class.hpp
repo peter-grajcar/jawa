@@ -6,16 +6,22 @@
 #ifndef JAWA_CLASS_HPP
 #define JAWA_CLASS_HPP
 
+#include <memory>
+
 #include "constant_pool.hpp"
-#include "attributes.hpp"
+#include "attribute.hpp"
+#include "field.hpp"
+#include "method.hpp"
 
 namespace jasm
 {
 
-    class Class : protected Attributable
+    class Class : public Attributable
     {
     private:
         ConstantPool constant_pool_;
+        std::vector<std::unique_ptr<Field>> fields_;
+        std::vector<std::unique_ptr<Method>> methods_;
 
         /**
          * Reads a class file from a class file input stream.
@@ -53,9 +59,24 @@ namespace jasm
             read_class(is);
         }
 
+        inline const ConstantPool &constant_pool() const
+        {
+            return constant_pool_;
+        }
+
         inline ConstantPool &constant_pool()
         {
             return constant_pool_;
+        }
+
+        inline void add_field(std::unique_ptr<Field> &field)
+        {
+            fields_.push_back(std::move(field));
+        }
+
+        inline void add_method(std::unique_ptr<Method> &method)
+        {
+            methods_.push_back(std::move(method));
         }
     };
 

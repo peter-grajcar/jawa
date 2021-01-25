@@ -18,7 +18,7 @@ namespace jasm
     public:
         virtual ~Constant() = default;
 
-        virtual void jasm(std::ostream &os) = 0;
+        virtual void jasm(std::ostream &os) const = 0;
     };
 
     class ClassConstant : public Constant
@@ -28,7 +28,7 @@ namespace jasm
     public:
         ClassConstant(u2 name_index) : name_index_(name_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Class" << '#' << name_index_ << std::endl;
         }
@@ -43,7 +43,7 @@ namespace jasm
         FieldRefConstant(u2 class_index, u2 name_and_type_index)
                 : class_index_(class_index), name_and_type_index_(name_and_type_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "FieldRef" << '#' << class_index_ << '.'
                << '#' << name_and_type_index_ << std::endl;
@@ -59,7 +59,7 @@ namespace jasm
         MethodRefConstant(u2 class_index, u2 name_and_type_index)
                 : class_index_(class_index), name_and_type_index_(name_and_type_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "MethodRef" << '#' << class_index_ << '.'
                << '#' << name_and_type_index_ << std::endl;
@@ -75,7 +75,7 @@ namespace jasm
         InterfaceMethodRefConstant(u2 class_index, u2 name_and_type_index)
                 : class_index_(class_index), name_and_type_index_(name_and_type_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "InterfaceMethodRef" << '#' << class_index_
                << '.' << '#' << name_and_type_index_ << std::endl;
@@ -89,7 +89,7 @@ namespace jasm
     public:
         StringConstant(u2 string_index) : string_index_(string_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "String" << '#' << string_index_ << std::endl;
         }
@@ -102,7 +102,7 @@ namespace jasm
     public:
         IntegerConstant(u4 bytes) : bytes_(bytes) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Integer" << std::hex << bytes_ << std::endl;
         }
@@ -115,7 +115,7 @@ namespace jasm
     public:
         FloatConstant(u4 bytes) : bytes_(bytes) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Float" << std::hex << bytes_ << std::endl;
         }
@@ -130,7 +130,7 @@ namespace jasm
         LongConstant(u4 high_bytes, u4 low_bytes)
                 : high_bytes_(high_bytes), low_bytes_(low_bytes) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Long" << std::hex << high_bytes_ << low_bytes_
                << std::endl;
@@ -146,7 +146,7 @@ namespace jasm
         DoubleConstant(u4 high_bytes, u4 low_bytes)
                 : high_bytes_(high_bytes), low_bytes_(low_bytes) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Double" << std::hex << high_bytes_ << low_bytes_
                << std::endl;
@@ -162,7 +162,7 @@ namespace jasm
         NameAndTypeConstant(u2 name_index, u2 descriptor_index)
                 : name_index_(name_index), descriptor_index_(descriptor_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "NameAndType" << '#' << name_index_ << ':' << '#'
                << descriptor_index_
@@ -173,14 +173,19 @@ namespace jasm
     class Utf8Constant : public Constant
     {
     private:
-        std::string value;
+        std::string value_;
     public:
-        Utf8Constant(u2 length, u1 bytes[length]) : value(reinterpret_cast<char *>(bytes),
-                                                          length) {};
+        Utf8Constant(u2 length, u1 bytes[length]) : value_(reinterpret_cast<char *>(bytes),
+                                                           length) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "Utf8" << value << std::endl;
+            os << std::setw(20) << std::left << "Utf8" << value_ << std::endl;
+        }
+
+        const std::string &value() const
+        {
+            return value_;
         }
     };
 
@@ -193,7 +198,7 @@ namespace jasm
         MethodHandleConstant(u2 reference_kind, u2 reference_index)
                 : reference_kind_(reference_kind), reference_index_(reference_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "MethodHandle" << '#' << reference_kind_ << ':'
                << '#' << reference_index_ << std::endl;
@@ -207,7 +212,7 @@ namespace jasm
     public:
         MethodTypeConstant(u2 descriptor_index) : descriptor_index_(descriptor_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "MethodType" << '#' << descriptor_index_
                << std::endl;
@@ -224,7 +229,7 @@ namespace jasm
                 : bootstrap_method_attr_index_(bootstrap_method_attr_index),
                   name_and_type_index_(name_and_type_index) {};
 
-        void jasm(std::ostream &os) override
+        void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << "InvokeDynamic" << '#' << bootstrap_method_attr_index_ << ':'
                << '#' << name_and_type_index_ << std::endl;

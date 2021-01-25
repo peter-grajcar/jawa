@@ -28,5 +28,9 @@ int main()
 
     std::cout << '}' << std::endl;
 
+    for (auto &attr : clazz.attributes()) {
+        attr->jasm(std::cout);
+    }
+
     return 0;
 }

@@ -56,6 +56,16 @@ namespace jasm
             pool_.push_back(std::make_unique<T>(args...));
         }
 
+        inline std::vector<std::unique_ptr<Constant>>::const_iterator begin() const
+        {
+            return pool_.begin();
+        }
+
+        inline std::vector<std::unique_ptr<Constant>>::const_iterator end() const
+        {
+            return pool_.end();
+        }
+
         inline std::vector<std::unique_ptr<Constant>>::iterator begin()
         {
             return pool_.begin();
@@ -66,7 +76,7 @@ namespace jasm
             return pool_.end();
         }
 
-        inline std::unique_ptr<Constant> &operator[](u2 index)
+        inline const std::unique_ptr<Constant> &operator[](u2 index) const
         {
             assert(index > 0);
             return pool_[index - 1];

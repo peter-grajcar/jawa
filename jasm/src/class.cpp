@@ -39,15 +39,41 @@ namespace jasm
         }
 
         u2 fields_count = read_big_endian<u2>(is);
-
         for (u2 i = 0; i < fields_count; ++i) {
-            u2 access_flags = read_big_endian<u2>(is);
+            u2 field_access_flags = read_big_endian<u2>(is);
             u2 name_index = read_big_endian<u2>(is);
             u2 descriptor_index = read_big_endian<u2>(is);
+
+            auto field = std::make_unique<Field>(field_access_flags, name_index, descriptor_index);
+
             u2 attributes_count = read_big_endian<u2>(is);
             for (u2 j = 0; j < attributes_count; ++j) {
-                read_attribute(is, nullptr); // TODO
+                read_attribute(is, field.get());
             }
+
+            add_field(field);
+        }
+
+        u2 methods_count = read_big_endian<u2>(is);
+        for (u2 i = 0; i < methods_count; ++i) {
+            u2 method_access_flags = read_big_endian<u2>(is);
+            u2 name_index = read_big_endian<u2>(is);
+            u2 descriptor_index = read_big_endian<u2>(is);
+
+            auto method = std::make_unique<Method>(method_access_flags, name_index,
+                                                   descriptor_index);
+
+            u2 attributes_count = read_big_endian<u2>(is);
+            for (u2 j = 0; j < attributes_count; ++j) {
+                read_attribute(is, method.get());
+            }
+
+            add_method(method);
+        }
+
+        u2 attributes_count = read_big_endian<u2>(is);
+        for (u2 i = 0; i < attributes_count; ++i) {
+            read_attribute(is, this);
         }
     }
 
@@ -143,7 +169,25 @@ namespace jasm
 
     void Class::read_attribute(std::istream &is, Attributable *atr)
     {
+        u2 attribute_name_index = read_big_endian<u2>(is);
+        u4 attribute_length = read_big_endian<u4>(is);
 
+        auto *attribute_name_const = dynamic_cast<Utf8Constant *>(
+                constant_pool_[attribute_name_index].get()
+        );
+        assert(attribute_name_const != nullptr);
+
+        std::string attribute_name = attribute_name_const->value();
+
+        if (attribute_name == "SourceFile") {
+            u2 source_file_index = read_big_endian<u2>(is);
+            atr->make_attribute<SourceFileAttribute>(attribute_name_index, source_file_index);
+        }
+
+        // debug only, delete later
+        for (u4 i = 0; i < attribute_length; ++i) {
+            read_big_endian<u1>(is);
+        }
     }
 
 }

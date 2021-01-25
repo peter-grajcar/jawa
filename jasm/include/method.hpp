@@ -6,14 +6,21 @@
 #ifndef JAWA_METHOD_HPP
 #define JAWA_METHOD_HPP
 
-#include "attributes.hpp"
+#include "attribute.hpp"
 
 namespace jasm
 {
 
-    class Method : Attributable
+    class Method : public Attributable
     {
-
+    private:
+        u2 access_flags_;
+        u2 name_index_;
+        u2 descriptor_index_;
+    public:
+        Method(u2 access_flags, u2 name_index, u2 descriptor_index)
+                : access_flags_(access_flags), name_index_(name_index),
+                  descriptor_index_(descriptor_index) {}
     };
 
 }
