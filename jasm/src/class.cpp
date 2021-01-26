@@ -13,7 +13,7 @@ namespace jasm
     void Class::read_class(std::istream &is)
     {
         u4 magic = read_big_endian<u4>(is);
-        assert(magic == MAGIC);
+        assert(magic == Magic);
         u2 minor_version = read_big_endian<u2>(is);
         u2 major_version = read_big_endian<u2>(is);
         u2 constant_pool_count = read_big_endian<u2>(is);

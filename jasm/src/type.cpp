@@ -18,7 +18,7 @@ namespace jasm
 
     char ClassType::prefix() const
     {
-        return byte_code::CLASS_TYPE_PREFIX;
+        return byte_code::ClassTypePrefix;
     }
 
     std::string ClassType::descriptor() const
@@ -28,7 +28,7 @@ namespace jasm
 
     char ArrayType::prefix() const
     {
-        return byte_code::ARRAY_TYPE_PREFIX;
+        return byte_code::ArrayTypePrefix;
     }
 
     std::string ArrayType::descriptor() const

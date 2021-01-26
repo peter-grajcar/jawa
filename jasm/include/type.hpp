@@ -26,14 +26,14 @@ namespace jasm
 
     using Type = BaseType;
 
-    using BooleanType = PrimitiveType<byte_code::BOOLEAN_TYPE_PREFIX>;
-    using CharType = PrimitiveType<byte_code::CHAR_TYPE_PREFIX>;
-    using ByteType = PrimitiveType<byte_code::BYTE_TYPE_PREFIX>;
-    using ShortType = PrimitiveType<byte_code::SHORT_TYPE_PREFIX>;
-    using IntType = PrimitiveType<byte_code::INT_TYPE_PREFIX>;
-    using LongType = PrimitiveType<byte_code::LONG_TYPE_PREFIX>;
-    using FloatType = PrimitiveType<byte_code::FLOAT_TYPE_PREFIX>;
-    using DoubleType = PrimitiveType<byte_code::DOUBLE_TYPE_PREFIX>;
+    using BooleanType = PrimitiveType<byte_code::BooleanTypePrefix>;
+    using CharType = PrimitiveType<byte_code::CharTypePrefix>;
+    using ByteType = PrimitiveType<byte_code::ByteTypePrefix>;
+    using ShortType = PrimitiveType<byte_code::ShortTypePrefix>;
+    using IntType = PrimitiveType<byte_code::IntTypePrefix>;
+    using LongType = PrimitiveType<byte_code::LongTypePrefix>;
+    using FloatType = PrimitiveType<byte_code::FloatTypePrefix>;
+    using DoubleType = PrimitiveType<byte_code::DoubleTypePrefix>;
 
 
     /**
