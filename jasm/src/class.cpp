@@ -166,7 +166,7 @@ namespace jasm
         }
     }
 
-    void Class::read_attribute(std::istream &is, Attributable *atr)
+    void Class::read_attribute(std::istream &is, Attributable *attr)
     {
         u2 attribute_name_index = read_big_endian<u2>(is);
         u4 attribute_length = read_big_endian<u4>(is);
@@ -180,12 +180,76 @@ namespace jasm
 
         if (attribute_name == "SourceFile") {
             u2 source_file_index = read_big_endian<u2>(is);
-            atr->make_attribute<SourceFileAttribute>(attribute_name_index, source_file_index);
+            attr->make_attribute<SourceFileAttribute>(attribute_name_index, source_file_index);
+        } else if (attribute_name == "Code") {
+            u2 max_stack = read_big_endian<u2>(is);
+            u2 max_locals = read_big_endian<u2>(is);
+            CodeAttribute code(attribute_name_index, max_stack, max_locals);
+
+            u4 code_length = read_big_endian<u4>(is);
+            for (u4 i = 0; i < code_length;) {
+                i += read_instruction(is, &code);
+            }
+
+            u2 exception_table_length = read_big_endian<u2>(is);
+            for (u2 i = 0; i < exception_table_length; ++i) {
+                u2 start_pc = read_big_endian<u2>(is);
+                u2 end_pc = read_big_endian<u2>(is);
+                u2 handler_pc = read_big_endian<u2>(is);
+                u2 catch_type = read_big_endian<u2>(is);
+                code.make_exception_table_entry(start_pc, end_pc, handler_pc, catch_type);
+            }
+
+            u2 attributes_count = read_big_endian<u2>(is);
+            for (u2 i = 0; i < attributes_count; ++i) {
+                read_attribute(is, &code);
+            }
+
+            attr->add_attribute(std::move(code));
         } else {
-            // debug only, delete later
+            // skip unknown
             for (u4 i = 0; i < attribute_length; ++i) {
                 read_big_endian<u1>(is);
             }
+        }
+    }
+
+    u4 Class::read_instruction(std::istream &is, CodeAttribute *code)
+    {
+        u1 opcode = read_big_endian<u1>(is);
+        switch (opcode) {
+            case 0x12: {
+                u1 index = read_big_endian<u1>(is);
+                code->make_instruction<LoadConst>(index);
+                return 2;
+            }
+            case 0x2a:
+                code->make_instruction<RefLoad0>();
+                return 1;
+            case 0xb1:
+                code->make_instruction<Return>();
+                return 1;
+            case 0xb2: {
+                u1 index_byte_1 = read_big_endian<u1>(is);
+                u1 index_byte_2 = read_big_endian<u1>(is);
+                code->make_instruction<GetStatic>(index_byte_1, index_byte_2);
+                return 3;
+            }
+            case 0xb6: {
+                u1 index_byte_1 = read_big_endian<u1>(is);
+                u1 index_byte_2 = read_big_endian<u1>(is);
+                code->make_instruction<InvokeVirtual>(index_byte_1, index_byte_2);
+                return 3;
+            }
+            case 0xb7: {
+                u1 index_byte_1 = read_big_endian<u1>(is);
+                u1 index_byte_2 = read_big_endian<u1>(is);
+                code->make_instruction<InvokeSpecial>(index_byte_1, index_byte_2);
+                return 3;
+            }
+            default:
+                // skip unknown
+                return 1;
         }
     }
 

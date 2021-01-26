@@ -6,7 +6,11 @@
 #ifndef JAWA_INSTRUCTION_HPP
 #define JAWA_INSTRUCTION_HPP
 
+#include <array>
+#include <iostream>
+
 #include "byte_code.hpp"
+#include "constant_pool.hpp"
 #include "mnemonics.hpp"
 
 namespace jasm
@@ -39,47 +43,54 @@ namespace jasm
 
         virtual u2 output_stack_operand_count() const = 0;
 
-        virtual void jasm(std::ostream &os) const = 0;
+        virtual u4 size() const = 0;
+
+        virtual void jasm(std::ostream &os, ConstantPool *pool) const = 0;
     };
 
     template <u1 opcode_, u2 operand_count_, u2 stack_in_, u2 stack_out_>
-    class SimpleInstruction : Instruction
+    class SimpleInstruction : public Instruction
     {
         std::array<u1, operand_count_> operands_;
     public:
         template <typename ...Args>
         explicit SimpleInstruction(Args ...args) : operands_{args...} {};
 
-        inline u1 opcode() const
+        inline u1 opcode() const override
         {
             return opcode_;
         }
 
-        inline const char *mnemonic() const
+        inline const char *mnemonic() const override
         {
             return InstructionMnemonics[opcode_];
         }
 
-        inline u2 operand_count() const
+        inline u2 operand_count() const override
         {
             return operand_count_;
         }
 
-        inline u2 input_stack_operand_count() const
+        inline u2 input_stack_operand_count() const override
         {
             return stack_in_;
         }
 
-        inline u2 output_stack_operand_count() const
+        inline u2 output_stack_operand_count() const override
         {
             return stack_out_;
         }
 
-        inline void jasm(std::ostream &os) const override
+        inline u4 size() const override
         {
-            os << mnemonic() << ' ';
+            return 1 + operand_count_;
+        }
+
+        inline void jasm(std::ostream &os, ConstantPool *pool = nullptr) const override
+        {
+            os << std::setw(19) << mnemonic();
             for (u1 op : operands_)
-                os << std::hex << op << ' ';
+                os << " #" << (int) op;
             os << std::endl;
         }
     };

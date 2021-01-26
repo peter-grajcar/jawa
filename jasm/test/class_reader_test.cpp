@@ -23,6 +23,11 @@ int main()
     }
     std::cout << std::endl;
 
+    for (auto &attr : clazz.attributes()) {
+        attr->jasm(std::cout, &clazz.constant_pool());
+    }
+    std::cout << std::endl;
+
     for (auto &field : clazz.fields()) {
         field.jasm(std::cout, &clazz.constant_pool());
         std::cout << std::endl;
@@ -31,10 +36,6 @@ int main()
     for (auto &method : clazz.methods()) {
         method.jasm(std::cout, &clazz.constant_pool());
         std::cout << std::endl;
-    }
-
-    for (auto &attr : clazz.attributes()) {
-        attr->jasm(std::cout, &clazz.constant_pool());
     }
 
     return 0;

@@ -39,7 +39,9 @@ namespace jasm
          */
         void read_constant(std::istream &is, u1 tag);
 
-        void read_attribute(std::istream &is, Attributable *atr);
+        void read_attribute(std::istream &is, Attributable *attr);
+
+        u4 read_instruction(std::istream &is, CodeAttribute *code);
 
     public:
         enum AccessFlag : u2
@@ -71,12 +73,12 @@ namespace jasm
 
         inline void add_field(Field &&field)
         {
-            fields_.push_back(std::forward<Field>(field));
+            fields_.emplace_back(std::forward<Field>(field));
         }
 
         inline void add_method(Method &&method)
         {
-            methods_.push_back(std::forward<Method>(method));
+            methods_.emplace_back(std::forward<Method>(method));
         }
 
         inline std::vector<Field> &fields()

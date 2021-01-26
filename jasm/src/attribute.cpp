@@ -19,4 +19,20 @@ namespace jasm
         }
     }
 
+    void CodeAttribute::jasm(std::ostream &os, ConstantPool *pool) const
+    {
+        os << "  " << std::setw(20) << ".limit stack" << max_stack_ << std::endl;
+        os << "  " << std::setw(20) << ".limit locals" << max_locals_ << std::endl;
+
+        for (auto &inst : code_) {
+            os << "  "; // indent
+            inst->jasm(os, pool);
+        }
+    }
+
+    u4 CodeAttribute::length() const
+    {
+        // TODO:
+        return 0;
+    }
 }

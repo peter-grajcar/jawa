@@ -85,7 +85,7 @@ namespace jasm
         }
     };
 
-    class CodeAttribute : public Attribute, Attributable
+    class CodeAttribute : public Attribute, public Attributable
     {
     public:
         struct ExceptionTableEntry
@@ -117,8 +117,12 @@ namespace jasm
         template <typename T, typename ...Args>
         inline void make_instruction(Args ...args)
         {
-            code_.push_back(std::make_unique<T>(args...));
+            code_.emplace_back(std::make_unique<T>(args...));
         }
+
+        void jasm(std::ostream &os, ConstantPool *pool) const override;
+
+        u4 length() const override;
     };
 
     class StackMapTableAttribute : public Attribute
