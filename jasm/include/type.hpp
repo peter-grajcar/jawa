@@ -42,6 +42,16 @@ namespace jasm
     class BaseType
     {
     public:
+        BaseType() = default;
+
+        BaseType(BaseType &) = delete;
+
+        BaseType(BaseType &&) = default;
+
+        BaseType &operator=(const BaseType &) = delete;
+
+        BaseType &operator=(BaseType &&) = default;
+
         virtual ~BaseType() = default;
 
         /**

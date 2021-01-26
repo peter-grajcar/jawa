@@ -16,6 +16,16 @@ namespace jasm
     class Constant
     {
     public:
+        Constant() = default;
+
+        Constant(const Constant &) = delete;
+
+        Constant(Constant &&) = default;
+
+        Constant &operator=(const Constant &) = delete;
+
+        Constant &operator=(Constant &&) = default;
+
         virtual ~Constant() = default;
 
         virtual void jasm(std::ostream &os) const = 0;

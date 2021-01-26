@@ -38,9 +38,13 @@ namespace jasm
     public:
         Attributable() = default;
 
-        Attributable(Attributable &) = delete;
+        Attributable(const Attributable &) = delete;
 
         Attributable(Attributable &&) = default;
+
+        Attributable &operator=(const Attributable &) = delete;
+
+        Attributable &operator=(Attributable &&) = default;
 
         virtual ~Attributable() = default;
 

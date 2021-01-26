@@ -12,6 +12,16 @@ namespace jasm
     class Instruction
     {
     public:
+        Instruction() = default;
+
+        Instruction(Instruction &) = delete;
+
+        Instruction(Instruction &&) = default;
+
+        Instruction &operator=(const Instruction &) = delete;
+
+        Instruction &operator=(Instruction &&) = default;
+
         virtual ~Instruction() = default;
     };
 
