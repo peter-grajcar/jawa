@@ -29,6 +29,9 @@ namespace jasm
         virtual ~Constant() = default;
 
         virtual void jasm(std::ostream &os) const = 0;
+
+        virtual u1 tag() const = 0;
+
     };
 
     class ClassConstant : public Constant
@@ -42,6 +45,8 @@ namespace jasm
         {
             os << std::setw(20) << std::left << "Class" << '#' << name_index_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class FieldRefConstant : public Constant
@@ -58,6 +63,8 @@ namespace jasm
             os << std::setw(20) << std::left << "FieldRef" << '#' << class_index_ << '.'
                << '#' << name_and_type_index_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class MethodRefConstant : public Constant
@@ -74,6 +81,8 @@ namespace jasm
             os << std::setw(20) << std::left << "MethodRef" << '#' << class_index_ << '.'
                << '#' << name_and_type_index_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class InterfaceMethodRefConstant : public Constant
@@ -90,6 +99,8 @@ namespace jasm
             os << std::setw(20) << std::left << "InterfaceMethodRef" << '#' << class_index_
                << '.' << '#' << name_and_type_index_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class StringConstant : public Constant
@@ -103,6 +114,8 @@ namespace jasm
         {
             os << std::setw(20) << std::left << "String" << '#' << string_index_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class IntegerConstant : public Constant
@@ -116,6 +129,8 @@ namespace jasm
         {
             os << std::setw(20) << std::left << "Integer" << std::hex << bytes_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class FloatConstant : public Constant
@@ -129,6 +144,8 @@ namespace jasm
         {
             os << std::setw(20) << std::left << "Float" << std::hex << bytes_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class LongConstant : public Constant
@@ -145,6 +162,8 @@ namespace jasm
             os << std::setw(20) << std::left << "Long" << std::hex << high_bytes_ << low_bytes_
                << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class DoubleConstant : public Constant
@@ -161,6 +180,8 @@ namespace jasm
             os << std::setw(20) << std::left << "Double" << std::hex << high_bytes_ << low_bytes_
                << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class NameAndTypeConstant : public Constant
@@ -178,6 +199,8 @@ namespace jasm
                << descriptor_index_
                << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class Utf8Constant : public Constant
@@ -197,6 +220,8 @@ namespace jasm
         {
             return value_;
         }
+
+        u1 tag() const override;
     };
 
     class MethodHandleConstant : public Constant
@@ -213,6 +238,8 @@ namespace jasm
             os << std::setw(20) << std::left << "MethodHandle" << '#' << reference_kind_ << ':'
                << '#' << reference_index_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class MethodTypeConstant : public Constant
@@ -227,6 +254,8 @@ namespace jasm
             os << std::setw(20) << std::left << "MethodType" << '#' << descriptor_index_
                << std::endl;
         }
+
+        u1 tag() const override;
     };
 
     class InvokeDynamicConstant : public Constant
@@ -244,6 +273,8 @@ namespace jasm
             os << std::setw(20) << "InvokeDynamic" << '#' << bootstrap_method_attr_index_ << ':'
                << '#' << name_and_type_index_ << std::endl;
         }
+
+        u1 tag() const override;
     };
 
 }

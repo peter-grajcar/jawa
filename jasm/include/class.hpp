@@ -23,6 +23,12 @@ namespace jasm
         std::vector<Field> fields_;
         std::vector<Method> methods_;
 
+        u2 minor_version_;
+        u2 major_version_;
+        u2 access_flags_;
+        u2 this_class_;
+        u2 super_class_;
+
         /**
          * Reads a class file from a class file input stream.
          *
@@ -56,10 +62,14 @@ namespace jasm
             ACC_ENUM = 0x4000
         };
 
-        Class(std::istream &is)
+        explicit Class(std::istream &is)
         {
             read_class(is);
         }
+
+        Class(u2 minor_version, u2 major_version, u2 access_flags)
+                : minor_version_(minor_version), major_version_(major_version),
+                  access_flags_(access_flags) {}
 
         inline const ConstantPool &constant_pool() const
         {
@@ -89,6 +99,16 @@ namespace jasm
         inline std::vector<Method> &methods()
         {
             return methods_;
+        }
+
+        inline u2 minor_version()
+        {
+            return minor_version_;
+        }
+
+        inline u2 major_version()
+        {
+            return major_version_;
         }
     };
 

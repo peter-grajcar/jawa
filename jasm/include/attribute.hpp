@@ -120,6 +120,11 @@ namespace jasm
             code_.emplace_back(std::make_unique<T>(args...));
         }
 
+        inline std::vector<std::unique_ptr<Instruction>> &code()
+        {
+            return code_;
+        }
+
         void jasm(std::ostream &os, ConstantPool *pool) const override;
 
         u4 length() const override;

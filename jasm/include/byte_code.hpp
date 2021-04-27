@@ -68,6 +68,22 @@ namespace jasm::byte_code
         return dst;
     }
 
+    /**
+     * Writes value converted to big endian (if the conversion is necessary) value to the stream.
+     *
+     * @tparam T value type.
+     * @param os output stream.
+     * @param val value to write.
+     */
+    template <typename T>
+    void write_big_endian(std::ostream &os, T val)
+    {
+#ifdef IS_LITTLE_ENDIAN
+        val = swap_endianness(val);
+#endif
+        os.write(reinterpret_cast<char *>(&val), sizeof(T));
+    }
+
 
 }
 

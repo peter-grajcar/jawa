@@ -14,8 +14,8 @@ namespace jasm
     {
         u4 magic = read_big_endian<u4>(is);
         assert(magic == Magic);
-        u2 minor_version = read_big_endian<u2>(is);
-        u2 major_version = read_big_endian<u2>(is);
+        minor_version_ = read_big_endian<u2>(is);
+        major_version_ = read_big_endian<u2>(is);
         u2 constant_pool_count = read_big_endian<u2>(is);
 
         // The value of the constant_pool_count item is equal to the number of entries in the
@@ -27,9 +27,9 @@ namespace jasm
             read_constant(is, tag);
         }
 
-        u2 access_flags = read_big_endian<u2>(is);
-        u2 this_class = read_big_endian<u2>(is);
-        u2 super_class = read_big_endian<u2>(is);
+        access_flags_ = read_big_endian<u2>(is);
+        this_class_ = read_big_endian<u2>(is);
+        super_class_ = read_big_endian<u2>(is);
         u2 interfaces_count = read_big_endian<u2>(is);
 
         for (u2 i = 0; i < interfaces_count; ++i) {

@@ -51,9 +51,10 @@ namespace jasm
          * @param args Constant type constructor arguments.
          */
         template <typename T, typename ...Args>
-        inline void make_constant(Args ...args)
+        inline u2 make_constant(Args ...args)
         {
             pool_.emplace_back(std::make_unique<T>(args...));
+            return pool_.size();
         }
 
         inline std::vector<std::unique_ptr<Constant>>::const_iterator begin() const
