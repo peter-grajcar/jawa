@@ -2,7 +2,7 @@
 
 JAWAC=jawac
 
-BIN_DIR=$(dirname "$0")/../build
+BIN_DIR=$(dirname "$0")/../build/jawa
 TEST_DIR=$(dirname "$0")/../test
 
 if [ ! -f "$BIN_DIR/$JAWAC" ]; then
