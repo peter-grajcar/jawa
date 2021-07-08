@@ -248,8 +248,40 @@ namespace jasm
                 return 3;
             }
             default:
-                // skip unknown
+                // skip unimplemented instruction
+                std::cerr << "instruction " << std::hex << std::setw(2) << std::setfill('0')
+                          << opcode << " is not implemented"
+                          << std::endl;
                 return 1;
+        }
+    }
+
+    void Class::dump(std::ostream &os) const
+    {
+        // dump the constant pool
+        size_t i = 1;
+        for (auto &c : constant_pool_) {
+            std::cout << '#' << std::setw(4) << std::left << i++ << " = ";
+            c->jasm(std::cout);
+        }
+        std::cout << std::endl;
+
+        // dump attributes
+        for (auto &attr : attributes_) {
+            attr->jasm(std::cout, &constant_pool_);
+        }
+        std::cout << std::endl;
+
+        // dump fields
+        for (auto &field : fields_) {
+            field.jasm(std::cout, &constant_pool_);
+            std::cout << std::endl;
+        }
+
+        // dump methods
+        for (auto &method : methods_) {
+            method.jasm(std::cout, &constant_pool_);
+            std::cout << std::endl;
         }
     }
 

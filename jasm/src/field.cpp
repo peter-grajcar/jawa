@@ -7,7 +7,7 @@
 namespace jasm
 {
 
-    void Field::jasm(std::ostream &os, ConstantPool *pool) const
+    void Field::jasm(std::ostream &os, const ConstantPool *pool) const
     {
 
     }

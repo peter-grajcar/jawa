@@ -7,10 +7,10 @@
 namespace jasm
 {
 
-    void SourceFileAttribute::jasm(std::ostream &os, ConstantPool *pool) const
+    void SourceFileAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         if (pool) {
-            auto source_file_const = dynamic_cast<Utf8Constant *>(pool->get(
+            auto source_file_const = dynamic_cast<const Utf8Constant *>(pool->get(
                     source_file_index_)
             );
             os << "SourceFile: \"" << source_file_const->value() << '\"' << std::endl;
@@ -19,7 +19,7 @@ namespace jasm
         }
     }
 
-    void CodeAttribute::jasm(std::ostream &os, ConstantPool *pool) const
+    void CodeAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << "  " << std::setw(20) << ".limit stack" << max_stack_ << std::endl;
         os << "  " << std::setw(20) << ".limit locals" << max_locals_ << std::endl;

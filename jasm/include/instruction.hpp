@@ -45,7 +45,7 @@ namespace jasm
 
         virtual u4 size() const = 0;
 
-        virtual void jasm(std::ostream &os, ConstantPool *pool) const = 0;
+        virtual void jasm(std::ostream &os, const ConstantPool *pool) const = 0;
     };
 
     template <u1 opcode_, u2 operand_count_, u2 stack_in_, u2 stack_out_>
@@ -86,7 +86,7 @@ namespace jasm
             return 1 + operand_count_;
         }
 
-        inline void jasm(std::ostream &os, ConstantPool *pool = nullptr) const override
+        inline void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const override
         {
             os << std::setw(19) << mnemonic();
             for (u1 op : operands_)

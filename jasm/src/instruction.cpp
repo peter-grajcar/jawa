@@ -8,7 +8,7 @@ namespace jasm
 {
 
     template <>
-    void GetStatic::jasm(std::ostream &os, ConstantPool *pool) const
+    void GetStatic::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << std::setw(20) << mnemonic();
         u2 cp_index = operands_[0];
@@ -18,7 +18,7 @@ namespace jasm
     }
 
     template <>
-    void InvokeVirtual::jasm(std::ostream &os, ConstantPool *pool) const
+    void InvokeVirtual::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << std::setw(20) << mnemonic();
         u2 cp_index = operands_[0];
@@ -28,7 +28,7 @@ namespace jasm
     }
 
     template <>
-    void InvokeSpecial::jasm(std::ostream &os, ConstantPool *pool) const
+    void InvokeSpecial::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << std::setw(20) << mnemonic();
         u2 cp_index = operands_[0];

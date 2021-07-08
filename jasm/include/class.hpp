@@ -45,8 +45,21 @@ namespace jasm
          */
         void read_constant(std::istream &is, u1 tag);
 
+        /**
+         * Reads a single attribute from a class file input stream.
+         *
+         * @param is binary input stream.
+         * @param attr a class that may contain attributes.
+         */
         void read_attribute(std::istream &is, Attributable *attr);
 
+        /**
+         * Reads a single instruction from a class file input stream.
+         *
+         * @param is binary input stream.
+         * @param code code attribute.
+         * @return instruction width.
+         */
         u4 read_instruction(std::istream &is, CodeAttribute *code);
 
     public:
@@ -109,6 +122,14 @@ namespace jasm
         inline u2 major_version()
         {
             return major_version_;
+        }
+
+        void dump(std::ostream &os) const;
+
+        inline friend std::ostream &operator<<(std::ostream &os, const Class &clazz)
+        {
+            clazz.dump(os);
+            return os;
         }
     };
 

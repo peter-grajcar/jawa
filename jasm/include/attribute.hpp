@@ -26,7 +26,7 @@ namespace jasm
 
         explicit Attribute(u2 attribute_name_index) : attribute_name_index_(attribute_name_index) {}
 
-        virtual void jasm(std::ostream &os, ConstantPool *pool = nullptr) const = 0;
+        virtual void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const = 0;
 
         virtual u4 length() const = 0;
     };
@@ -125,7 +125,7 @@ namespace jasm
             return code_;
         }
 
-        void jasm(std::ostream &os, ConstantPool *pool) const override;
+        void jasm(std::ostream &os, const ConstantPool *pool) const override;
 
         u4 length() const override;
     };
@@ -168,7 +168,7 @@ namespace jasm
         SourceFileAttribute(u2 attribute_name_index, u2 source_file_index)
                 : Attribute(attribute_name_index), source_file_index_(source_file_index) {}
 
-        void jasm(std::ostream &os, ConstantPool *pool = nullptr) const override;
+        void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const override;
 
         inline u4 length() const override
         {

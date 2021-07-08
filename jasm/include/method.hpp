@@ -39,7 +39,7 @@ namespace jasm
                 : access_flags_(access_flags), name_index_(name_index),
                   descriptor_index_(descriptor_index) {}
 
-        void jasm(std::ostream &os, ConstantPool *pool = nullptr) const;
+        void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const;
     };
 
 }

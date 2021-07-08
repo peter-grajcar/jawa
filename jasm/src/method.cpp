@@ -9,7 +9,7 @@
 namespace jasm
 {
 
-    void Method::jasm(std::ostream &os, ConstantPool *pool) const
+    void Method::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << ".method ";
 
@@ -24,8 +24,9 @@ namespace jasm
            << (access_flags_ & ACC_STRICT ? "strictfp " : "");
 
         if (pool) {
-            auto name_const = dynamic_cast<Utf8Constant *>(pool->get(name_index_));
-            auto descriptor_const = dynamic_cast<Utf8Constant *>(pool->get(descriptor_index_));
+            auto name_const = dynamic_cast<const Utf8Constant *>(pool->get(name_index_));
+            auto descriptor_const = dynamic_cast<const Utf8Constant *>(pool->get(
+                    descriptor_index_));
             assert(name_const != nullptr && descriptor_const != nullptr);
             os << name_const->value() << descriptor_const->value() << std::endl;
         } else {

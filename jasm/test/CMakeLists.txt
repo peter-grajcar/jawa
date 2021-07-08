@@ -7,5 +7,5 @@ target_link_libraries(class_reader_test PUBLIC jasm)
 add_executable(type_test type_test.cpp)
 target_link_libraries(type_test PUBLIC jasm)
 
-add_executable(builder_test builder_test.cpp)
-target_link_libraries(builder_test PUBLIC jasm)
+add_executable(class_builder_test class_builder_test.cpp)
+target_link_libraries(class_builder_test PUBLIC jasm)
