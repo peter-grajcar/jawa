@@ -40,6 +40,8 @@ namespace jasm
                   descriptor_index_(descriptor_index) {}
 
         void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const;
+
+        void emit_bytecode(std::ostream &os) const;
     };
 
 }

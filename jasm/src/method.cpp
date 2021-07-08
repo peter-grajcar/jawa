@@ -40,4 +40,9 @@ namespace jasm
         os << ".end method" << std::endl;
     }
 
+    void Method::emit_bytecode(std::ostream &os) const
+    {
+        // TODO
+    }
+
 }

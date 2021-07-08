@@ -46,6 +46,8 @@ namespace jasm
         virtual u4 size() const = 0;
 
         virtual void jasm(std::ostream &os, const ConstantPool *pool) const = 0;
+
+        virtual void emit_bytecode(std::ostream &os) const = 0;
     };
 
     template <u1 opcode_, u2 operand_count_, u2 stack_in_, u2 stack_out_>

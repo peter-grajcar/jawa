@@ -19,6 +19,11 @@ namespace jasm
         }
     }
 
+    void SourceFileAttribute::emit_bytecode(std::ostream &os) const
+    {
+        // TODO
+    }
+
     void CodeAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << "  " << std::setw(20) << ".limit stack" << max_stack_ << std::endl;
@@ -34,5 +39,10 @@ namespace jasm
     {
         // TODO:
         return 0;
+    }
+
+    void CodeAttribute::emit_bytecode(std::ostream &os) const
+    {
+        // TODO
     }
 }

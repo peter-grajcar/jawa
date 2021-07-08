@@ -256,7 +256,7 @@ namespace jasm
         }
     }
 
-    void Class::dump(std::ostream &os) const
+    void Class::jasm(std::ostream &os) const
     {
         // dump the constant pool
         size_t i = 1;
@@ -283,6 +283,19 @@ namespace jasm
             method.jasm(std::cout, &constant_pool_);
             std::cout << std::endl;
         }
+    }
+
+    void Class::emit_bytecode(std::ostream &os) const
+    {
+        write_big_endian<u4>(os, Magic);
+        write_big_endian<u2>(os, minor_version_);
+        write_big_endian<u2>(os, major_version_);
+        write_big_endian<u2>(os, constant_pool_.count());
+
+        for (auto &constant : constant_pool_) {
+            constant->emit_bytecode(os);
+        }
+        // TODO
     }
 
 }

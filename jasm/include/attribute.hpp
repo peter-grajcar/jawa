@@ -28,6 +28,8 @@ namespace jasm
 
         virtual void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const = 0;
 
+        virtual void emit_bytecode(std::ostream &os) const = 0;
+
         virtual u4 length() const = 0;
     };
 
@@ -127,6 +129,8 @@ namespace jasm
 
         void jasm(std::ostream &os, const ConstantPool *pool) const override;
 
+        void emit_bytecode(std::ostream &os) const override;
+
         u4 length() const override;
     };
 
@@ -169,6 +173,8 @@ namespace jasm
                 : Attribute(attribute_name_index), source_file_index_(source_file_index) {}
 
         void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const override;
+
+        void emit_bytecode(std::ostream &os) const override;
 
         inline u4 length() const override
         {

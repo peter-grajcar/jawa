@@ -99,6 +99,11 @@ namespace jasm
             return pool_[index - 1].get();
         }
 
+        inline u2 count() const
+        {
+            return pool_.size();
+        }
+
     };
 
 

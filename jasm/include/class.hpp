@@ -84,6 +84,13 @@ namespace jasm
                 : minor_version_(minor_version), major_version_(major_version),
                   access_flags_(access_flags) {}
 
+        /**
+        * Writes the class' bytecode to the given output stream.
+         *
+        * @param os output stream.
+        */
+        void emit_bytecode(std::ostream &os) const;
+
         inline const ConstantPool &constant_pool() const
         {
             return constant_pool_;
@@ -124,11 +131,21 @@ namespace jasm
             return major_version_;
         }
 
-        void dump(std::ostream &os) const;
+        inline ClassConstant *this_class()
+        {
+            return dynamic_cast<ClassConstant *>(constant_pool_.get(this_class_));
+        }
+
+        inline ClassConstant *super_class()
+        {
+            return dynamic_cast<ClassConstant *>(constant_pool_.get(super_class_));
+        }
+
+        void jasm(std::ostream &os) const;
 
         inline friend std::ostream &operator<<(std::ostream &os, const Class &clazz)
         {
-            clazz.dump(os);
+            clazz.jasm(os);
             return os;
         }
     };

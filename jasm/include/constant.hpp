@@ -30,6 +30,8 @@ namespace jasm
 
         virtual void jasm(std::ostream &os) const = 0;
 
+        virtual void emit_bytecode(std::ostream &os) const = 0;
+
         virtual u1 tag() const = 0;
 
     };
@@ -44,6 +46,12 @@ namespace jasm
         void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Class" << '#' << name_index_ << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         u1 tag() const override;
@@ -64,6 +72,12 @@ namespace jasm
                << '#' << name_and_type_index_ << std::endl;
         }
 
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
+        }
+
         u1 tag() const override;
     };
 
@@ -80,6 +94,12 @@ namespace jasm
         {
             os << std::setw(20) << std::left << "MethodRef" << '#' << class_index_ << '.'
                << '#' << name_and_type_index_ << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         u1 tag() const override;
@@ -100,6 +120,12 @@ namespace jasm
                << '.' << '#' << name_and_type_index_ << std::endl;
         }
 
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
+        }
+
         u1 tag() const override;
     };
 
@@ -113,6 +139,12 @@ namespace jasm
         void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "String" << '#' << string_index_ << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         u1 tag() const override;
@@ -130,6 +162,12 @@ namespace jasm
             os << std::setw(20) << std::left << "Integer" << std::hex << bytes_ << std::endl;
         }
 
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
+        }
+
         u1 tag() const override;
     };
 
@@ -143,6 +181,12 @@ namespace jasm
         void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Float" << std::hex << bytes_ << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         u1 tag() const override;
@@ -163,6 +207,12 @@ namespace jasm
                << std::endl;
         }
 
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
+        }
+
         u1 tag() const override;
     };
 
@@ -179,6 +229,12 @@ namespace jasm
         {
             os << std::setw(20) << std::left << "Double" << std::hex << high_bytes_ << low_bytes_
                << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         u1 tag() const override;
@@ -200,6 +256,12 @@ namespace jasm
                << std::endl;
         }
 
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
+        }
+
         u1 tag() const override;
     };
 
@@ -216,6 +278,12 @@ namespace jasm
         void jasm(std::ostream &os) const override
         {
             os << std::setw(20) << std::left << "Utf8" << value_ << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         const std::string &value() const
@@ -241,6 +309,12 @@ namespace jasm
                << '#' << reference_index_ << std::endl;
         }
 
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
+        }
+
         u1 tag() const override;
     };
 
@@ -255,6 +329,12 @@ namespace jasm
         {
             os << std::setw(20) << std::left << "MethodType" << '#' << descriptor_index_
                << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         u1 tag() const override;
@@ -274,6 +354,12 @@ namespace jasm
         {
             os << std::setw(20) << "InvokeDynamic" << '#' << bootstrap_method_attr_index_ << ':'
                << '#' << name_and_type_index_ << std::endl;
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+            write_big_endian<u1>(os, tag());
+            // TODO
         }
 
         u1 tag() const override;
