@@ -95,6 +95,11 @@ namespace jasm
                 os << " #" << (int) op;
             os << std::endl;
         }
+
+        inline void emit_bytecode(std::ostream &os) const override
+        {
+            // TODO
+        }
     };
 
     using RefArrayLoad = SimpleInstruction<0x32, 0, 2, 1>;
