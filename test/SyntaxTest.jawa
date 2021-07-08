@@ -29,7 +29,7 @@ publiczna klasa SyntaxTest realizuje I {
     }
 
     prywatny całość cfcc(całość a, całość b) {
-        jeśli (a < b) {
+        jeżeli (a < b) {
             zwróć b - a;
         }
         zwróć a - b;

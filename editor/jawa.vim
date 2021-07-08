@@ -17,8 +17,8 @@ syn keyword modifiers       zsynchronizowany zsynchronizowana               skip
 syn keyword modifiers       abstrakcyjny abstrakcyjna                       skipwhite
 syn keyword modifiers       rzejściowy rzejściowa                           skipwhite
 syn keyword modifiers       ścisłezp ścisłezp                               skipwhite
-syn keyword controlFlow     jeśli albo dla zrob dopóki zwróć spróbuj łap    skipwhite
-syn keyword controlFlow     wreszcie kontyntynuj przełącz domyślna złam     skipwhite
+syn keyword controlFlow     jeżeli albo dla wykonaj dopóki zwróć spróbuj    skipwhite
+syn keyword controlFlow     łap wreszcie kontyntynuj przełącz domyślna złam skipwhite
 syn keyword controlFlow     przypad rzuć                                    skipwhite
 syn keyword types           void całość krótki znak bajt                    skipwhite, nextgroup=idf
 syn keyword types           długy podwójny pojedynczy boolowski             skipwhite, nextgroup=idf

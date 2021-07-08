@@ -69,10 +69,10 @@ abstrakcyjn[ya]             return jawa::parser::make_ABSTRACT(jawa::get_gender(
 rzejściow[ya]               return jawa::parser::make_TRANSIENT(jawa::get_gender(yytext), ctx->loc());
 ścisłezp                    return jawa::parser::make_STRICTFP(ctx->loc());
 
-jeśli                       return jawa::parser::make_IF(ctx->loc());
+jeżeli                      return jawa::parser::make_IF(ctx->loc());
 albo                        return jawa::parser::make_ELSE(ctx->loc());
 dla                         return jawa::parser::make_FOR(ctx->loc());
-zrob                        return jawa::parser::make_DO(ctx->loc());
+wykonaj                     return jawa::parser::make_DO(ctx->loc());
 dopóki                      return jawa::parser::make_WHILE(ctx->loc());
 zwróć                       return jawa::parser::make_RETURN(ctx->loc());
 spróbuj                     return jawa::parser::make_TRY(ctx->loc());
