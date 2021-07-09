@@ -14,7 +14,12 @@ namespace jasm
 
     void Field::emit_bytecode(std::ostream &os) const
     {
-        // TODO
+        write_big_endian<u2>(os, access_flags_);
+        write_big_endian<u2>(os, name_index_);
+        write_big_endian<u2>(os, descriptor_index_);
+        write_big_endian<u2>(os, attributes_.size());
+        for (auto &attr : attributes_)
+            attr->emit_bytecode(os);
     }
 
 }
