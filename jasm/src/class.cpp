@@ -291,7 +291,7 @@ namespace jasm
         write_big_endian<u2>(os, minor_version_);
         write_big_endian<u2>(os, major_version_);
 
-        write_big_endian<u2>(os, constant_pool_.count());
+        write_big_endian<u2>(os, constant_pool_.count() + 1);
         for (auto &constant : constant_pool_)
             constant->emit_bytecode(os);
 
