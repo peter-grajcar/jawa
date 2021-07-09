@@ -51,7 +51,7 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, name_index_);
         }
 
         u1 tag() const override;
@@ -75,7 +75,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, class_index_);
+            write_big_endian<u2>(os, name_and_type_index_);
         }
 
         u1 tag() const override;
@@ -99,7 +100,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, class_index_);
+            write_big_endian<u2>(os, name_and_type_index_);
         }
 
         u1 tag() const override;
@@ -123,7 +125,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, class_index_);
+            write_big_endian<u2>(os, name_and_type_index_);
         }
 
         u1 tag() const override;
@@ -144,7 +147,7 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, string_index_);
         }
 
         u1 tag() const override;
@@ -165,7 +168,7 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u4>(os, bytes_);
         }
 
         u1 tag() const override;
@@ -186,7 +189,7 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u4>(os, bytes_);
         }
 
         u1 tag() const override;
@@ -210,7 +213,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u4>(os, high_bytes_);
+            write_big_endian<u4>(os, low_bytes_);
         }
 
         u1 tag() const override;
@@ -234,7 +238,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u4>(os, high_bytes_);
+            write_big_endian<u4>(os, low_bytes_);
         }
 
         u1 tag() const override;
@@ -259,7 +264,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, name_index_);
+            write_big_endian<u2>(os, descriptor_index_);
         }
 
         u1 tag() const override;
@@ -283,7 +289,9 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, value_.length());
+            for (char ch : value_)
+                write_big_endian<u1>(os, ch);
         }
 
         const std::string &value() const
@@ -312,7 +320,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, reference_kind_);
+            write_big_endian<u2>(os, reference_index_);
         }
 
         u1 tag() const override;
@@ -334,7 +343,7 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, descriptor_index_);
         }
 
         u1 tag() const override;
@@ -359,7 +368,8 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            // TODO
+            write_big_endian<u2>(os, bootstrap_method_attr_index_);
+            write_big_endian<u2>(os, name_and_type_index_);
         }
 
         u1 tag() const override;
