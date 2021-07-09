@@ -122,12 +122,12 @@ namespace jasm
             return methods_;
         }
 
-        inline u2 minor_version()
+        inline u2 minor_version() const
         {
             return minor_version_;
         }
 
-        inline u2 major_version()
+        inline u2 major_version() const
         {
             return major_version_;
         }
@@ -140,6 +140,16 @@ namespace jasm
         inline ClassConstant *super_class()
         {
             return dynamic_cast<ClassConstant *>(constant_pool_.get(super_class_));
+        }
+
+        inline void set_this_class(u2 this_class_index)
+        {
+            this_class_ = this_class_index;
+        }
+
+        inline void set_super_class(u2 super_class_index)
+        {
+            super_class_ = super_class_index;
         }
 
         void jasm(std::ostream &os) const;

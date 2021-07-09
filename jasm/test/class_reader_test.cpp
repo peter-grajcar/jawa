@@ -10,7 +10,7 @@
 
 int main()
 {
-    std::ifstream is("jasm/test/classes/HelloWorld.copy.class",
+    std::ifstream is("jasm/test/classes/HelloWorld.class",
                      std::ios::in | std::ios::binary);
     jasm::Class clazz(is);
     is.close();
