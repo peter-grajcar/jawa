@@ -5,11 +5,11 @@ pakiet syntax.test;
 
 zaimportuj jawa.io.StrumieńWydruku;
 
-publiczna klasa SyntaxTest realizuje I {
+publiczna klasa TestSkładni realizuje I {
 
     całość numer;
 
-    publiczny SyntaxTest() {
+    publiczny TestSkładni() {
         A<C>.KlasaWewnętrzna c;
 
         A<C> ac = nowy A<>();
@@ -21,7 +21,7 @@ publiczna klasa SyntaxTest realizuje I {
         SyntaxTest.<Łańcuch>cfT(l);
     }
 
-    publiczny SyntaxTest(długy d) {
+    publiczny TestSkładni(długy d) {
         to();
         całość a, b, c;
         a = (b * (c + (całość) d)) % 13;
