@@ -18,6 +18,8 @@
 namespace jasm
 {
 
+    using namespace byte_code;
+
     class BaseType;
 
     template <char p>
@@ -78,7 +80,7 @@ namespace jasm
          *
          * @return type descriptor.
          */
-        virtual std::string descriptor() const;
+        virtual utf8 descriptor() const;
     };
 
     template <char p>
@@ -97,7 +99,7 @@ namespace jasm
             return p;
         }
 
-        std::string descriptor() const override
+        utf8 descriptor() const override
         {
             return std::string(1, p);
         }
@@ -122,7 +124,7 @@ namespace jasm
 
         char prefix() const override;
 
-        std::string descriptor() const override;
+        utf8 descriptor() const override;
     };
 
     class ArrayType : public ReferenceType
@@ -139,7 +141,7 @@ namespace jasm
 
         char prefix() const override;
 
-        std::string descriptor() const override;
+        utf8 descriptor() const override;
     };
 
     // TODO: class VariableType

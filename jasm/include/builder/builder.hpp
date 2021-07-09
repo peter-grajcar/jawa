@@ -12,13 +12,17 @@
 #define JAWA_BUILDER_HPP
 
 #include <vector>
+#include <map>
+#include <string>
+#include <class.hpp>
 
 #include "instruction.hpp"
+#include "class.hpp"
 
 namespace jasm
 {
 
-    class InsertionPoint
+    class BasicBlock
     {
     private:
         std::vector<std::unique_ptr<Instruction>> code_;
@@ -30,16 +34,37 @@ namespace jasm
             code_.emplace_back(std::make_unique<T>(args...));
         }
 
+        u4 length() const;
+
     };
 
     class ClassBuilder
     {
+    public:
+        using InsertionPoint = BasicBlock *;
     private:
-        std::vector<InsertionPoint> insertion_points_;
-        std::vector<InsertionPoint>::iterator current_insertion_point_;
+        std::vector<BasicBlock> basic_blocks_;
+        InsertionPoint current_insertion_point_;
+
+        std::map<utf8, u2> utf8_constants_;
+
+        Class class_;
 
     public:
-        ClassBuilder() = default;
+        ClassBuilder(utf8 &class_name);
+
+        InsertionPoint create_basic_block();
+
+        ClassBuilder &set_version(u2 major_version, u2 minor_version);
+
+        ClassBuilder &set_access_flags(u2 access_flags);
+
+        ClassBuilder &add_access_flags(u2 access_flags);
+
+        inline Class build()
+        {
+            return std::move(class_);
+        }
     };
 
 }

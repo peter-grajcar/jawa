@@ -279,12 +279,14 @@ namespace jasm
     class Utf8Constant : public Constant
     {
     private:
-        std::string value_;
+        utf8 value_;
     public:
         Utf8Constant(u2 length, u1 bytes[length]) : value_(reinterpret_cast<char *>(bytes),
                                                            length) {};
 
         Utf8Constant(const char *str) : value_(str) {};
+
+        Utf8Constant(utf8 &str) : value_(str) {};
 
         void jasm(std::ostream &os) const override
         {

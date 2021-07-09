@@ -32,8 +32,8 @@ namespace jasm
         u2 minor_version_;
         u2 major_version_;
         u2 access_flags_;
-        u2 this_class_;
-        u2 super_class_;
+        u2 this_class_{};
+        u2 super_class_{};
 
         /**
          * Reads a class file from a class file input stream.
@@ -68,6 +68,8 @@ namespace jasm
          */
         u4 read_instruction(std::istream &is, CodeAttribute *code);
 
+        friend class ClassBuilder;
+
     public:
         enum AccessFlag : u2
         {
@@ -81,6 +83,8 @@ namespace jasm
             ACC_ENUM = 0x4000
         };
 
+        Class() = default;
+
         explicit Class(std::istream &is)
         {
             read_class(is);
@@ -88,7 +92,7 @@ namespace jasm
 
         Class(u2 minor_version, u2 major_version, u2 access_flags)
                 : minor_version_(minor_version), major_version_(major_version),
-                  access_flags_(access_flags) {}
+                  access_flags_(access_flags) {};
 
         /**
         * Writes the class' bytecode to the given output stream.
@@ -145,6 +149,17 @@ namespace jasm
         inline ClassConstant *super_class()
         {
             return dynamic_cast<ClassConstant *>(constant_pool_.get(super_class_));
+        }
+
+        inline void set_version(u2 major_version, u2 minor_version)
+        {
+            minor_version_ = minor_version;
+            major_version_ = major_version;
+        }
+
+        inline void set_access_flags(u2 access_flags)
+        {
+            access_flags_ = access_flags;
         }
 
         inline void set_this_class(u2 this_class_index)

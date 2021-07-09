@@ -26,7 +26,7 @@ namespace jasm
         return byte_code::ClassTypePrefix;
     }
 
-    std::string ClassType::descriptor() const
+    utf8 ClassType::descriptor() const
     {
         return prefix() + class_name_ + ";";
     }
@@ -36,7 +36,7 @@ namespace jasm
         return byte_code::ArrayTypePrefix;
     }
 
-    std::string ArrayType::descriptor() const
+    utf8 ArrayType::descriptor() const
     {
         std::ostringstream ss;
         for (size_t i = 0; i < dimension_; ++i)
@@ -45,7 +45,7 @@ namespace jasm
         return ss.str();
     }
 
-    std::string BaseType::descriptor() const
+    utf8 BaseType::descriptor() const
     {
         return std::string(1, prefix());
     }

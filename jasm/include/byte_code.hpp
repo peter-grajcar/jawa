@@ -23,6 +23,8 @@ namespace jasm::byte_code
     using u4 = uint32_t;
     using u8 = uint64_t;
 
+    using utf8 = std::string;
+
     constexpr u8 Magic = 0xCAFEBABE;
 
     constexpr char BooleanTypePrefix = 'Z';
