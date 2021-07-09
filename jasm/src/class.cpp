@@ -35,7 +35,7 @@ namespace jasm
         for (u2 i = 0; i < interfaces_count; ++i) {
             u2 interface_index = read_big_endian<u2>(is);
             assert(dynamic_cast<ClassConstant *>(constant_pool_[interface_index]) != nullptr);
-            // TODO:
+            interfaces_.push_back(interface_index);
         }
 
         u2 fields_count = read_big_endian<u2>(is);
@@ -290,12 +290,30 @@ namespace jasm
         write_big_endian<u4>(os, Magic);
         write_big_endian<u2>(os, minor_version_);
         write_big_endian<u2>(os, major_version_);
-        write_big_endian<u2>(os, constant_pool_.count());
 
-        for (auto &constant : constant_pool_) {
+        write_big_endian<u2>(os, constant_pool_.count());
+        for (auto &constant : constant_pool_)
             constant->emit_bytecode(os);
-        }
-        // TODO
+
+        write_big_endian<u2>(os, access_flags_);
+        write_big_endian<u2>(os, this_class_);
+        write_big_endian<u2>(os, super_class_);
+
+        write_big_endian<u2>(os, interfaces_.size());
+        for (auto interface : interfaces_)
+            write_big_endian<u2>(os, interface);
+
+        write_big_endian<u2>(os, fields_.size());
+        for (auto &field : fields_)
+            field.emit_bytecode(os);
+
+        write_big_endian<u2>(os, methods_.size());
+        for (auto &method : methods_)
+            method.emit_bytecode(os);
+
+        write_big_endian<u2>(os, attributes_.size());
+        for (auto &attr : attributes_)
+            attr->emit_bytecode(os);
     }
 
 }

@@ -107,6 +107,13 @@ namespace jasm
         u2 max_locals_;
         std::vector<std::unique_ptr<Instruction>> code_;
         std::vector<ExceptionTableEntry> exception_table_;
+
+        u4 code_length() const;
+
+        u4 exception_table_length() const;
+
+        u4 attributes_length() const;
+
     public:
         CodeAttribute(u2 name_index, u2 max_stack, u2 max_locals)
                 : Attribute(name_index), max_stack_(max_stack), max_locals_(max_locals) {}

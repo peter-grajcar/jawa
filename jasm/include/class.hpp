@@ -22,6 +22,7 @@ namespace jasm
         ConstantPool constant_pool_;
         std::vector<Field> fields_;
         std::vector<Method> methods_;
+        std::vector<u2> interfaces_;
 
         u2 minor_version_;
         u2 major_version_;

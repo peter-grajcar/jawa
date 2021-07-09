@@ -98,7 +98,9 @@ namespace jasm
 
         inline void emit_bytecode(std::ostream &os) const override
         {
-            // TODO
+            write_big_endian<u1>(os, opcode_);
+            for (auto operand : operands_)
+                write_big_endian<u1>(os, operand);
         }
     };
 
