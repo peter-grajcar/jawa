@@ -1,9 +1,14 @@
 /**
  * @file builder_test.cpp
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
  * Copyright (c) 2021 Peter Grajcar
  */
 #include "class.hpp"
-#include "builder.hpp"
+#include "builder/builder.hpp"
 
 #define U2_HIGH(X) ((u1) ((X & 0xFF00u) >> 8u))
 #define U2_LOW(X) ((u1) (X & 0x00FFu))

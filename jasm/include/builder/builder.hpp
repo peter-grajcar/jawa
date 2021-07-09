@@ -1,5 +1,10 @@
 /**
  * @file builder.hpp
+ *
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
  * Copyright (c) 2021 Peter Grajcar
  */
 
@@ -7,7 +12,6 @@
 #define JAWA_BUILDER_HPP
 
 #include <vector>
-#include <list>
 
 #include "instruction.hpp"
 
@@ -31,6 +35,8 @@ namespace jasm
     class ClassBuilder
     {
     private:
+        std::vector<InsertionPoint> insertion_points_;
+        std::vector<InsertionPoint>::iterator current_insertion_point_;
 
     public:
         ClassBuilder() = default;
