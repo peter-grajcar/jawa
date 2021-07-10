@@ -12,6 +12,7 @@
 #define JAWA_TYPE_HPP
 
 #include <string>
+#include <vector>
 
 #include "byte_code.hpp"
 
@@ -41,7 +42,7 @@ namespace jasm
     using LongType = PrimitiveType<byte_code::LongTypePrefix>;
     using FloatType = PrimitiveType<byte_code::FloatTypePrefix>;
     using DoubleType = PrimitiveType<byte_code::DoubleTypePrefix>;
-
+    using VoidType = PrimitiveType<byte_code::VoidTypePrefix>;
 
     /**
      * Abstract type class.
@@ -136,8 +137,28 @@ namespace jasm
         explicit ArrayType(Type *element_type, size_t dim = 1) : element_type_(element_type),
                                                                  dimension_(dim)
         {
-            assert(dim != 0);
+            assert(element_type_ && dim != 0);
         }
+
+        char prefix() const override;
+
+        utf8 descriptor() const override;
+    };
+
+    class MethodSignatureType : public BaseType
+    {
+    private:
+        Type *return_type_;
+        std::vector<Type *> argument_types_;
+    public:
+        template <typename ...Args>
+        MethodSignatureType(Type *return_type, Args ...argument_types) : return_type_(return_type),
+                                                                         argument_types_{argument_types...}
+        {
+            assert(return_type_);
+        }
+
+        bool is_reference_type() const override;
 
         char prefix() const override;
 

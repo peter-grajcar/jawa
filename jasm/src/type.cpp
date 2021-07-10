@@ -50,4 +50,24 @@ namespace jasm
         return std::string(1, prefix());
     }
 
+    char MethodSignatureType::prefix() const
+    {
+        return '(';
+    }
+
+    utf8 MethodSignatureType::descriptor() const
+    {
+        std::ostringstream ss;
+        ss << '(';
+        for (Type *arg : argument_types_)
+            ss << arg->descriptor();
+        ss << ')';
+        ss << return_type_->descriptor();
+        return ss.str();
+    }
+
+    bool MethodSignatureType::is_reference_type() const
+    {
+        return false;
+    }
 }

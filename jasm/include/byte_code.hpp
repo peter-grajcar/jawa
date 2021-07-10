@@ -38,6 +38,7 @@ namespace jasm::byte_code
     constexpr char ClassTypePrefix = 'L';
     constexpr char ArrayTypePrefix = '[';
     constexpr char VariableTypePrefix = 'T';
+    constexpr char VoidTypePrefix = 'V';
 
     /**
      * Swaps endianness of the given value.

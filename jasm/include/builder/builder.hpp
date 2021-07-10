@@ -18,6 +18,7 @@
 
 #include "instruction.hpp"
 #include "class.hpp"
+#include "type.hpp"
 
 namespace jasm
 {
@@ -26,6 +27,9 @@ namespace jasm
     {
     private:
         std::vector<std::unique_ptr<Instruction>> code_;
+
+        friend class ClassBuilder;
+
     public:
 
         template <typename T, typename ...Args>
@@ -45,21 +49,47 @@ namespace jasm
     private:
         std::vector<BasicBlock> basic_blocks_;
         InsertionPoint current_insertion_point_;
+        CodeAttribute *current_code_;
+        Method *current_method_;
 
         std::map<utf8, u2> utf8_constants_;
+        std::map<utf8, u2> class_constants_;
 
+        utf8 class_name_;
         Class class_;
+
+        void init();
+
+        u2 add_utf8_constant(const utf8 &value);
+
+        u2 add_class_constant(const utf8 &class_name);
+
+        u2 add_name_and_type_constant(const utf8 &name, const Type &type);
+
+        u2 add_method_constant(const utf8 &class_name, const utf8 &method_name, const Type &type);
+
+        u2 add_field_constant(const utf8 &class_name, const utf8 &field_name, const Type &type);
 
     public:
         ClassBuilder(utf8 &class_name);
 
+        explicit ClassBuilder(const char *class_name);
+
         InsertionPoint create_basic_block();
+
+        InsertionPoint enter_constructor(const Type &type, u2 access_flags);
+
+        InsertionPoint enter_method(const utf8 &method_name, const Type &type, u2 access_flags);
+
+        void exit_method();
+
+        void set_insertion_point(InsertionPoint insertion_point);
 
         ClassBuilder &set_version(u2 major_version, u2 minor_version);
 
         ClassBuilder &set_access_flags(u2 access_flags);
 
-        ClassBuilder &add_access_flags(u2 access_flags);
+        ClassBuilder &add_access_flags(Class::AccessFlag access_flags);
 
         inline Class build()
         {

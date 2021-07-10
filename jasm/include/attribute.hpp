@@ -134,6 +134,12 @@ namespace jasm
             code_.emplace_back(std::make_unique<T>(args...));
         }
 
+        template <typename T>
+        inline void add_instruction(T &&inst)
+        {
+            code_.emplace_back(std::forward<T>(inst));
+        }
+
         inline std::vector<std::unique_ptr<Instruction>> &code()
         {
             return code_;

@@ -17,6 +17,36 @@ using namespace jasm;
 
 int main()
 {
+    ClassBuilder builder("HelloWorld");
+    builder.set_version(59, 0)
+            .set_access_flags(Class::ACC_PUBLIC);
+
+    ClassType str("java/lang/String");
+    ArrayType str_arr(&str, 1);
+    PrimitiveType void_type = VoidType();
+    MethodSignatureType main_signature(&void_type, &str_arr);
+    MethodSignatureType constructor_signature(&void_type);
+
+    builder.enter_constructor(constructor_signature, Method::ACC_PUBLIC);
+
+    builder.exit_method();
+
+    builder.enter_method("main", main_signature, Method::ACC_PUBLIC | Method::ACC_STATIC);
+    // TODO:
+    builder.exit_method();
+
+    Class clazz = builder.build();
+    std::cout << clazz;
+
+    std::ofstream os("jasm/test/classes/HelloWorld.class");
+    clazz.emit_bytecode(os);
+    os.close();
+
+    return 0;
+}
+
+int main_()
+{
     Class clazz(0, 59, Class::AccessFlag::ACC_PUBLIC);
 
     auto &pool = clazz.constant_pool();

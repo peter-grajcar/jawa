@@ -93,15 +93,15 @@ namespace jasm
             return 1 + operand_count_;
         }
 
-        inline void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const override
+        void jasm(std::ostream &os, const ConstantPool *pool) const override
         {
             os << std::setw(19) << mnemonic();
             for (u1 op : operands_)
-                os << " #" << (int) op;
+                os << " $" << (int) op;
             os << std::endl;
         }
 
-        inline void emit_bytecode(std::ostream &os) const override
+        void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, opcode_);
             for (auto operand : operands_)

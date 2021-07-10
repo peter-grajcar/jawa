@@ -111,14 +111,16 @@ namespace jasm
             return constant_pool_;
         }
 
-        inline void add_field(Field &&field)
+        inline Field &add_field(Field &&field)
         {
             fields_.emplace_back(std::forward<Field>(field));
+            return fields_.back();
         }
 
-        inline void add_method(Method &&method)
+        inline Method &add_method(Method &&method)
         {
             methods_.emplace_back(std::forward<Method>(method));
+            return methods_.back();
         }
 
         inline std::vector<Field> &fields()
