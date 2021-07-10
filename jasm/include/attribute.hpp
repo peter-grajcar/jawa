@@ -145,6 +145,26 @@ namespace jasm
             return code_;
         }
 
+        inline u2 locals_limit() const
+        {
+            return max_locals_;
+        }
+
+        inline u2 stack_limit() const
+        {
+            return max_stack_;
+        }
+
+        inline void set_locals_limit(u2 max_locals)
+        {
+            max_locals_ = max_locals;
+        }
+
+        inline void set_stack_limit(u2 max_stack)
+        {
+            max_stack_ = max_stack;
+        }
+
         void jasm(std::ostream &os, const ConstantPool *pool) const override;
 
         void emit_bytecode(std::ostream &os) const override;

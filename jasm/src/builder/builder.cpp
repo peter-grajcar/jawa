@@ -101,23 +101,35 @@ namespace jasm
     u2 ClassBuilder::add_method_constant(const utf8 &class_name, const utf8 &method_name, const Type &type)
     {
         u2 name_and_type_index = add_name_and_type_constant(method_name, type);
-        u2 class_index = add_class_constant(class_name_);
+        u2 class_index = add_class_constant(class_name);
         return class_.constant_pool_.make_constant<MethodRefConstant>(class_index, name_and_type_index);
     }
 
     u2 ClassBuilder::add_field_constant(const utf8 &class_name, const utf8 &field_name, const Type &type)
     {
         u2 name_and_type_index = add_name_and_type_constant(field_name, type);
-        u2 class_index = add_class_constant(class_name_);
+        u2 class_index = add_class_constant(class_name);
         return class_.constant_pool_.make_constant<FieldRefConstant>(class_index, name_and_type_index);
     }
 
-    ClassBuilder::InsertionPoint ClassBuilder::enter_constructor(const Type &type, u2 access_flags)
+    u2 ClassBuilder::add_string_constant(const utf8 &str)
+    {
+        auto search = string_constants_.find(str);
+        if (search != string_constants_.end())
+            return search->second;
+        u2 utf8_index = class_.constant_pool_.make_constant<Utf8Constant>(str);
+        u2 index = class_.constant_pool_.make_constant<StringConstant>(utf8_index);
+        string_constants_.insert({str, index});
+        return index;
+    }
+
+    ClassBuilder::InsertionPoint ClassBuilder::enter_constructor(const MethodSignatureType &type, u2 access_flags)
     {
         return enter_method("<init>", type, access_flags);
     }
 
-    ClassBuilder::InsertionPoint ClassBuilder::enter_method(const utf8 &method_name, const Type &type, u2 access_flags)
+    ClassBuilder::InsertionPoint
+    ClassBuilder::enter_method(const utf8 &method_name, const MethodSignatureType &type, u2 access_flags)
     {
         InsertionPoint insertion_point = create_basic_block();
         current_insertion_point_ = insertion_point;
@@ -132,17 +144,29 @@ namespace jasm
         current_method_->make_attribute<CodeAttribute>(code_attr_name, 0, 0);
         current_code_ = dynamic_cast<CodeAttribute *>(current_method_->attributes().back().get());
 
+        // TODO:
+        current_code_->set_locals_limit(1);
+
         return insertion_point;
     }
 
     void ClassBuilder::exit_method()
     {
+        u2 stack_size = 0;
+        u2 max_stack_size = 0;
         for (auto &basic_block : basic_blocks_) {
             for (auto &inst : basic_block.code_) {
+                stack_size -= inst->input_stack_operand_count();
+                stack_size += inst->output_stack_operand_count();
+
+                if (stack_size > max_stack_size)
+                    max_stack_size = stack_size;
+
                 current_code_->add_instruction(std::move(inst));
             }
         }
-        // TODO:
+        current_code_->set_stack_limit(max_stack_size);
+        basic_blocks_.clear();
     }
 
 }

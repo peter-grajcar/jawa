@@ -140,6 +140,11 @@ namespace jasm
             assert(element_type_ && dim != 0);
         }
 
+        inline const Type *element_type() const
+        {
+            return element_type_;
+        }
+
         char prefix() const override;
 
         utf8 descriptor() const override;
@@ -156,6 +161,16 @@ namespace jasm
                                                                          argument_types_{argument_types...}
         {
             assert(return_type_);
+        }
+
+        inline const Type *return_type() const
+        {
+            return return_type_;
+        }
+
+        inline const std::vector<Type *> &argument_types() const
+        {
+            return argument_types_;
         }
 
         bool is_reference_type() const override;

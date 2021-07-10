@@ -53,12 +53,34 @@ namespace jasm
         Method *current_method_;
 
         std::map<utf8, u2> utf8_constants_;
+        std::map<utf8, u2> string_constants_;
         std::map<utf8, u2> class_constants_;
 
         utf8 class_name_;
         Class class_;
 
         void init();
+
+    public:
+        ClassBuilder(utf8 &class_name);
+
+        explicit ClassBuilder(const char *class_name);
+
+        InsertionPoint create_basic_block();
+
+        InsertionPoint enter_constructor(const MethodSignatureType &type, u2 access_flags);
+
+        InsertionPoint enter_method(const utf8 &method_name, const MethodSignatureType &type, u2 access_flags);
+
+        void exit_method();
+
+        void set_insertion_point(InsertionPoint insertion_point);
+
+        ClassBuilder &set_version(u2 major_version, u2 minor_version);
+
+        ClassBuilder &set_access_flags(u2 access_flags);
+
+        ClassBuilder &add_access_flags(Class::AccessFlag access_flags);
 
         u2 add_utf8_constant(const utf8 &value);
 
@@ -70,26 +92,14 @@ namespace jasm
 
         u2 add_field_constant(const utf8 &class_name, const utf8 &field_name, const Type &type);
 
-    public:
-        ClassBuilder(utf8 &class_name);
+        u2 add_string_constant(const utf8 &str);
 
-        explicit ClassBuilder(const char *class_name);
-
-        InsertionPoint create_basic_block();
-
-        InsertionPoint enter_constructor(const Type &type, u2 access_flags);
-
-        InsertionPoint enter_method(const utf8 &method_name, const Type &type, u2 access_flags);
-
-        void exit_method();
-
-        void set_insertion_point(InsertionPoint insertion_point);
-
-        ClassBuilder &set_version(u2 major_version, u2 minor_version);
-
-        ClassBuilder &set_access_flags(u2 access_flags);
-
-        ClassBuilder &add_access_flags(Class::AccessFlag access_flags);
+        template <typename T, typename ...Args>
+        inline void make_instruction(Args ...args)
+        {
+            assert(current_insertion_point_);
+            current_insertion_point_->make_instruction<T>(args...);
+        }
 
         inline Class build()
         {
