@@ -8,7 +8,7 @@
  * Copyright (c) 2021 Peter Grajcar
  */
 #include "class.hpp"
-#include "builder/builder.hpp"
+#include "builder.hpp"
 
 #define U2_HIGH(X) ((u1) ((X & 0xFF00u) >> 8u))
 #define U2_LOW(X) ((u1) (X & 0x00FFu))

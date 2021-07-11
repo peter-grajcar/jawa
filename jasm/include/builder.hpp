@@ -80,8 +80,6 @@ namespace jasm
 
         ClassBuilder &set_access_flags(u2 access_flags);
 
-        ClassBuilder &add_access_flags(Class::AccessFlag access_flags);
-
         u2 add_utf8_constant(const utf8 &value);
 
         u2 add_class_constant(const utf8 &class_name);

@@ -8,7 +8,7 @@
  * Copyright (c) 2021 Peter Grajcar
  */
 
-#include <builder/builder.hpp>
+#include <builder.hpp>
 
 namespace jasm
 {
@@ -57,12 +57,6 @@ namespace jasm
     ClassBuilder &ClassBuilder::set_access_flags(u2 access_flags)
     {
         class_.access_flags_ = access_flags;
-        return *this;
-    }
-
-    ClassBuilder &ClassBuilder::add_access_flags(Class::AccessFlag access_flag)
-    {
-        class_.access_flags_ |= access_flag;
         return *this;
     }
 
