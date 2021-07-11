@@ -15,8 +15,8 @@
 #include <iostream>
 #include <fstream>
 
-#define U2_HIGH(X) ((u1) ((X & 0xFF00u) >> 8u))
-#define U2_LOW(X) ((u1) (X & 0x00FFu))
+#define U2_HIGH(X) ((jasm::u1) ((X & 0xFF00u) >> 8u))
+#define U2_LOW(X) ((jasm::u1) (X & 0x00FFu))
 #define U2_SPLIT(X) U2_HIGH(X), U2_LOW(X)
 
 namespace jasm::byte_code

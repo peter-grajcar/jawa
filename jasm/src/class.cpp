@@ -213,7 +213,7 @@ namespace jasm
             attr->add_attribute(std::move(code));
         } else {
             // skip unknown
-            std::cerr << "attribute " << attribute_name << "is not implemented" << std::endl;
+            std::cerr << "Warning: attribute " << attribute_name << "is not implemented." << std::endl;
             for (u4 i = 0; i < attribute_length; ++i) {
                 read_big_endian<u1>(is);
             }
@@ -255,8 +255,8 @@ namespace jasm
             }
             default:
                 // skip unimplemented instruction
-                std::cerr << "instruction " << std::hex << std::setw(2) << std::setfill('0')
-                          << opcode << " (" << InstructionMnemonics[opcode] << ") is not implemented"
+                std::cerr << "Warning: instruction " << std::hex << std::setw(2) << std::setfill('0')
+                          << opcode << " (" << InstructionMnemonics[opcode] << ") is not implemented."
                           << std::endl;
                 return 1;
         }

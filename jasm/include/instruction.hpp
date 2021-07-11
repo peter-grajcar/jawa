@@ -18,6 +18,8 @@
 #include "constant_pool.hpp"
 #include "mnemonics.hpp"
 
+#define JASM_SPECIALISATION(X) template <> void X::jasm(std::ostream &os, const ConstantPool *pool) const;
+
 namespace jasm
 {
 
@@ -314,6 +316,13 @@ namespace jasm
     //         - lookup switch instruction
     //         - table switch instruction
     //         - wide instruction
+
+
+    JASM_SPECIALISATION(InvokeVirtual)
+
+    JASM_SPECIALISATION(InvokeSpecial)
+
+    JASM_SPECIALISATION(GetStatic)
 
 }
 

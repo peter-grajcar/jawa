@@ -7,10 +7,12 @@
  *
  * Copyright (c) 2021 Peter Grajcar
  */
+
+#include <iostream>
+#include <ios>
+
 #include "class.hpp"
 #include "builder.hpp"
-
-
 
 using namespace jasm;
 
