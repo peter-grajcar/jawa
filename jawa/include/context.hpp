@@ -17,6 +17,7 @@
 #include "format.hpp"
 #include "error.hpp"
 #include "tables.hpp"
+#include "builder.hpp"
 
 namespace jawa
 {
@@ -41,6 +42,7 @@ namespace jawa
         loc_t loc_;
         tables tables_;
         std::locale locale_;
+        std::unique_ptr<jasm::ClassBuilder> builder_;
 
         void message_line(loc_t const &loc) const;
 
@@ -125,6 +127,24 @@ namespace jawa
          * @return true if the name corresponds to an existing type name, otherwise false.
          */
         bool is_type_name(const Name &name) const;
+
+        /**
+         * Returns current class builder.
+         *
+         * @return class builder.
+         */
+        inline jasm::ClassBuilder &class_builder()
+        {
+            return *builder_;
+        }
+
+        /**
+         * Creates a new class builder.
+         *
+         * @param class_name name of a new class.
+         * @return newly created class builder.
+         */
+        jasm::ClassBuilder &new_class_builder(Name class_name);
 
     };
 

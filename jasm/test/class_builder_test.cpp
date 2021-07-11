@@ -10,8 +10,7 @@
 #include "class.hpp"
 #include "builder.hpp"
 
-#define U2_HIGH(X) ((u1) ((X & 0xFF00u) >> 8u))
-#define U2_LOW(X) ((u1) (X & 0x00FFu))
+
 
 using namespace jasm;
 
@@ -33,8 +32,7 @@ int main()
 
     builder.enter_constructor(constructor_signature, Method::ACC_PUBLIC);
     builder.make_instruction<RefLoad0>();
-    builder.make_instruction<InvokeSpecial>(U2_HIGH(object_constructor),
-                                            U2_LOW(object_constructor));
+    builder.make_instruction<InvokeSpecial>(U2_SPLIT(object_constructor));
     builder.make_instruction<Return>();
     builder.exit_method();
 
@@ -43,9 +41,9 @@ int main()
     u2 println_method = builder.add_method_constant("java/io/PrintStream", "println", println_signature);
 
     builder.enter_method("main", main_signature, Method::ACC_PUBLIC | Method::ACC_STATIC);
-    builder.make_instruction<GetStatic>(U2_HIGH(out_field), U2_LOW(out_field));
+    builder.make_instruction<GetStatic>(U2_SPLIT(out_field));
     builder.make_instruction<LoadConst>(U2_LOW(message));
-    builder.make_instruction<InvokeVirtual>(U2_HIGH(println_method), U2_LOW(println_method));
+    builder.make_instruction<InvokeVirtual>(U2_SPLIT(println_method));
     builder.make_instruction<Return>();
     builder.exit_method();
 

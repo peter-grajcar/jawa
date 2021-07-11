@@ -138,8 +138,7 @@ namespace jasm
         current_method_->make_attribute<CodeAttribute>(code_attr_name, 0, 0);
         current_code_ = dynamic_cast<CodeAttribute *>(current_method_->attributes().back().get());
 
-        // TODO:
-        current_code_->set_locals_limit(1);
+        current_code_->set_locals_limit(1 + type.argument_types().size());
 
         return insertion_point;
     }

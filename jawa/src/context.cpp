@@ -59,4 +59,11 @@ namespace jawa
         return name == "Łańcuch" || name == "System";
     }
 
+    jasm::ClassBuilder &context::new_class_builder(Name class_name)
+    {
+        builder_ = std::make_unique<jasm::ClassBuilder>(class_name);
+        return *builder_;
+
+    }
+
 }

@@ -29,6 +29,7 @@
 #include "modifiers.hpp"
 #include "types.hpp"
 #include "operators.hpp"
+#include "builder.hpp"
 }
 
 /* parser.cpp */
@@ -489,12 +490,15 @@ MemberDecl: MethodOrFieldDecl
           | InterfaceDeclaration
           ;
 
-MethodOrFieldDecl: Type Identifier MethodOrFieldRest
+MethodOrFieldDecl: FieldDeclHead FieldDeclaratorsRest SEMIC
+                 | MethodDeclHead MethodDeclaratorRest
                  ;
 
-MethodOrFieldRest: FieldDeclaratorsRest SEMIC
-                 | MethodDeclaratorRest
-                 ;
+FieldDeclHead: Type Identifier
+             ;
+
+MethodDeclHead: Type Identifier
+              ;
 
 FieldDeclaratorsRest: VariableDeclaratorRest
                     | VariableDeclaratorRest FieldDeclaratorsRestTail
