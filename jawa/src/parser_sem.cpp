@@ -60,7 +60,9 @@ namespace jawa
         std::cout << "entering method " << method_name << std::endl;
         MethodTypeObs method_type = TYPE_TABLE.get_method_type(return_type, argument_types);
         if (is_main(ctx, method_name, return_type, argument_types)) {
-            BUILDER.enter_method("main", *method_type);
+            BUILDER.enter_method("main", *method_type,
+                                 jasm::Method::ACC_PUBLIC | jasm::Method::ACC_STATIC // <- temproary TODO: remove
+            );
         } else {
             BUILDER.enter_method(method_name, *method_type);
         }
@@ -69,6 +71,7 @@ namespace jawa
     void leave_method(context_t ctx)
     {
         std::cout << "leaving method" << std::endl;
+        BUILDER.make_instruction<jasm::Return>();
         BUILDER.leave_method();
     }
 

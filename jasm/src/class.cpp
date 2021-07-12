@@ -30,6 +30,9 @@ namespace jasm
         for (u2 i = 1; i < constant_pool_count; ++i) {
             u1 tag = read_big_endian<u1>(is);
             read_constant(is, tag);
+            // 8 byte constants take up two entries in the constant pool
+            if (tag == ConstantPool::CONSTANT_DOUBLE || tag == ConstantPool::CONSTANT_LONG)
+                ++i;
         }
 
         access_flags_ = read_big_endian<u2>(is);
@@ -105,12 +108,14 @@ namespace jasm
                 u4 high_bytes = read_big_endian<u4>(is);
                 u4 low_bytes = read_big_endian<u4>(is);
                 constant_pool_.make_constant<LongConstant>(high_bytes, low_bytes);
+                constant_pool_.make_constant<EmptyConstant>();
                 break;
             }
             case ConstantPool::CONSTANT_DOUBLE: {
                 u4 high_bytes = read_big_endian<u4>(is);
                 u4 low_bytes = read_big_endian<u4>(is);
                 constant_pool_.make_constant<DoubleConstant>(high_bytes, low_bytes);
+                constant_pool_.make_constant<EmptyConstant>();
                 break;
             }
             case ConstantPool::CONSTANT_CLASS: {
@@ -149,7 +154,7 @@ namespace jasm
                 break;
             }
             case ConstantPool::CONSTANT_METHOD_HANDLE: {
-                u2 reference_kind = read_big_endian<u2>(is);
+                u2 reference_kind = read_big_endian<u1>(is);
                 u2 reference_index = read_big_endian<u2>(is);
                 constant_pool_.make_constant<MethodHandleConstant>(reference_kind, reference_index);
                 break;
@@ -167,6 +172,7 @@ namespace jasm
                 break;
             }
             default:
+                std::cerr << "Error: invalid constant tag " << (int) tag << "." << std::endl;
                 assert(false);
         }
     }
@@ -194,6 +200,8 @@ namespace jasm
             u4 code_length = read_big_endian<u4>(is);
             for (u4 i = 0; i < code_length;) {
                 i += read_instruction(is, &code);
+                std::cout << code_length << ", " << i << std::endl;
+                assert(i <= code_length);
             }
 
             u2 exception_table_length = read_big_endian<u2>(is);
@@ -213,7 +221,7 @@ namespace jasm
             attr->add_attribute(std::move(code));
         } else {
             // skip unknown
-            std::cerr << "Warning: attribute " << attribute_name << "is not implemented." << std::endl;
+            std::cerr << "Warning: attribute " << attribute_name << " is not implemented." << std::endl;
             for (u4 i = 0; i < attribute_length; ++i) {
                 read_big_endian<u1>(is);
             }
@@ -256,7 +264,8 @@ namespace jasm
             default:
                 // skip unimplemented instruction
                 std::cerr << "Warning: instruction " << std::hex << std::setw(2) << std::setfill('0')
-                          << opcode << " (" << InstructionMnemonics[opcode] << ") is not implemented."
+                          << (int) opcode << " (" << (opcode <= 0xca ? InstructionMnemonics[opcode] : "")
+                          << ") is not implemented."
                           << std::endl;
                 return 1;
         }

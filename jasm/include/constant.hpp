@@ -312,10 +312,10 @@ namespace jasm
     class MethodHandleConstant : public Constant
     {
     private:
-        u2 reference_kind_;
+        u1 reference_kind_;
         u2 reference_index_;
     public:
-        MethodHandleConstant(u2 reference_kind, u2 reference_index)
+        MethodHandleConstant(u1 reference_kind, u2 reference_index)
                 : reference_kind_(reference_kind), reference_index_(reference_index) {};
 
         void jasm(std::ostream &os) const override
@@ -327,7 +327,7 @@ namespace jasm
         void emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, tag());
-            write_big_endian<u2>(os, reference_kind_);
+            write_big_endian<u1>(os, reference_kind_);
             write_big_endian<u2>(os, reference_index_);
         }
 
@@ -380,6 +380,25 @@ namespace jasm
         }
 
         u1 tag() const override;
+    };
+
+    class EmptyConstant : public Constant
+    {
+    public:
+        EmptyConstant() {};
+
+        void jasm(std::ostream &os) const override
+        {
+        }
+
+        void emit_bytecode(std::ostream &os) const override
+        {
+        }
+
+        u1 tag() const override
+        {
+            return 0;
+        };
     };
 
 }

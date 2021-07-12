@@ -15,16 +15,13 @@
 
 int main()
 {
-    std::ifstream is("jasm/test/classes/HelloWorld.class",
+    // std::ifstream is("jasm/test/classes/HelloWorld.class",
+    std::ifstream is("/Users/petergrajcar/Desktop/java/lang/String.class",
                      std::ios::in | std::ios::binary);
     jasm::Class clazz(is);
     is.close();
 
     std::cout << clazz;
-
-    std::ofstream os("jasm/test/classes/HelloWorld.copy.class");
-    clazz.emit_bytecode(os);
-    os.close();
 
     return 0;
 }

@@ -503,14 +503,14 @@ MemberDecl: MethodOrFieldDecl
           ;
 
 MethodOrFieldDecl: FieldDeclHead FieldDeclaratorsRest SEMIC
-                 | MethodDeclHead MethodDeclaratorRest          { leave_method(ctx); }
+                 | MethodDeclHead MethodDeclaratorRest                  { leave_method(ctx); }
                  ;
 
 FieldDeclHead: Type Identifier
              ;
 
-MethodDeclHead: Type Identifier FormalParameters Dims_opt Throws_opt { }
-              | VoidType Identifier FormalParameters Throws_opt      { enter_method(ctx, $2, $1, $3); }
+MethodDeclHead: Type Identifier FormalParameters Dims_opt Throws_opt    { }
+              | VoidType Identifier FormalParameters Throws_opt         { enter_method(ctx, $2, $1, $3); }
               ;
 
 FieldDeclaratorsRest: VariableDeclaratorRest

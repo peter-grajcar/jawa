@@ -25,6 +25,212 @@ namespace jasm
 
     using namespace byte_code;
 
+    constexpr u2 InstructionInfo[][3] = {
+            {0, 0, 0}, // 0x00 nop
+            {0, 0, 1}, // 0x01 aconst_null
+            {0, 0, 1}, // 0x02 iconst_m1
+            {0, 0, 1}, // 0x03 iconst_0
+            {0, 0, 1}, // 0x04 iconst_1
+            {0, 0, 1}, // 0x05 iconst_2
+            {0, 0, 1}, // 0x06 iconst_3
+            {0, 0, 1}, // 0x07 iconst_4
+            {0, 0, 1}, // 0x08 iconst_5
+            {0, 0, 1}, // 0x09 lconst_0
+            {0, 0, 1}, // 0x0a lconst_1
+            {0, 0, 1}, // 0x0b fconst_0
+            {0, 0, 1}, // 0x0c fconst_1
+            {0, 0, 1}, // 0x0d fconst_2
+            {0, 0, 1}, // 0x0e dconst_0
+            {0, 0, 1}, // 0x0f dconst_1
+            {1, 0, 1}, // 0x10 bipush
+            {2, 0, 1}, // 0x11 sipush
+            {1, 0, 1}, // 0x12 ldc
+            {2, 0, 1}, // 0x13 ldc_w
+            {2, 0, 1}, // 0x14 ldc2_w
+            {1, 0, 1}, // 0x15 iload
+            {1, 0, 1}, // 0x16 lload
+            {1, 0, 1}, // 0x17 fload
+            {1, 0, 1}, // 0x18 dload
+            {1, 0, 1}, // 0x19 aload
+            {0, 0, 1}, // 0x1a iload_0
+            {0, 0, 1}, // 0x1b iload_1
+            {0, 0, 1}, // 0x1c iload_2
+            {0, 0, 1}, // 0x1d iload_3
+            {0, 0, 1}, // 0x1e lload_0
+            {0, 0, 1}, // 0x1f lload_1
+            {0, 0, 1}, // 0x20 lload_2
+            {0, 0, 1}, // 0x21 lload_3
+            {0, 0, 1}, // 0x22 fload_0
+            {0, 0, 1}, // 0x23 fload_1
+            {0, 0, 1}, // 0x24 fload_2
+            {0, 0, 1}, // 0x25 fload_3
+            {0, 0, 1}, // 0x26 dload_0
+            {0, 0, 1}, // 0x27 dload_1
+            {0, 0, 1}, // 0x28 dload_2
+            {0, 0, 1}, // 0x29 dload_3
+            {0, 0, 1}, // 0x2a aload_0
+            {0, 0, 1}, // 0x2b aload_1
+            {0, 0, 1}, // 0x2c aload_2
+            {0, 0, 1}, // 0x2d aload_3
+            {0, 2, 1}, // 0x2e iaload
+            {0, 2, 1}, // 0x2f laload
+            {0, 2, 1}, // 0x30 faload
+            {0, 2, 1}, // 0x31 daload
+            {0, 2, 1}, // 0x32 aaload
+            {0, 2, 1}, // 0x33 baload
+            {0, 2, 1}, // 0x34 caload
+            {0, 2, 1}, // 0x35 saload
+            {1, 1, 0}, // 0x36 istore
+            {1, 1, 0}, // 0x37 lstore
+            {1, 1, 0}, // 0x38 fstore
+            {1, 1, 0}, // 0x39 dstore
+            {1, 1, 0}, // 0x3a astore
+            {0, 1, 0}, // 0x3b istore_0
+            {0, 1, 0}, // 0x3c istore_1
+            {0, 1, 0}, // 0x3d istore_2
+            {0, 1, 0}, // 0x3e istore_3
+            {0, 1, 0}, // 0x3f lstore_0
+            {0, 1, 0}, // 0x40 lstore_1
+            {0, 1, 0}, // 0x41 lstore_2
+            {0, 1, 0}, // 0x42 lstore_3
+            {0, 1, 0}, // 0x43 fstore_0
+            {0, 1, 0}, // 0x44 fstore_1
+            {0, 1, 0}, // 0x45 fstore_2
+            {0, 1, 0}, // 0x46 fstore_3
+            {0, 1, 0}, // 0x47 dstore_0
+            {0, 1, 0}, // 0x48 dstore_1
+            {0, 1, 0}, // 0x49 dstore_2
+            {0, 1, 0}, // 0x4a dstore_3
+            {0, 1, 0}, // 0x4b astore_0
+            {0, 1, 0}, // 0x4c astore_1
+            {0, 1, 0}, // 0x4d astore_2
+            {0, 1, 0}, // 0x4e astore_3
+            {0, 3, 0}, // 0x4f iastore
+            {0, 3, 0}, // 0x50 lastore
+            {0, 3, 0}, // 0x51 fastore
+            {0, 3, 0}, // 0x52 dastore
+            {0, 3, 0}, // 0x53 aastore
+            {0, 3, 0}, // 0x54 bastore
+            {0, 3, 0}, // 0x55 castore
+            {0, 3, 0}, // 0x56 sastore
+            {0, 1, 0}, // 0x57 pop
+            {0, 2, 0}, // 0x58 pop2
+            {0, 1, 2}, // 0x59 dup
+            {0, 2, 3}, // 0x5a dup_x1
+            {0, 3, 4}, // 0x5b dup_x2
+            {0, 2, 4}, // 0x5c dup2
+            {0, 3, 5}, // 0x5d dup2_x1
+            {0, 4, 6}, // 0x5e dup2_x2
+            {0, 2, 2}, // 0x5f swap
+            {0, 2, 1}, // 0x60 iadd
+            {0, 2, 1}, // 0x61 0x61
+            {0, 2, 1}, // 0x62 0x62
+            {0, 2, 1}, // 0x63 0x63
+            {0, 2, 1}, // 0x64 isub
+            {0, 2, 1}, // 0x65 lsub
+            {0, 2, 1}, // 0x66 fsub
+            {0, 2, 1}, // 0x67 dsub
+            {0, 2, 1}, // 0x68 imul
+            {0, 2, 1}, // 0x69 lmul
+            {0, 2, 1}, // 0x6a fmul
+            {0, 2, 1}, // 0x6b dmul
+            {0, 2, 1}, // 0x6c idiv
+            {0, 2, 1}, // 0x6d ldiv
+            {0, 2, 1}, // 0x6e fdiv
+            {0, 2, 1}, // 0x6f ddiv
+            {0, 2, 1}, // 0x70 irem
+            {0, 2, 1}, // 0x71 lrem
+            {0, 2, 1}, // 0x72 frem
+            {0, 2, 1}, // 0x73 drem
+            {0, 1, 1}, // 0x74 ineg
+            {0, 1, 1}, // 0x75 lneg
+            {0, 1, 1}, // 0x76 fneg
+            {0, 1, 1}, // 0x77 dneg
+            {0, 2, 1}, // 0x78 ishl
+            {0, 2, 1}, // 0x79 lshl
+            {0, 2, 1}, // 0x7a ishr
+            {0, 2, 1}, // 0x7b lshr
+            {0, 2, 1}, // 0x7c iushr
+            {0, 2, 1}, // 0x7d lushr
+            {0, 2, 1}, // 0x7e iand
+            {0, 2, 1}, // 0x7f land
+            {0, 2, 1}, // 0x80 ior
+            {0, 2, 1}, // 0x81 lor
+            {0, 2, 1}, // 0x82 ixor
+            {0, 2, 1}, // 0x83 lxor
+            {2, 0, 0}, // 0x84 iinc
+            {0, 1, 1}, // 0x85 i2l
+            {0, 1, 1}, // 0x86 i2f
+            {0, 1, 1}, // 0x87 i2d
+            {0, 1, 1}, // 0x88 l2i
+            {0, 1, 1}, // 0x89 l2f
+            {0, 1, 1}, // 0x8a l2d
+            {0, 1, 1}, // 0x8b f2i
+            {0, 1, 1}, // 0x8c f2l
+            {0, 1, 1}, // 0x8d f2d
+            {0, 1, 1}, // 0x8e d2i
+            {0, 1, 1}, // 0x8f d2l
+            {0, 1, 1}, // 0x90 d2f
+            {0, 1, 1}, // 0x91 i2b
+            {0, 1, 1}, // 0x92 i2c
+            {0, 1, 1}, // 0x93 i2s
+            {0, 2, 1}, // 0x94 lcmp
+            {0, 2, 1}, // 0x95 fcmpl
+            {0, 2, 1}, // 0x96 fcmpg
+            {0, 2, 1}, // 0x97 dcmpl
+            {0, 2, 1}, // 0x98 dcmpg
+            {2, 1, 0}, // 0x99 ifeq
+            {2, 1, 0}, // 0x9a ifne
+            {2, 1, 0}, // 0x9b iflt
+            {2, 1, 0}, // 0x9c ifge
+            {2, 1, 0}, // 0x9d ifgt
+            {2, 1, 0}, // 0x9e ifle
+            {2, 2, 0}, // 0x9f if_icmpeq
+            {2, 2, 0}, // 0xa0 if_icmpne
+            {2, 2, 0}, // 0xa1 if_icmplt
+            {2, 2, 0}, // 0xa2 if_icmpge
+            {2, 2, 0}, // 0xa3 if_icmpgt
+            {2, 2, 0}, // 0xa4 if_icmple
+            {2, 2, 0}, // 0xa5 if_acmpeq
+            {2, 2, 0}, // 0xa6 if_acmpne
+            {2, 0, 0}, // 0xa7 goto
+            {2, 0, 1}, // 0xa8 jsr
+            {1, 0, 0}, // 0xa9 ret
+            {0, 0, 0},  // 0xaa tableswitch
+            {0, 0, 0},  // axab lookupswitch
+            {0, 1, 0}, // 0xac ireturn
+            {0, 1, 0}, // 0xad lreturn
+            {0, 1, 0}, // 0xae freturn
+            {0, 1, 0}, // 0xaf dreturn
+            {0, 1, 0}, // 0xb0 areturn
+            {0, 0, 0}, // 0xb1 return
+            {2, 0, 1}, // 0xb2 getstatic
+            {2, 1, 0}, // 0xb3 putstatic
+            {2, 1, 1}, // 0xb4 getfield
+            {2, 2, 0}, // 0xb5 putfield
+            {2, 1, 0}, // 0xb6 invokevirtual
+            {2, 1, 0}, // 0xb7 invokespecial
+            {2, 0, 0}, // 0xb8 invokestatic
+            {4, 1, 0}, // 0xb9 invokeinterface
+            {4, 0, 0}, // 0xba invokedynamic
+            {2, 0, 1}, // 0xbb new
+            {1, 1, 1}, // 0xbc newarray
+            {2, 1, 1}, // 0xbd anewarray
+            {0, 1, 1}, // 0xbe arraylength
+            {0, 1, 1}, // 0xbf athrow
+            {2, 1, 1}, // 0xc0 checkcast
+            {2, 1, 1}, // 0xc1 instanceof
+            {0, 1, 0}, // 0xc2 monitorenter
+            {0, 1, 0}, // 0xc3 monitorexit
+            {0, 0, 0}, // 0xc4 wide
+            {3, 1, 1}, // 0xc5 multianewarray
+            {2, 1, 0}, // 0xc6 ifnull
+            {2, 1, 0}, // 0xc7 ifnonnull
+            {4, 0, 0}, // 0xc8 goto_w
+            {4, 0, 1}, // 0xc9 jsr_w
+            {0, 0, 0}, // 0xca breakpoint
+    };
+
     class Instruction
     {
     public:
@@ -63,7 +269,10 @@ namespace jasm
         std::array<u1, operand_count_> operands_;
     public:
         template <typename ...Args>
-        explicit SimpleInstruction(Args ...args) : operands_{args...} {};
+        explicit SimpleInstruction(Args ...args) : operands_{args...}
+        {
+            assert(opcode_ != 0xc4 && opcode_ != 0xaa && opcode_ != 0xab);
+        };
 
         inline u1 opcode() const override
         {
@@ -135,7 +344,7 @@ namespace jasm
     using CharArrayStore = SimpleInstruction<0x55, 0, 3, 0>;
     using CheckCast = SimpleInstruction<0xc0, 2, 1, 1>;
     using DoubleToFloat = SimpleInstruction<0x90, 0, 1, 1>;
-    using DoubleToInt = SimpleInstruction<0x82, 0, 1, 1>;
+    using DoubleToInt = SimpleInstruction<0x8e, 0, 1, 1>;
     using DoubleToLong = SimpleInstruction<0x8f, 0, 1, 1>;
     using DoubleAdd = SimpleInstruction<0x63, 0, 2, 1>;
     using DoubleArrayLoad = SimpleInstruction<0x31, 0, 2, 1>;
@@ -178,7 +387,7 @@ namespace jasm
     using FloatConst1 = SimpleInstruction<0xc, 0, 0, 1>;
     using FloatConst2 = SimpleInstruction<0xd, 0, 0, 1>;
     using FloatDiv = SimpleInstruction<0x6e, 0, 2, 1>;
-    using FloatLoad = SimpleInstruction<0x96, 1, 0, 1>;
+    using FloatLoad = SimpleInstruction<0x17, 1, 0, 1>;
     using FloatLoad0 = SimpleInstruction<0x22, 0, 0, 1>;
     using FloatLoad1 = SimpleInstruction<0x23, 0, 0, 1>;
     using FloatLoad2 = SimpleInstruction<0x24, 0, 0, 1>;
