@@ -31,6 +31,19 @@ namespace jasm
         return prefix() + class_name_ + ";";
     }
 
+    bool ClassType::operator==(const BaseType &type) const
+    {
+        auto class_type = dynamic_cast<const ClassType *>(&type);
+        if (!class_type)
+            return false;
+        return *this == *class_type;
+    }
+
+    bool ClassType::operator==(const ClassType &class_type) const
+    {
+        return class_type.class_name_ == class_name_;
+    }
+
     char ArrayType::prefix() const
     {
         return byte_code::ArrayTypePrefix;
@@ -43,6 +56,19 @@ namespace jasm
             ss << prefix();
         ss << element_type_->descriptor();
         return ss.str();
+    }
+
+    bool ArrayType::operator==(const BaseType &type) const
+    {
+        auto array_type = dynamic_cast<const ArrayType *>(&type);
+        if (!array_type)
+            return false;
+        return *this == *array_type;
+    }
+
+    bool ArrayType::operator==(const ArrayType &array_type) const
+    {
+        return array_type.element_type_ == element_type_ && array_type.dimension_ == dimension_;
     }
 
     utf8 BaseType::descriptor() const
@@ -59,7 +85,7 @@ namespace jasm
     {
         std::ostringstream ss;
         ss << '(';
-        for (Type *arg : argument_types_)
+        for (const Type *arg : argument_types_)
             ss << arg->descriptor();
         ss << ')';
         ss << return_type_->descriptor();
@@ -69,5 +95,27 @@ namespace jasm
     bool MethodSignatureType::is_reference_type() const
     {
         return false;
+    }
+
+    bool MethodSignatureType::operator==(const BaseType &type) const
+    {
+        auto method_type = dynamic_cast<const MethodSignatureType *>(&type);
+        if (!method_type)
+            return false;
+        return *this == *method_type;
+    }
+
+    bool MethodSignatureType::operator==(const MethodSignatureType &method_type) const
+    {
+        if (method_type.return_type_ != return_type_)
+            return false;
+        if (method_type.argument_types_.size() != argument_types_.size())
+            return false;
+        for (auto it1 = method_type.argument_types_.begin(), it2 = argument_types_.begin();
+             it2 < argument_types_.end(); ++it1, ++it2) {
+            if (*it1 != *it2)
+                return false;
+        }
+        return true;
     }
 }

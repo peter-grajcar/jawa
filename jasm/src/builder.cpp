@@ -143,7 +143,7 @@ namespace jasm
         return insertion_point;
     }
 
-    void ClassBuilder::exit_method()
+    void ClassBuilder::leave_method()
     {
         u2 stack_size = 0;
         u2 max_stack_size = 0;

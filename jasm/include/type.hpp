@@ -12,6 +12,7 @@
 #define JAWA_TYPE_HPP
 
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "byte_code.hpp"
@@ -62,6 +63,10 @@ namespace jasm
 
         virtual ~BaseType() = default;
 
+        virtual size_t hash() const = 0;
+
+        virtual bool operator==(const BaseType &type) const = 0;
+
         /**
          * Detrmines whether a type is a reference type.
          *
@@ -104,6 +109,20 @@ namespace jasm
         {
             return std::string(1, p);
         }
+
+        size_t hash() const override
+        {
+            return std::hash<char>{}(p);
+        }
+
+        bool operator==(const BaseType &type) const override
+        {
+            auto primitive_type = dynamic_cast<const PrimitiveType *>(&type);
+            if (!primitive_type)
+                return false;
+            return primitive_type->prefix() == p;
+        }
+
     };
 
     class ReferenceType : public BaseType
@@ -117,25 +136,35 @@ namespace jasm
     class ClassType : public ReferenceType
     {
     private:
-        std::string class_name_;
+        utf8 class_name_;
     public:
         explicit ClassType(const char *name) : class_name_(name) {}
 
-        explicit ClassType(std::string &name) : class_name_(name) {}
+        explicit ClassType(utf8 name) : class_name_(std::move(name)) {}
 
         char prefix() const override;
 
         utf8 descriptor() const override;
+
+        size_t hash() const override
+        {
+            return std::hash<std::string>{}(class_name_);
+        }
+
+        bool operator==(const BaseType &type) const override;
+
+        bool operator==(const ClassType &type) const;
+
     };
 
     class ArrayType : public ReferenceType
     {
     private:
         size_t dimension_;
-        Type *element_type_;
+        const Type *element_type_;
     public:
-        explicit ArrayType(Type *element_type, size_t dim = 1) : element_type_(element_type),
-                                                                 dimension_(dim)
+        explicit ArrayType(const Type *element_type, size_t dim = 1)
+                : element_type_(element_type), dimension_(dim)
         {
             assert(element_type_ && dim != 0);
         }
@@ -148,17 +177,33 @@ namespace jasm
         char prefix() const override;
 
         utf8 descriptor() const override;
+
+        size_t hash() const override
+        {
+            return element_type_->hash() ^ std::hash<size_t>{}(dimension_);
+        }
+
+        bool operator==(const BaseType &type) const override;
+
+        bool operator==(const ArrayType &type) const;
+
     };
 
     class MethodSignatureType : public BaseType
     {
     private:
-        Type *return_type_;
-        std::vector<Type *> argument_types_;
+        const Type *return_type_;
+        std::vector<const Type *> argument_types_;
     public:
         template <typename ...Args>
-        MethodSignatureType(Type *return_type, Args ...argument_types) : return_type_(return_type),
-                                                                         argument_types_{argument_types...}
+        MethodSignatureType(const Type *return_type, Args ...argument_types)
+                : return_type_(return_type), argument_types_{argument_types...}
+        {
+            assert(return_type_);
+        }
+
+        MethodSignatureType(const Type *return_type, std::vector<const Type *> &&argument_types)
+                : return_type_(return_type), argument_types_(argument_types)
         {
             assert(return_type_);
         }
@@ -168,7 +213,7 @@ namespace jasm
             return return_type_;
         }
 
-        inline const std::vector<Type *> &argument_types() const
+        inline const std::vector<const Type *> &argument_types() const
         {
             return argument_types_;
         }
@@ -178,6 +223,19 @@ namespace jasm
         char prefix() const override;
 
         utf8 descriptor() const override;
+
+        size_t hash() const override
+        {
+            size_t h = return_type_->hash();
+            for (auto &arg_type : argument_types_)
+                h ^= arg_type->hash();
+            return h;
+        }
+
+        bool operator==(const BaseType &type) const override;
+
+        bool operator==(const MethodSignatureType &type) const;
+
     };
 
     // TODO: class VariableType

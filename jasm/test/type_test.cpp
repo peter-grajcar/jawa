@@ -33,5 +33,17 @@ int main()
     std::cout << main_signature.descriptor() << std::endl;
 
 
+    std::cout << "int == void           " << (IntType() == VoidType()) << std::endl;
+    std::cout << "int == int            " << (IntType() == IntType()) << std::endl;
+    std::cout << "Thread == Thread      " << (ref == ClassType("java/lang/Thread")) << std::endl;
+    std::cout << "Thread == String      " << (ref == ClassType("java/lang/String")) << std::endl;
+    std::cout << "Thread == int         " << (ref == IntType()) << std::endl;
+    std::cout << "Thread[] == Thread[]  " << (ref_arr == ArrayType(&ref, 1)) << std::endl;
+    std::cout << "void(String[]) == void(String[])  " << (main_signature == MethodSignatureType(&void_type, &str_arr))
+              << std::endl;
+    std::cout << "void(String[]) == void(String)    " << (main_signature == MethodSignatureType(&void_type, &str))
+              << std::endl;
+
+
     return 0;
 }

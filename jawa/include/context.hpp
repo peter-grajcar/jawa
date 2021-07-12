@@ -40,7 +40,7 @@ namespace jawa
     {
     private:
         loc_t loc_;
-        tables tables_;
+        TypeTable type_table_;
         std::locale locale_;
         std::unique_ptr<jasm::ClassBuilder> builder_;
 

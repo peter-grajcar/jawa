@@ -23,6 +23,7 @@
 %code requires
 {
 #include <sstream>
+#include <iostream>
 
 #include "bisonflex.hpp"
 #include "context.hpp"
@@ -30,6 +31,8 @@
 #include "types.hpp"
 #include "operators.hpp"
 #include "builder.hpp"
+#include "parser_sem.hpp"
+#include "tables.hpp"
 }
 
 /* parser.cpp */
@@ -159,6 +162,7 @@ using namespace jawa;
 
 %type<Name>                 Identifier Name
 %type<NameList>             NameList
+%type<TypeObs>              Type PrimitiveType ReferenceType
 
 %%
 
@@ -206,7 +210,7 @@ TypeDeclarations: TypeDeclaration
                 | TypeDeclarations TypeDeclaration
                 ;
 
-TypeDeclaration: ClassOrInterfaceDeclaration
+TypeDeclaration: ClassOrInterfaceDeclaration { leave_class(ctx); }
                | SEMIC
                ;
 
@@ -222,8 +226,11 @@ InterfaceDeclaration: NormalInterfaceDeclaration
                     | AnnotationTypeDeclaration
                     ;
 
-NormalClassDeclaration: CLASS Identifier TypeParameters_opt ClassExtends_opt Implements_opt ClassBody
+NormalClassDeclaration: NormalClassDeclarationHead ClassBody
                       ;
+
+NormalClassDeclarationHead: CLASS Identifier TypeParameters_opt ClassExtends_opt Implements_opt { enter_class(ctx, $2); }
+                          ;
 
 EnumDeclaration: ENUM Identifier Implements_opt EnumBody
                ;
@@ -483,7 +490,6 @@ ClassBodyDeclaration: SEMIC
                     ;
 
 MemberDecl: MethodOrFieldDecl
-          | VOID Identifier VoidMethodDeclaratorRest
           | Identifier ConstructorDeclaratorRest
           | GenericMethodOrConstructorDecl
           | ClassDeclaration
@@ -497,7 +503,8 @@ MethodOrFieldDecl: FieldDeclHead FieldDeclaratorsRest SEMIC
 FieldDeclHead: Type Identifier
              ;
 
-MethodDeclHead: Type Identifier
+MethodDeclHead: Type Identifier FormalParameters Dims_opt Throws_opt { std::cout << "method " << $2 << std::endl; }
+              | VOID Identifier FormalParameters Throws_opt { std::cout << "void method " << $2 << std::endl; }
               ;
 
 FieldDeclaratorsRest: VariableDeclaratorRest
@@ -508,8 +515,8 @@ FieldDeclaratorsRestTail: COMMA VariableDeclarator
                         | FieldDeclaratorsRestTail COMMA VariableDeclarator
                         ;
 
-MethodDeclaratorRest: FormalParameters Dims_opt Throws_opt Block
-                    | FormalParameters Dims_opt Throws_opt SEMIC
+MethodDeclaratorRest: Block
+                    | SEMIC
                     ;
 
 Throws_opt: %empty
@@ -518,10 +525,6 @@ Throws_opt: %empty
 
 Throws: THROWS NameList
       ;
-
-VoidMethodDeclaratorRest: FormalParameters Throws_opt Block
-                        | FormalParameters Throws_opt SEMIC
-                        ;
 
 ConstructorDeclaratorRest: FormalParameters Throws_opt Block
                          ;

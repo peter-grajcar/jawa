@@ -36,7 +36,7 @@ int main()
     builder.make_instruction<RefLoad0>();
     builder.make_instruction<InvokeSpecial>(U2_SPLIT(object_constructor));
     builder.make_instruction<Return>();
-    builder.exit_method();
+    builder.leave_method();
 
     u2 message = builder.add_string_constant("Hello, World!");
     u2 out_field = builder.add_field_constant("java/lang/System", "out", print_stream);
@@ -47,7 +47,7 @@ int main()
     builder.make_instruction<LoadConst>(U2_LOW(message));
     builder.make_instruction<InvokeVirtual>(U2_SPLIT(println_method));
     builder.make_instruction<Return>();
-    builder.exit_method();
+    builder.leave_method();
 
     Class clazz = builder.build();
     std::cout << clazz;
