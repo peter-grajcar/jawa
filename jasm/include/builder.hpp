@@ -103,6 +103,11 @@ namespace jasm
         {
             return std::move(class_);
         }
+
+        inline utf8 class_name() const
+        {
+            return class_name_;
+        }
     };
 
 }

@@ -16,9 +16,9 @@
 namespace jawa
 {
 
-    void enter_class(context *ctx, Name &class_name);
+    void enter_class(context_t ctx, const Name &class_name);
 
-    void leave_class(context *ctx);
+    void leave_class(context_t ctx);
 
     struct MethodSignature
     {
@@ -29,9 +29,13 @@ namespace jawa
         // MethodSignature() : name(), type() {};
     };
 
-    void enter_method(context *ctx, MethodSignature &signature);
+    void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types);
 
-    void leave_method(context *ctx);
+    void leave_method(context_t ctx);
+
+    TypeObs find_class(context_t ctx, const Name &name);
+
+    void generate_default_constructor(context_t ctx);
 
 }
 

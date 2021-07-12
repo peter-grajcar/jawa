@@ -21,6 +21,13 @@ namespace jawa
     using TypeObs = const jasm::Type *;
     using VoidTypeObs = const jasm::VoidType *;
     using IntTypeObs = const jasm::IntType *;
+    using ByteTypeObs = const jasm::ByteType *;
+    using CharTypeObs = const jasm::CharType *;
+    using ShortTypeObs = const jasm::ShortType *;
+    using LongTypeObs = const jasm::LongType *;
+    using FloatTypeObs = const jasm::FloatType *;
+    using DoubleTypeObs = const jasm::DoubleType *;
+    using BooleanTypeObs = const jasm::BooleanType *;
     using MethodTypeObs = const jasm::MethodSignatureType *;
     using TypeObsArray = std::vector<TypeObs>;
     using ClassTypeObs = const jasm::ClassType *;
@@ -36,6 +43,13 @@ namespace jawa
 
         jasm::VoidType void_type_;
         jasm::IntType int_type_;
+        jasm::BooleanType boolean_type_;
+        jasm::ShortType short_type_;
+        jasm::LongType long_type_;
+        jasm::ByteType byte_type_;
+        jasm::FloatType float_type_;
+        jasm::DoubleType double_type_;
+        jasm::CharType char_type_;
         std::unordered_set<jasm::MethodSignatureType, type_hasher_t> method_types_;
         std::unordered_set<jasm::ArrayType, type_hasher_t> array_types_;
         std::unordered_set<jasm::ClassType, type_hasher_t> class_types_;
@@ -46,6 +60,20 @@ namespace jawa
         VoidTypeObs get_void_type() const { return &void_type_; }
 
         IntTypeObs get_int_type() const { return &int_type_; }
+
+        ByteTypeObs get_byte_type() const { return &byte_type_; }
+
+        ShortTypeObs get_short_type() const { return &short_type_; }
+
+        CharTypeObs get_char_type() const { return &char_type_; }
+
+        LongTypeObs get_long_type() const { return &long_type_; }
+
+        FloatTypeObs get_float_type() const { return &float_type_; }
+
+        DoubleTypeObs get_double_type() const { return &double_type_; }
+
+        BooleanTypeObs get_boolean_type() const { return &boolean_type_; }
 
         MethodTypeObs get_method_type(TypeObs return_type, TypeObsArray arguments)
         {

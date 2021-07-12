@@ -1,5 +1,5 @@
 /**
- * @file context.hpp
+ * @file Context.hpp
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -34,9 +34,9 @@ namespace jawa
     };
 
     /**
-     * A class for storing the compiler context.
+     * A class for storing the compiler Context.
      */
-    class context
+    class Context
     {
     private:
         loc_t loc_;
@@ -47,7 +47,7 @@ namespace jawa
         void message_line(loc_t const &loc) const;
 
     public:
-        context() : locale_("pl_PL.UTF-8") {}
+        Context() : locale_("pl_PL.UTF-8") {}
 
         /**
          * Returns current location of the parser.
@@ -146,7 +146,18 @@ namespace jawa
          */
         jasm::ClassBuilder &new_class_builder(Name class_name);
 
+        /**
+         *
+         * @return reference to the type table.
+         */
+        inline TypeTable &type_table()
+        {
+            return type_table_;
+        }
+
     };
+
+    using context_t = Context *;
 
 }
 

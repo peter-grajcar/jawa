@@ -200,12 +200,16 @@ namespace jasm
                 : return_type_(return_type), argument_types_{argument_types...}
         {
             assert(return_type_);
+            for (auto arg : argument_types_)
+                assert(arg);
         }
 
         MethodSignatureType(const Type *return_type, std::vector<const Type *> &&argument_types)
                 : return_type_(return_type), argument_types_(argument_types)
         {
             assert(return_type_);
+            for (auto arg : argument_types_)
+                assert(arg);
         }
 
         inline const Type *return_type() const

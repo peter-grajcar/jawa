@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    context ctx{};
+    Context ctx{};
 
     FILE *iff = fopen(argv[1], "r");
     if (!iff) {

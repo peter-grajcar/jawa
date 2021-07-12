@@ -1,5 +1,5 @@
 /**
- * @file context.cpp
+ * @file Context.cpp
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -28,7 +28,7 @@ namespace jawa
 
     }
 
-    void context::message_line(loc_t const &loc) const
+    void Context::message_line(loc_t const &loc) const
     {
         std::cerr << ' ' << std::setw(5) << loc.line << " | "
                   << jawa::line_buffer.str() << std::endl
@@ -48,18 +48,18 @@ namespace jawa
         std::cerr << std::endl;
     }
 
-    bool context::no_spaces_between(const loc_t &lhs, const loc_t &rhs) const
+    bool Context::no_spaces_between(const loc_t &lhs, const loc_t &rhs) const
     {
         return lhs.column_end == rhs.column_start;
     }
 
-    bool context::is_type_name(const Name &name) const
+    bool Context::is_type_name(const Name &name) const
     {
         // TODO: implement this method
         return name == "Łańcuch" || name == "System";
     }
 
-    jasm::ClassBuilder &context::new_class_builder(Name class_name)
+    jasm::ClassBuilder &Context::new_class_builder(Name class_name)
     {
         builder_ = std::make_unique<jasm::ClassBuilder>(class_name);
         return *builder_;

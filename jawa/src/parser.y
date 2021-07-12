@@ -44,7 +44,7 @@ using namespace jawa;
 }
 
 %param {yyscan_t yyscanner}		// the name yyscanner is enforced by Flex
-%param {jawa::context *ctx}
+%param {jawa::context_t ctx}
 
 %start CompilationUnit
 
@@ -162,17 +162,20 @@ using namespace jawa;
 
 %type<Name>                 Identifier Name
 %type<NameList>             NameList
-%type<TypeObs>              Type PrimitiveType ReferenceType
+%type<TypeObs>              Type VoidType PrimitiveType ReferenceType NumericType IntegralType
+%type<TypeObs>              FloatingPointType ClassOrInterfaceType ArrayType
+%type<TypeObsArray>         FormalParameters FormalParameterDecls_opt FormalParameterDecls
+%type<size_t>               Dims
 
 %%
 
 /* Identifiers */
 
-Identifier: IDF             { $$ = $1; }
+Identifier: IDF                 { $$ = $1; }
           ;
 
-Name: Identifier            { $$ = $1;  }
-    | Name DOT Identifier   { $$ = $1 + "/" + $3; }
+Name: Identifier                { $$ = $1;  }
+    | Name DOT Identifier       { $$ = $1 + "/" + $3; }
     ;
 
 NameList: Name                  { $$.push_back($1); }
@@ -264,27 +267,30 @@ Implements: IMPLEMENTS TypeList
 
 /* Types */
 
-Type: PrimitiveType
-    | ReferenceType
+VoidType: VOID                  { $$ = ctx->type_table().get_void_type(); }
+        ;
+
+Type: PrimitiveType             { $$ = $1; }
+    | ReferenceType             { $$ = $1; }
     ;
 
-PrimitiveType: NumericType
-             | BOOLEAN
+PrimitiveType: NumericType      { $$ = $1; }
+             | BOOLEAN          { $$ = ctx->type_table().get_boolean_type(); }
              ;
 
-NumericType: IntegralType
-           | FloatingPointType
+NumericType: IntegralType       { $$ = $1; }
+           | FloatingPointType  { $$ = $1; }
            ;
 
-IntegralType: BYTE
-            | SHORT
-            | INT
-            | LONG
-            | CHAR
+IntegralType: BYTE              { $$ = ctx->type_table().get_byte_type(); }
+            | SHORT             { $$ = ctx->type_table().get_short_type(); }
+            | INT               { $$ = ctx->type_table().get_int_type(); }
+            | LONG              { $$ = ctx->type_table().get_long_type(); }
+            | CHAR              { $$ = ctx->type_table().get_char_type(); }
             ;
 
-FloatingPointType: FLOAT
-                 | DOUBLE
+FloatingPointType: FLOAT        { $$ = ctx->type_table().get_float_type(); }
+                 | DOUBLE       { $$ = ctx->type_table().get_double_type(); }
                  ;
 
 ReferenceType: ClassOrInterfaceType
@@ -314,7 +320,7 @@ TypeDeclSpecifierHead: Name TypeArguments DOT
                      ;
 
 ArrayType: PrimitiveType Dims
-         | Name Dims
+         | Name Dims                { $$ = ctx->type_table().get_array_type(find_class(ctx, $1), $2); }
          | TypeDeclSpecifier Dims
          ;
 
@@ -329,8 +335,8 @@ Dims_opt: %empty
         | Dims
         ;
 
-Dims: Dim
-    | Dims Dim
+Dims: Dim          { $$ = 1u; }
+    | Dims Dim     { $$ = $1 + 1u; }
     ;
 
 /* Type Arguments */
@@ -497,14 +503,14 @@ MemberDecl: MethodOrFieldDecl
           ;
 
 MethodOrFieldDecl: FieldDeclHead FieldDeclaratorsRest SEMIC
-                 | MethodDeclHead MethodDeclaratorRest
+                 | MethodDeclHead MethodDeclaratorRest          { leave_method(ctx); }
                  ;
 
 FieldDeclHead: Type Identifier
              ;
 
-MethodDeclHead: Type Identifier FormalParameters Dims_opt Throws_opt { std::cout << "method " << $2 << std::endl; }
-              | VOID Identifier FormalParameters Throws_opt { std::cout << "void method " << $2 << std::endl; }
+MethodDeclHead: Type Identifier FormalParameters Dims_opt Throws_opt { }
+              | VoidType Identifier FormalParameters Throws_opt      { enter_method(ctx, $2, $1, $3); }
               ;
 
 FieldDeclaratorsRest: VariableDeclaratorRest
@@ -533,7 +539,7 @@ GenericMethodOrConstructorDecl: TypeParameters GenericMethodOrConstructorRest
                               ;
 
 GenericMethodOrConstructorRest: Type Identifier MethodDeclaratorRest
-                              | VOID Identifier MethodDeclaratorRest
+                              | VoidType Identifier MethodDeclaratorRest
                               | Identifier ConstructorDeclaratorRest
                               ;
 
@@ -552,7 +558,7 @@ InterfaceBodyDeclaration: SEMIC
                         ;
 
 InterfaceMemberDecl: InterfaceMethodOrFieldDecl
-                   | VOID Identifier VoidInterfaceMethodDeclaratorRest
+                   | VoidType Identifier VoidInterfaceMethodDeclaratorRest
                    | InterfaceGenericMethodDecl
                    | ClassDeclaration
                    | InterfaceDeclaration
@@ -581,26 +587,21 @@ InterfaceMethodDeclaratorRest: FormalParameters Dims_opt Throws_opt SEMIC
 VoidInterfaceMethodDeclaratorRest: FormalParameters Throws_opt SEMIC
 
 InterfaceGenericMethodDecl: TypeParameters Type Identifier InterfaceMethodDeclaratorRest
-                          | TypeParameters VOID Identifier InterfaceMethodDeclaratorRest
+                          | TypeParameters VoidType Identifier InterfaceMethodDeclaratorRest
                           ;
 
 
-FormalParameters: LPAR FormalParameterDecls_opt RPAR
+FormalParameters: LPAR FormalParameterDecls_opt RPAR    { $$ = $2; }
                 ;
 
-FormalParameterDecls_opt: %empty
-                        | FormalParameterDecls
+FormalParameterDecls_opt: %empty                        { }
+                        | FormalParameterDecls          { $$ = $1; }
                         ;
 
-FormalParameterDecls: Modifiers_opt Type FormalParameterDeclsRest
+FormalParameterDecls: Modifiers_opt Type VariableDeclaratorId                            { $$.push_back($2); }
+                    | Modifiers_opt Type VariableDeclaratorId COMMA FormalParameterDecls { $$.push_back($2); $$ = $5; }
+                    | Modifiers_opt Type DOTS VariableDeclaratorId                       { /* TODO */ }
                     ;
-
-FormalParameterDeclsRest: VariableDeclaratorId
-                        | VariableDeclaratorId COMMA FormalParameterDecls
-                        | DOTS VariableDeclaratorId
-                        ;
-
-
 
 VariableDeclaratorId: Identifier Dims_opt
                     ;
@@ -1045,7 +1046,7 @@ PrimaryNoName: Literal
              | VOID DOT CLASS
              | Name LBRA ExpressionNoName RBRA
              | Name LBRA Name RBRA
-             | Name Arguments
+             | Name Arguments  { std::cout << "invocation of method " << $1 << std::endl; }
              | Name DOT CLASS
              | Name DOT ExplicitGenericInvocation
              | Name DOT THIS
