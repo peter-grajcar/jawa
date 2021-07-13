@@ -12,7 +12,9 @@
 #define JAWA_TABLES_HPP
 
 #include <unordered_set>
+#include <unordered_map>
 
+#include "types.hpp"
 #include "type.hpp"
 
 namespace jawa
@@ -92,6 +94,52 @@ namespace jawa
 
     };
 
+
+    struct JawaMethodSignature
+    {
+        MethodTypeObs type;
+        Name name;
+    };
+
+    struct JawaMethod
+    {
+        JawaMethodSignature signature;
+
+        size_t hash() const;
+
+        bool operator==(const JawaMethod &field) const;
+    };
+
+    struct JawaField
+    {
+        TypeObs type;
+        Name name;
+
+        size_t hash() const;
+
+        bool operator==(const JawaField &field) const;
+    };
+
+    class JawaClass
+    {
+    private:
+        Name name_;
+        std::unordered_map<JawaMethodSignature, JawaMethod> methods_;
+        std::unordered_map<Name, JawaField> fields_;
+    public:
+
+        size_t hash() const;
+
+        bool operator==(const JawaClass &clazz) const;
+    };
+
+    class ClassTable
+    {
+    private:
+        std::unordered_map<Name, JawaClass> classes_;
+    public:
+        void load_class(const Name &fully_qualified_name);
+    };
 
 }
 

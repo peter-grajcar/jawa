@@ -166,6 +166,14 @@ using namespace jawa;
 %type<TypeObs>              FloatingPointType ClassOrInterfaceType ArrayType
 %type<TypeObsArray>         FormalParameters FormalParameterDecls_opt FormalParameterDecls
 %type<size_t>               Dims
+%type<ExpressionArray>      Arguments Expressions_opt Expressions
+%type<Expression>           ExpressionNoName AssignmentExpressionNoName ConditionalExpressionNoName
+%type<Expression>           InclusiveOrExpressionNoName ExclusiveOrExpressionNoName
+%type<Expression>           AndExpressionNoName EqualityExpressionNoName RelationalExpressionNoName
+%type<Expression>           ShiftExpressionNoName AdditiveExpressionNoName MultiplicativeExpressionNoName
+%type<Expression>           CastExpressionNoName UnaryExpressionNotPlusMinusNoName PreIncDecExpression
+%type<Expression>           UnaryExpressionNoName PostIncDecExpression PostfixExpressionNoName
+%type<Expression>           ConstantExpressionNoName PrimaryNoName Literal
 
 %%
 
@@ -866,12 +874,14 @@ Resource: Modifiers_opt Type VariableDeclaratorId ASGN ExpressionNoName
 
 /* Expressions */
 
-Expressions_opt: %empty | Expressions ;
+Expressions_opt: %empty         { }
+               | Expressions    { $$ = $1; }
+               ;
 
-Expressions: ExpressionNoName
-           | Name
-           | Expressions COMMA ExpressionNoName
-           | Expressions COMMA Name
+Expressions: ExpressionNoName                   { $$.push_back($1); }
+           | Name                               { /* TODO */ }
+           | Expressions COMMA ExpressionNoName { $$ = $1; $$.push_back($3); }
+           | Expressions COMMA Name             { /* TODO */ }
            ;
 
 ExpressionNoName_opt: %empty
@@ -1046,7 +1056,7 @@ PrimaryNoName: Literal
              | VOID DOT CLASS
              | Name LBRA ExpressionNoName RBRA
              | Name LBRA Name RBRA
-             | Name Arguments  { std::cout << "invocation of method " << $1 << std::endl; }
+             | Name Arguments  { invoke_method(ctx, $1, $2); }
              | Name DOT CLASS
              | Name DOT ExplicitGenericInvocation
              | Name DOT THIS
@@ -1058,7 +1068,7 @@ PrimaryNoName: Literal
 Literal: INT_LIT
        | FLOAT_LIT
        | CHAR_LIT
-       | STR_LIT
+       | STR_LIT        { $$ = load_string_literal(ctx, $1); }
        | TRUE
        | FALSE
        | NULL
@@ -1066,7 +1076,7 @@ Literal: INT_LIT
 
 Arguments_opt: %empty | Arguments ;
 
-Arguments: LPAR Expressions_opt RPAR
+Arguments: LPAR Expressions_opt RPAR  { $$ = $2; }
          ;
 
 SuperSuffix: Arguments

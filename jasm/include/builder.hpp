@@ -62,7 +62,7 @@ namespace jasm
         void init();
 
     public:
-        ClassBuilder(utf8 &class_name);
+        ClassBuilder(utf8 class_name);
 
         explicit ClassBuilder(const char *class_name);
 

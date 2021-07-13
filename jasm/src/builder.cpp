@@ -9,6 +9,7 @@
  */
 
 #include <builder.hpp>
+#include <utility>
 
 namespace jasm
 {
@@ -21,8 +22,8 @@ namespace jasm
         return length;
     }
 
-    ClassBuilder::ClassBuilder(utf8 &class_name)
-            : current_insertion_point_(), class_name_(class_name), current_code_(), current_method_()
+    ClassBuilder::ClassBuilder(utf8 class_name)
+            : current_insertion_point_(), class_name_(std::move(class_name)), current_code_(), current_method_()
     {
         init();
     }

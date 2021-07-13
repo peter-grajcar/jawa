@@ -94,4 +94,17 @@ namespace jawa
         BUILDER.leave_method();
     }
 
+    Expression load_string_literal(context_t ctx, const Name &name)
+    {
+        jasm::u2 str_index = BUILDER.add_string_constant(name);
+        // TODO: check if str_index <= 0xFF, otherwise use different instruction
+        BUILDER.make_instruction<jasm::LoadConst>(U2_LOW(str_index));
+        return Expression(TYPE_TABLE.get_class_type("java/lang/String"));
+    }
+
+    void invoke_method(context_t ctx, const Name &method_name, const ExpressionArray &arguments)
+    {
+        std::cout << "invoking method " << method_name << std::endl;
+    }
+
 }

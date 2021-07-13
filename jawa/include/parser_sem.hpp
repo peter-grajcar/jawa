@@ -20,14 +20,16 @@ namespace jawa
 
     void leave_class(context_t ctx);
 
-    struct MethodSignature
+    struct Expression
     {
-        jasm::MethodSignatureType type;
-        Name name;
+        TypeObs type;
 
-        // TODO: constructor
-        // MethodSignature() : name(), type() {};
+        Expression() : type(nullptr) {};
+
+        explicit Expression(TypeObs type) : type(type) {};
     };
+
+    using ExpressionArray = std::vector<Expression>;
 
     void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types);
 
@@ -36,6 +38,10 @@ namespace jawa
     TypeObs find_class(context_t ctx, const Name &name);
 
     void generate_default_constructor(context_t ctx);
+
+    Expression load_string_literal(context_t ctx, const Name &name);
+
+    void invoke_method(context_t ctx, const Name &method_name, const ExpressionArray &arguments);
 
 }
 
