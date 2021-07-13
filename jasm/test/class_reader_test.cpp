@@ -16,7 +16,7 @@
 int main()
 {
     // std::ifstream is("jasm/test/classes/HelloWorld.class",
-    std::ifstream is("/Users/petergrajcar/Desktop/java/lang/String.class",
+    std::ifstream is("/Users/petergrajcar/Desktop/java/io/PrintStream.class",
                      std::ios::in | std::ios::binary);
     jasm::Class clazz(is);
     is.close();

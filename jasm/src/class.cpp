@@ -200,7 +200,6 @@ namespace jasm
             u4 code_length = read_big_endian<u4>(is);
             for (u4 i = 0; i < code_length;) {
                 i += read_instruction(is, &code);
-                std::cout << code_length << ", " << i << std::endl;
                 assert(i <= code_length);
             }
 
@@ -228,42 +227,219 @@ namespace jasm
         }
     }
 
+#define CASE_SIMPLE_INST(OPCODE) case OPCODE:\
+        code->make_instruction<SimpleInstruction<OPCODE>>(&is); \
+        return 1 + InstructionInfo[opcode][0];
+
     u4 Class::read_instruction(std::istream &is, CodeAttribute *code)
     {
         u1 opcode = read_big_endian<u1>(is);
         switch (opcode) {
-            case 0x12: {
-                u1 index = read_big_endian<u1>(is);
-                code->make_instruction<LoadConst>(index);
-                return 2;
-            }
-            case 0x2a:
-                code->make_instruction<RefLoad0>();
-                return 1;
-            case 0xb1:
-                code->make_instruction<Return>();
-                return 1;
-            case 0xb2: {
-                u1 index_byte_1 = read_big_endian<u1>(is);
-                u1 index_byte_2 = read_big_endian<u1>(is);
-                code->make_instruction<GetStatic>(index_byte_1, index_byte_2);
-                return 3;
-            }
-            case 0xb6: {
-                u1 index_byte_1 = read_big_endian<u1>(is);
-                u1 index_byte_2 = read_big_endian<u1>(is);
-                code->make_instruction<InvokeVirtual>(index_byte_1, index_byte_2);
-                return 3;
-            }
-            case 0xb7: {
-                u1 index_byte_1 = read_big_endian<u1>(is);
-                u1 index_byte_2 = read_big_endian<u1>(is);
-                code->make_instruction<InvokeSpecial>(index_byte_1, index_byte_2);
-                return 3;
-            }
+            CASE_SIMPLE_INST(0x00)
+            CASE_SIMPLE_INST(0x01)
+            CASE_SIMPLE_INST(0x02)
+            CASE_SIMPLE_INST(0x03)
+            CASE_SIMPLE_INST(0x04)
+            CASE_SIMPLE_INST(0x05)
+            CASE_SIMPLE_INST(0x06)
+            CASE_SIMPLE_INST(0x07)
+            CASE_SIMPLE_INST(0x08)
+            CASE_SIMPLE_INST(0x09)
+            CASE_SIMPLE_INST(0x0a)
+            CASE_SIMPLE_INST(0x0b)
+            CASE_SIMPLE_INST(0x0c)
+            CASE_SIMPLE_INST(0x0d)
+            CASE_SIMPLE_INST(0x0e)
+            CASE_SIMPLE_INST(0x0f)
+            CASE_SIMPLE_INST(0x10)
+            CASE_SIMPLE_INST(0x11)
+            CASE_SIMPLE_INST(0x12)
+            CASE_SIMPLE_INST(0x13)
+            CASE_SIMPLE_INST(0x14)
+            CASE_SIMPLE_INST(0x15)
+            CASE_SIMPLE_INST(0x16)
+            CASE_SIMPLE_INST(0x17)
+            CASE_SIMPLE_INST(0x18)
+            CASE_SIMPLE_INST(0x19)
+            CASE_SIMPLE_INST(0x1a)
+            CASE_SIMPLE_INST(0x1b)
+            CASE_SIMPLE_INST(0x1c)
+            CASE_SIMPLE_INST(0x1d)
+            CASE_SIMPLE_INST(0x1e)
+            CASE_SIMPLE_INST(0x1f)
+            CASE_SIMPLE_INST(0x20)
+            CASE_SIMPLE_INST(0x21)
+            CASE_SIMPLE_INST(0x22)
+            CASE_SIMPLE_INST(0x23)
+            CASE_SIMPLE_INST(0x24)
+            CASE_SIMPLE_INST(0x25)
+            CASE_SIMPLE_INST(0x26)
+            CASE_SIMPLE_INST(0x27)
+            CASE_SIMPLE_INST(0x28)
+            CASE_SIMPLE_INST(0x29)
+            CASE_SIMPLE_INST(0x2a)
+            CASE_SIMPLE_INST(0x2b)
+            CASE_SIMPLE_INST(0x2c)
+            CASE_SIMPLE_INST(0x2d)
+            CASE_SIMPLE_INST(0x2e)
+            CASE_SIMPLE_INST(0x2f)
+            CASE_SIMPLE_INST(0x30)
+            CASE_SIMPLE_INST(0x31)
+            CASE_SIMPLE_INST(0x32)
+            CASE_SIMPLE_INST(0x33)
+            CASE_SIMPLE_INST(0x34)
+            CASE_SIMPLE_INST(0x35)
+            CASE_SIMPLE_INST(0x36)
+            CASE_SIMPLE_INST(0x37)
+            CASE_SIMPLE_INST(0x38)
+            CASE_SIMPLE_INST(0x39)
+            CASE_SIMPLE_INST(0x3a)
+            CASE_SIMPLE_INST(0x3b)
+            CASE_SIMPLE_INST(0x3c)
+            CASE_SIMPLE_INST(0x3d)
+            CASE_SIMPLE_INST(0x3e)
+            CASE_SIMPLE_INST(0x3f)
+            CASE_SIMPLE_INST(0x40)
+            CASE_SIMPLE_INST(0x41)
+            CASE_SIMPLE_INST(0x42)
+            CASE_SIMPLE_INST(0x43)
+            CASE_SIMPLE_INST(0x44)
+            CASE_SIMPLE_INST(0x45)
+            CASE_SIMPLE_INST(0x46)
+            CASE_SIMPLE_INST(0x47)
+            CASE_SIMPLE_INST(0x48)
+            CASE_SIMPLE_INST(0x49)
+            CASE_SIMPLE_INST(0x4a)
+            CASE_SIMPLE_INST(0x4b)
+            CASE_SIMPLE_INST(0x4c)
+            CASE_SIMPLE_INST(0x4d)
+            CASE_SIMPLE_INST(0x4e)
+            CASE_SIMPLE_INST(0x4f)
+            CASE_SIMPLE_INST(0x50)
+            CASE_SIMPLE_INST(0x51)
+            CASE_SIMPLE_INST(0x52)
+            CASE_SIMPLE_INST(0x53)
+            CASE_SIMPLE_INST(0x54)
+            CASE_SIMPLE_INST(0x55)
+            CASE_SIMPLE_INST(0x56)
+            CASE_SIMPLE_INST(0x57)
+            CASE_SIMPLE_INST(0x58)
+            CASE_SIMPLE_INST(0x59)
+            CASE_SIMPLE_INST(0x5a)
+            CASE_SIMPLE_INST(0x5b)
+            CASE_SIMPLE_INST(0x5c)
+            CASE_SIMPLE_INST(0x5d)
+            CASE_SIMPLE_INST(0x5e)
+            CASE_SIMPLE_INST(0x5f)
+            CASE_SIMPLE_INST(0x60)
+            CASE_SIMPLE_INST(0x61)
+            CASE_SIMPLE_INST(0x62)
+            CASE_SIMPLE_INST(0x63)
+            CASE_SIMPLE_INST(0x64)
+            CASE_SIMPLE_INST(0x65)
+            CASE_SIMPLE_INST(0x66)
+            CASE_SIMPLE_INST(0x67)
+            CASE_SIMPLE_INST(0x68)
+            CASE_SIMPLE_INST(0x69)
+            CASE_SIMPLE_INST(0x6a)
+            CASE_SIMPLE_INST(0x6b)
+            CASE_SIMPLE_INST(0x6c)
+            CASE_SIMPLE_INST(0x6d)
+            CASE_SIMPLE_INST(0x6e)
+            CASE_SIMPLE_INST(0x6f)
+            CASE_SIMPLE_INST(0x70)
+            CASE_SIMPLE_INST(0x71)
+            CASE_SIMPLE_INST(0x72)
+            CASE_SIMPLE_INST(0x73)
+            CASE_SIMPLE_INST(0x74)
+            CASE_SIMPLE_INST(0x75)
+            CASE_SIMPLE_INST(0x76)
+            CASE_SIMPLE_INST(0x77)
+            CASE_SIMPLE_INST(0x78)
+            CASE_SIMPLE_INST(0x79)
+            CASE_SIMPLE_INST(0x7a)
+            CASE_SIMPLE_INST(0x7b)
+            CASE_SIMPLE_INST(0x7c)
+            CASE_SIMPLE_INST(0x7d)
+            CASE_SIMPLE_INST(0x7e)
+            CASE_SIMPLE_INST(0x7f)
+            CASE_SIMPLE_INST(0x80)
+            CASE_SIMPLE_INST(0x81)
+            CASE_SIMPLE_INST(0x82)
+            CASE_SIMPLE_INST(0x83)
+            CASE_SIMPLE_INST(0x84)
+            CASE_SIMPLE_INST(0x85)
+            CASE_SIMPLE_INST(0x86)
+            CASE_SIMPLE_INST(0x87)
+            CASE_SIMPLE_INST(0x88)
+            CASE_SIMPLE_INST(0x89)
+            CASE_SIMPLE_INST(0x8a)
+            CASE_SIMPLE_INST(0x8b)
+            CASE_SIMPLE_INST(0x8c)
+            CASE_SIMPLE_INST(0x8d)
+            CASE_SIMPLE_INST(0x8e)
+            CASE_SIMPLE_INST(0x8f)
+            CASE_SIMPLE_INST(0x90)
+            CASE_SIMPLE_INST(0x91)
+            CASE_SIMPLE_INST(0x92)
+            CASE_SIMPLE_INST(0x93)
+            CASE_SIMPLE_INST(0x94)
+            CASE_SIMPLE_INST(0x95)
+            CASE_SIMPLE_INST(0x96)
+            CASE_SIMPLE_INST(0x97)
+            CASE_SIMPLE_INST(0x98)
+            CASE_SIMPLE_INST(0x99)
+            CASE_SIMPLE_INST(0x9a)
+            CASE_SIMPLE_INST(0x9b)
+            CASE_SIMPLE_INST(0x9c)
+            CASE_SIMPLE_INST(0x9d)
+            CASE_SIMPLE_INST(0x9e)
+            CASE_SIMPLE_INST(0x9f)
+            CASE_SIMPLE_INST(0xa0)
+            CASE_SIMPLE_INST(0xa1)
+            CASE_SIMPLE_INST(0xa2)
+            CASE_SIMPLE_INST(0xa3)
+            CASE_SIMPLE_INST(0xa4)
+            CASE_SIMPLE_INST(0xa5)
+            CASE_SIMPLE_INST(0xa6)
+            CASE_SIMPLE_INST(0xa7)
+            CASE_SIMPLE_INST(0xa8)
+            CASE_SIMPLE_INST(0xa9)
+            CASE_SIMPLE_INST(0xac)
+            CASE_SIMPLE_INST(0xad)
+            CASE_SIMPLE_INST(0xae)
+            CASE_SIMPLE_INST(0xaf)
+            CASE_SIMPLE_INST(0xb0)
+            CASE_SIMPLE_INST(0xb1)
+            CASE_SIMPLE_INST(0xb2)
+            CASE_SIMPLE_INST(0xb3)
+            CASE_SIMPLE_INST(0xb4)
+            CASE_SIMPLE_INST(0xb5)
+            CASE_SIMPLE_INST(0xb6)
+            CASE_SIMPLE_INST(0xb7)
+            CASE_SIMPLE_INST(0xb8)
+            CASE_SIMPLE_INST(0xb9)
+            CASE_SIMPLE_INST(0xba)
+            CASE_SIMPLE_INST(0xbb)
+            CASE_SIMPLE_INST(0xbc)
+            CASE_SIMPLE_INST(0xbd)
+            CASE_SIMPLE_INST(0xbe)
+            CASE_SIMPLE_INST(0xbf)
+            CASE_SIMPLE_INST(0xc0)
+            CASE_SIMPLE_INST(0xc1)
+            CASE_SIMPLE_INST(0xc2)
+            CASE_SIMPLE_INST(0xc3)
+            CASE_SIMPLE_INST(0xc5)
+            CASE_SIMPLE_INST(0xc6)
+            CASE_SIMPLE_INST(0xc7)
+            CASE_SIMPLE_INST(0xc8)
+            CASE_SIMPLE_INST(0xc9)
+            case 0xc4:
+            case 0xaa:
+            case 0xab:
             default:
                 // skip unimplemented instruction
-                std::cerr << "Warning: instruction " << std::hex << std::setw(2) << std::setfill('0')
+                std::cerr << "Warning: instruction 0x" << std::hex << std::setw(2) << std::setfill('0')
                           << (int) opcode << " (" << (opcode <= 0xca ? InstructionMnemonics[opcode] : "")
                           << ") is not implemented."
                           << std::endl;
