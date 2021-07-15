@@ -10,6 +10,7 @@
 
 #include "tables.hpp"
 #include <filesystem>
+#include <sstream>
 #include <class.hpp>
 
 namespace jawa
@@ -189,7 +190,117 @@ namespace jawa
 
     TypeObs TypeTable::from_descriptor(const Name &descriptor)
     {
-        // TODO:
-        return nullptr;
+        enum Action
+        {
+            GET_TYPE,
+            ADD_ARGUMENT,
+            MAKE_ARRAY,
+            MAKE_METHOD
+        };
+
+        std::stack<Action> action_stack;
+        std::stack<std::size_t> array_dims;
+        std::stack<TypeObsArray> argument_types;
+
+        std::istringstream is(descriptor);
+        action_stack.push(GET_TYPE);
+
+        TypeObs type = nullptr;
+
+        while (!action_stack.empty()) {
+            Action action = action_stack.top();
+            action_stack.pop();
+            switch (action) {
+            case GET_TYPE:
+                switch (is.get()) {
+                case jasm::VoidTypePrefix:
+                    type = &void_type_;
+                    break;
+                case jasm::IntTypePrefix:
+                    type = &int_type_;
+                    break;
+                case jasm::ShortTypePrefix:
+                    type = &short_type_;
+                    break;
+                case jasm::LongTypePrefix:
+                    type = &long_type_;
+                    break;
+                case jasm::ByteTypePrefix:
+                    type = &byte_type_;
+                    break;
+                case jasm::BooleanTypePrefix:
+                    type = &boolean_type_;
+                    break;
+                case jasm::FloatTypePrefix:
+                    type = &float_type_;
+                    break;
+                case jasm::DoubleTypePrefix:
+                    type = &double_type_;
+                    break;
+                case jasm::CharTypePrefix:
+                    type = &char_type_;
+                    break;
+                case jasm::ClassTypePrefix: {
+                    std::ostringstream name;
+                    char ch;
+                    while ((ch = is.get()) != ';')
+                        name << ch;
+                    type = get_class_type(name.str());
+                    break;
+                }
+                case jasm::ArrayTypePrefix: {
+                    std::size_t dims = 1;
+                    for (; is.peek() == jasm::ArrayTypePrefix; ++dims)
+                        is.get();
+                    array_dims.push(dims);
+                    action_stack.push(MAKE_ARRAY);
+                    action_stack.push(GET_TYPE);
+                    break;
+                }
+                case '(':
+                    argument_types.emplace();
+                    action_stack.push(MAKE_METHOD);
+                    action_stack.push(ADD_ARGUMENT);
+                    action_stack.push(GET_TYPE);
+                    break;
+                case ')':
+                    // get return type
+                    assert(action_stack.top() == ADD_ARGUMENT);
+                    action_stack.pop();
+                    action_stack.push(GET_TYPE);
+                    break;
+                default:
+                    return nullptr;
+                }
+                break; // GET_TYPE
+            case MAKE_ARRAY:
+                type = get_array_type(type, array_dims.top());
+                array_dims.pop();
+                break;
+            case MAKE_METHOD:
+                type = get_method_type(type, argument_types.top());
+                argument_types.pop();
+                break;
+            case ADD_ARGUMENT:
+                argument_types.top().push_back(type);
+                if (is.peek() == ')') {
+                    is.get();
+                    // get return type
+                    action_stack.push(GET_TYPE);
+                } else {
+                    // get next argument
+                    action_stack.push(ADD_ARGUMENT);
+                    action_stack.push(GET_TYPE);
+                }
+                break;
+            }
+        }
+
+        is.get();
+        if (is)
+            return nullptr;
+
+        return type;
     }
+
 }
