@@ -173,7 +173,9 @@ using namespace jawa;
 %type<Expression>           ShiftExpressionNoName AdditiveExpressionNoName MultiplicativeExpressionNoName
 %type<Expression>           CastExpressionNoName UnaryExpressionNotPlusMinusNoName PreIncDecExpression
 %type<Expression>           UnaryExpressionNoName PostIncDecExpression PostfixExpressionNoName
-%type<Expression>           ConstantExpressionNoName PrimaryNoName Literal
+%type<Expression>           ConstantExpressionNoName PrimaryNoName Literal ConditionalOrExpressionNoName
+%type<Expression>           ConditionalAndExpressionNoName
+%type<ExpressionOpt>        ExpressionNoName_opt
 
 %%
 
@@ -884,14 +886,14 @@ Expressions: ExpressionNoName                   { $$.push_back($1); }
            | Expressions COMMA Name             { /* TODO */ }
            ;
 
-ExpressionNoName_opt: %empty
-                    | ExpressionNoName
+ExpressionNoName_opt: %empty           { $$ = std::nullopt; }
+                    | ExpressionNoName { $$ = std::make_optional($1); }
                     ;
 
-ExpressionNoName: AssignmentExpressionNoName
+ExpressionNoName: AssignmentExpressionNoName { $$ = $1; }
           ;
 
-AssignmentExpressionNoName: ConditionalExpressionNoName
+AssignmentExpressionNoName: ConditionalExpressionNoName { $$ = $1; }
                     | ConditionalExpressionNoName AssignmentOperator AssignmentExpressionNoName
                     | ConditionalExpressionNoName AssignmentOperator Name
                     | Name AssignmentOperator AssignmentExpressionNoName
@@ -902,7 +904,7 @@ AssignmentOperator: ASGN
                   | COMP
                   ;
 
-ConditionalExpressionNoName: ConditionalOrExpressionNoName
+ConditionalExpressionNoName: ConditionalOrExpressionNoName { $$ = $1; }
                            | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON ConditionalExpressionNoName
                            | ConditionalOrExpressionNoName INTRG ExpressionNoName COLON Name
                            | ConditionalOrExpressionNoName INTRG Name COLON ConditionalExpressionNoName
@@ -913,42 +915,42 @@ ConditionalExpressionNoName: ConditionalOrExpressionNoName
                            | Name INTRG Name COLON Name
                            ;
 
-ConditionalOrExpressionNoName: ConditionalAndExpressionNoName
+ConditionalOrExpressionNoName: ConditionalAndExpressionNoName { $$ = $1; }
                              | ConditionalOrExpressionNoName DVERT ConditionalAndExpressionNoName
                              | ConditionalOrExpressionNoName DVERT Name
                              | Name DVERT ConditionalAndExpressionNoName
                              | Name DVERT Name
                              ;
 
-ConditionalAndExpressionNoName: InclusiveOrExpressionNoName
+ConditionalAndExpressionNoName: InclusiveOrExpressionNoName { $$ = $1; }
                               | ConditionalAndExpressionNoName DAMP InclusiveOrExpressionNoName
                               | ConditionalAndExpressionNoName DAMP Name
                               | Name DAMP InclusiveOrExpressionNoName
                               | Name DAMP Name
                               ;
 
-InclusiveOrExpressionNoName: ExclusiveOrExpressionNoName
+InclusiveOrExpressionNoName: ExclusiveOrExpressionNoName { $$ = $1; }
                            | InclusiveOrExpressionNoName VERT ExclusiveOrExpressionNoName
                            | InclusiveOrExpressionNoName VERT Name
                            | Name VERT ExclusiveOrExpressionNoName
                            | Name VERT Name
                            ;
 
-ExclusiveOrExpressionNoName: AndExpressionNoName
+ExclusiveOrExpressionNoName: AndExpressionNoName { $$ = $1; }
                            | ExclusiveOrExpressionNoName HAT AndExpressionNoName
                            | ExclusiveOrExpressionNoName HAT Name
                            | Name HAT AndExpressionNoName
                            | Name HAT Name
                            ;
 
-AndExpressionNoName: EqualityExpressionNoName
+AndExpressionNoName: EqualityExpressionNoName { $$ = $1; }
                    | AndExpressionNoName AMP EqualityExpressionNoName
                    | AndExpressionNoName AMP Name
                    | Name AMP EqualityExpressionNoName
                    | Name AMP Name
                    ;
 
-EqualityExpressionNoName: RelationalExpressionNoName
+EqualityExpressionNoName: RelationalExpressionNoName { $$ = $1; }
                         | EqualityExpressionNoName EQOP RelationalExpressionNoName
                         | EqualityExpressionNoName EQOP Name
                         | Name EQOP RelationalExpressionNoName
@@ -957,7 +959,7 @@ EqualityExpressionNoName: RelationalExpressionNoName
                         | Name INSTANCEOF ReferenceType
                         ;
 
-RelationalExpressionNoName: ShiftExpressionNoName
+RelationalExpressionNoName: ShiftExpressionNoName { $$ = $1; }
                           | ShiftExpressionNoName LT ShiftExpressionNoName
                           | ShiftExpressionNoName LT Name
                           | Name LT ShiftExpressionNoName
@@ -972,7 +974,7 @@ RelationalExpressionNoName: ShiftExpressionNoName
                           | Name RELOP Name
                           ;
 
-ShiftExpressionNoName: AdditiveExpressionNoName
+ShiftExpressionNoName: AdditiveExpressionNoName { $$ = $1; }
                      | ShiftExpressionNoName SHL AdditiveExpressionNoName
                      | ShiftExpressionNoName SHL Name
                      | ShiftExpressionNoName SHR AdditiveExpressionNoName
@@ -988,14 +990,14 @@ ShiftExpressionNoName: AdditiveExpressionNoName
                      ;
 
 
-AdditiveExpressionNoName: MultiplicativeExpressionNoName
+AdditiveExpressionNoName: MultiplicativeExpressionNoName { $$ = $1; }
                         | AdditiveExpressionNoName ADDOP MultiplicativeExpressionNoName
                         | AdditiveExpressionNoName ADDOP Name
                         | Name ADDOP MultiplicativeExpressionNoName
                         | Name ADDOP Name
                         ;
 
-MultiplicativeExpressionNoName: UnaryExpressionNoName
+MultiplicativeExpressionNoName: UnaryExpressionNoName { $$ = $1; }
                               | MultiplicativeExpressionNoName STAR UnaryExpressionNoName
                               | MultiplicativeExpressionNoName STAR Name
                               | Name STAR UnaryExpressionNoName
@@ -1014,22 +1016,22 @@ CastExpressionNoName: LPAR PrimitiveType RPAR UnaryExpressionNoName
                     | LPAR Name RPAR Name
                     ;
 
-UnaryExpressionNotPlusMinusNoName: PostfixExpressionNoName
+UnaryExpressionNotPlusMinusNoName: PostfixExpressionNoName { $$ = $1; }
                                  | TILDE UnaryExpressionNoName
                                  | TILDE Name
                                  | EMPH UnaryExpressionNoName
                                  | EMPH Name
-                                 | CastExpressionNoName
+                                 | CastExpressionNoName { $$ = $1; }
                                  ;
 
 PreIncDecExpression: INCDEC UnaryExpressionNoName
                    | INCDEC Name
                    ;
 
-UnaryExpressionNoName: PreIncDecExpression
+UnaryExpressionNoName: PreIncDecExpression { $$ = $1; }
                      | ADDOP UnaryExpressionNoName
                      | ADDOP Name
-                     | UnaryExpressionNotPlusMinusNoName
+                     | UnaryExpressionNotPlusMinusNoName { $$ = $1; }
                      ;
 
 
@@ -1037,14 +1039,14 @@ PostIncDecExpression: PostfixExpressionNoName INCDEC
                     | Name INCDEC
                     ;
 
-PostfixExpressionNoName: PrimaryNoName
-                       | PostIncDecExpression
+PostfixExpressionNoName: PrimaryNoName          { $$ = $1; }
+                       | PostIncDecExpression   { $$ = $1; }
                        ;
 
 ConstantExpressionNoName: ExpressionNoName
                         ;
 
-PrimaryNoName: Literal
+PrimaryNoName: Literal          { $$ = $1; }
              | LPAR ExpressionNoName RPAR
              | LPAR Name RPAR
              | THIS ThisSuffix

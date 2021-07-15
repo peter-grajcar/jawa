@@ -14,6 +14,7 @@
 
 #define BUILDER ctx->class_builder()
 #define TYPE_TABLE ctx->type_table()
+#define CLASS_TABLE ctx->class_table()
 
 namespace jawa
 {
@@ -77,7 +78,7 @@ namespace jawa
 
     TypeObs find_class(context_t ctx, const Name &name)
     {
-        if (name == "Łańcuch")
+        if (name == "Łańcuch") // temporary measure
             return TYPE_TABLE.get_class_type("java/lang/String");
         return TYPE_TABLE.get_class_type(name);
     }
@@ -102,8 +103,32 @@ namespace jawa
         return Expression(TYPE_TABLE.get_class_type("java/lang/String"));
     }
 
-    void invoke_method(context_t ctx, const Name &method_name, const ExpressionArray &arguments)
+    void invoke_method(context_t ctx, const Name &method, const ExpressionArray &arguments)
     {
+        TypeObsArray argument_types;
+        for (auto &expr : arguments) {
+            assert(expr.type != nullptr);
+            argument_types.push_back(expr.type);
+        }
+
+        // TODO: resolve the method name
+        Name method_class_name = "java/io/PrintStream";
+        Name method_name = "println";
+
+        JawaMethodSignature signature(method_name, argument_types);
+
+        const JawaClass *jawa_class = CLASS_TABLE.load_class(method_class_name);
+        if (!jawa_class) {
+            ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), method_class_name);
+            return;
+        }
+
+        const JawaMethod *jawa_method = jawa_class->get_method(signature);
+        if (!jawa_method) {
+            ctx->message(errors::METHOD_NOT_FOUND, ctx->loc(), method_name, method_class_name);
+            return;
+        }
+
         std::cout << "invoking method " << method_name << std::endl;
     }
 

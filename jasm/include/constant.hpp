@@ -59,6 +59,11 @@ namespace jasm
             write_big_endian<u2>(os, name_index_);
         }
 
+        inline u2 name_index() const
+        {
+            return name_index_;
+        }
+
         u1 tag() const override;
     };
 

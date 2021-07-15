@@ -44,6 +44,9 @@ namespace jawa::errors
     extern err_n MALFORMED_STRING;
     extern err_c UNEXPECTED_CHAR;
 
+    extern err_n CLASS_NOT_FOUND;
+    extern err_nn METHOD_NOT_FOUND;
+
 }
 
 #endif //JAWA_ERROR_HPP

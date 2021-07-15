@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    Context ctx{};
+    Context ctx("/Users/petergrajcar/Desktop/classpath");
 
     FILE *iff = fopen(argv[1], "r");
     if (!iff) {

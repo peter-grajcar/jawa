@@ -41,13 +41,15 @@ namespace jawa
     private:
         loc_t loc_;
         TypeTable type_table_;
+        ClassTable class_table_;
         std::locale locale_;
         std::unique_ptr<jasm::ClassBuilder> builder_;
 
         void message_line(loc_t const &loc) const;
 
     public:
-        Context() : locale_("pl_PL.UTF-8") {}
+        Context(const std::string &class_paths) : locale_("pl_PL.UTF-8"), type_table_(),
+                                                  class_table_(type_table_, class_paths) {}
 
         /**
          * Returns current location of the parser.
@@ -153,6 +155,15 @@ namespace jawa
         inline TypeTable &type_table()
         {
             return type_table_;
+        }
+
+        /**
+         *
+         * @return reference to the class table.
+         */
+        inline ClassTable &class_table()
+        {
+            return class_table_;
         }
 
     };
