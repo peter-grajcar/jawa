@@ -192,10 +192,10 @@ namespace jawa
     {
         enum Action
         {
-            GET_TYPE,
-            ADD_ARGUMENT,
-            MAKE_ARRAY,
-            MAKE_METHOD
+            GET_TYPE, // reads one type
+            ADD_ARGUMENT, // adds last read type to the argument list on top of the stack
+            MAKE_ARRAY, // creates an array type with last read type as an element type and dimensions from the top of the stack
+            MAKE_METHOD // creates a method type using the argument list on the top of the stack and read type as return type
         };
 
         std::stack<Action> action_stack;

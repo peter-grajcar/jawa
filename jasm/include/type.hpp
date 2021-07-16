@@ -167,11 +167,21 @@ namespace jasm
                 : element_type_(element_type), dimension_(dim)
         {
             assert(element_type_ && dim != 0);
+            auto array_type = dynamic_cast<const ArrayType *>(element_type);
+            if (array_type != nullptr) {
+                element_type_ = array_type->element_type_;
+                dimension_ = dimension_ + array_type->dimension_;
+            }
         }
 
         inline const Type *element_type() const
         {
             return element_type_;
+        }
+
+        inline size_t dimension() const
+        {
+            return dimension_;
         }
 
         char prefix() const override;
