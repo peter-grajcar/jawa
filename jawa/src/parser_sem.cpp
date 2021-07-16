@@ -103,22 +103,65 @@ namespace jawa
         return Expression(TYPE_TABLE.get_class_type("java/lang/String"));
     }
 
-    ReferenceAndName resolve_method_class(context_t ctx, const Name &method)
+    static std::vector<std::size_t> split_name(const Name &name)
     {
-        Name class_name = "java/lang/System";
+        std::vector<std::size_t> indices;
+        indices.push_back(0);
+        std::size_t start = 0, end;
+        while ((end = name.find('/', start)) != std::string::npos) {
+            indices.push_back(end);
+            start = end + 1;
+        }
+        indices.push_back(std::string::npos);
+        return indices;
+    }
+
+    MethodReferenceAndName resolve_method_class(context_t ctx, const Name &method)
+    {
+        auto splits = split_name(method);
+
+        if (splits.size() == 2) {
+            // TODO: method in this class
+            assert(false);
+        }
+
+        Name class_name;
+        std::vector<std::size_t>::iterator it;
+        for (it = splits.begin() + 1; it + 2 < splits.end(); ++it) {
+            Name name = CLASS_TABLE.get_fully_qualified_name(method.substr(0, *it));
+            if (!name.empty()) {
+                class_name = name;
+                break;
+            }
+        }
+
+        if (class_name.empty()) {
+            ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), method.substr(0, splits[1]));
+        }
+
+        if (it + 2 != splits.end()) {
+            std::vector<Name> fields;
+            for (; it + 2 < splits.end(); ++it) {
+                fields.emplace_back(method.substr(*it + 1, *(it + 1) - *it - 1));
+            }
+            // TODO:
+        }
+
         Name method_class_name = "java/io/PrintStream";
-        Name method_name = "println";
+        Name method_name = method.substr(splits[splits.size() - 2] + 1);
+
+
         jasm::u2 out_field_index = BUILDER.add_field_constant(class_name, "out",
                                                               *TYPE_TABLE.get_class_type(method_class_name));
         BUILDER.make_instruction<jasm::GetStatic>(U2_SPLIT(out_field_index));
-        return ReferenceAndName{
+        return {
                 out_field_index,
                 method_class_name,
                 method_name
         };
     }
 
-    void invoke_method(context_t ctx, const ReferenceAndName &method, const ExpressionArray &arguments)
+    void invoke_method(context_t ctx, const MethodReferenceAndName &method, const ExpressionArray &arguments)
     {
         TypeObsArray argument_types;
         for (auto &expr : arguments) {

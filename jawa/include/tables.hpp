@@ -197,6 +197,8 @@ namespace jawa
             implicit_import();
         }
 
+        Name get_fully_qualified_name(const Name &name);
+
         /**
          * Imports a class. Note that import itself does not load the class' content.
          *

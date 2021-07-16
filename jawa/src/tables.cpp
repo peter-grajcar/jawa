@@ -172,6 +172,10 @@ namespace jawa
 
     const JawaClass *ClassTable::load_class(const Name &class_name)
     {
+        auto search = classes_.find(class_name);
+        if (search != classes_.end())
+            return &search->second;
+
         // TODO: check imports
         Name file = find_class_file(class_name);
         if (file.empty())
@@ -186,6 +190,16 @@ namespace jawa
         auto inserted = classes_.insert({class_name, std::move(jawa_class)});
 
         return &inserted.first->second;
+    }
+
+    Name ClassTable::get_fully_qualified_name(const Name &name)
+    {
+        auto search = imported_classes_.find(name);
+        if (search != imported_classes_.end())
+            return search->second.fully_qualified_name;
+        if (!find_class_file(name).empty())
+            return name;
+        return "";
     }
 
     TypeObs TypeTable::from_descriptor(const Name &descriptor)

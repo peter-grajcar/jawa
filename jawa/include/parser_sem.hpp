@@ -29,7 +29,7 @@ namespace jawa
         explicit Expression(TypeObs type) : type(type) {};
     };
 
-    struct ReferenceAndName
+    struct MethodReferenceAndName
     {
         jasm::u2 reference;
         Name class_name;
@@ -49,9 +49,9 @@ namespace jawa
 
     Expression load_string_literal(context_t ctx, const Name &name);
 
-    ReferenceAndName resolve_method_class(context_t ctx, const Name &method);
+    MethodReferenceAndName resolve_method_class(context_t ctx, const Name &method);
 
-    void invoke_method(context_t ctx, const ReferenceAndName &method, const ExpressionArray &arguments);
+    void invoke_method(context_t ctx, const MethodReferenceAndName &method, const ExpressionArray &arguments);
 
 }
 

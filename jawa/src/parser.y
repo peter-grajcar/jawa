@@ -161,7 +161,6 @@ using namespace jawa;
 
 
 %type<Name>                 Identifier Name
-%type<ReferenceAndName>     MethodName
 %type<NameList>             NameList
 %type<TypeObs>              Type VoidType PrimitiveType ReferenceType NumericType IntegralType
 %type<TypeObs>              FloatingPointType ClassOrInterfaceType ArrayType
@@ -177,6 +176,7 @@ using namespace jawa;
 %type<Expression>           ConstantExpressionNoName PrimaryNoName Literal ConditionalOrExpressionNoName
 %type<Expression>           ConditionalAndExpressionNoName
 %type<ExpressionOpt>        ExpressionNoName_opt
+%type<MethodReferenceAndName>   MethodName
 
 %%
 
