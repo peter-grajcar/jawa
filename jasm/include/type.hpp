@@ -146,6 +146,11 @@ namespace jasm
 
         utf8 descriptor() const override;
 
+        inline utf8 class_name() const
+        {
+            return class_name_;
+        }
+
         size_t hash() const override
         {
             return std::hash<std::string>{}(class_name_);

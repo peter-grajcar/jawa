@@ -108,7 +108,7 @@ namespace jawa
         template <typename ...Args>
         void message(errors::error_object<Args...> err, const loc_t &loc, Args... args) const
         {
-            std::cerr << "błąd:" << loc.line << ':' << loc.column_start << ": ";
+            std::cerr << "błąd:" << std::dec << loc.line << ':' << loc.column_start << ": ";
             format(std::cerr, err.msg(), args...) << std::endl;
             message_line(loc);
         }

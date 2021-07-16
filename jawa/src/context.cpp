@@ -30,7 +30,7 @@ namespace jawa
 
     void Context::message_line(loc_t const &loc) const
     {
-        std::cerr << ' ' << std::setw(5) << loc.line << " | "
+        std::cerr << ' ' << std::setw(5) << std::setfill(' ') << loc.line << " | "
                   << jawa::line_buffer.str() << std::endl
                   << "       | ";
         // column starts at 1, so subtracting 1 is safe

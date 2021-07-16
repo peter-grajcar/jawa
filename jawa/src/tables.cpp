@@ -84,10 +84,9 @@ namespace jawa
             auto descriptor_constant = dynamic_cast<jasm::Utf8Constant *>(clazz.constant_pool().get(index));
             TypeObs type = type_table.from_descriptor(descriptor_constant->value());
 
-            // TODO: modifiers
             jasm::u2 access_flags = field.access_flags();
 
-            fields_.insert({name_constant->value(), JawaField(name_constant->value(), type)});
+            fields_.insert({name_constant->value(), JawaField(name_constant->value(), type, access_flags)});
         }
 
         for (auto &method : clazz.methods()) {
@@ -105,6 +104,14 @@ namespace jawa
             JawaMethod jawa_method(name_constant->value(), type);
             methods_.insert({jawa_method.signature(), std::move(jawa_method)});
         }
+    }
+
+    const JawaField *JawaClass::get_field(const Name &name) const
+    {
+        auto search = fields_.find(name);
+        if (search != fields_.end())
+            return &search->second;
+        return nullptr;
     }
 
     Name ClassTable::find_class_file(const Name &class_name) const
@@ -159,7 +166,7 @@ namespace jawa
                         continue;
 
                     std::string class_name(entry.path().stem());
-                    std::string fully_qualified_name("/java/lang/");
+                    std::string fully_qualified_name("java/lang/");
                     fully_qualified_name += class_name;
 
                     imported_classes_.insert({class_name, JawaImport(fully_qualified_name, entry.path())});

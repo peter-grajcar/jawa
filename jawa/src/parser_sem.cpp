@@ -125,6 +125,8 @@ namespace jawa
             assert(false);
         }
 
+        // TODO: check for local variables and this class fields
+
         Name class_name;
         std::vector<std::size_t>::iterator it;
         for (it = splits.begin() + 1; it + 2 < splits.end(); ++it) {
@@ -137,27 +139,49 @@ namespace jawa
 
         if (class_name.empty()) {
             ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), method.substr(0, splits[1]));
+            return {};
         }
 
-        if (it + 2 != splits.end()) {
-            std::vector<Name> fields;
-            for (; it + 2 < splits.end(); ++it) {
-                fields.emplace_back(method.substr(*it + 1, *(it + 1) - *it - 1));
-            }
-            // TODO:
-        }
-
-        Name method_class_name = "java/io/PrintStream";
+        const JawaClass *jawa_class = CLASS_TABLE.load_class(class_name);
         Name method_name = method.substr(splits[splits.size() - 2] + 1);
 
+        if (it + 2 != splits.end()) {
+            jasm::u2 field_index;
+            for (; it + 2 < splits.end(); ++it) {
+                // this is a bit messy
+                Name field_name = method.substr(*it + 1, *(it + 1) - *it - 1);
+                const JawaField *jawa_field = jawa_class->get_field(field_name);
+                if (jawa_field == nullptr) {
+                    ctx->message(errors::FIELD_NOT_FOUND, ctx->loc(), field_name, class_name);
+                    return {};
+                }
+                assert(jawa_field->access_flags & jasm::Field::ACC_STATIC);
+                auto class_type = dynamic_cast<ClassTypeObs>(jawa_field->type);
+                assert(class_type); // in fact it could also be an array
 
-        jasm::u2 out_field_index = BUILDER.add_field_constant(class_name, "out",
-                                                              *TYPE_TABLE.get_class_type(method_class_name));
-        BUILDER.make_instruction<jasm::GetStatic>(U2_SPLIT(out_field_index));
+                field_index = BUILDER.add_field_constant(class_name, field_name,
+                                                         *TYPE_TABLE.get_class_type(
+                                                                 class_type->class_name()));
+                BUILDER.make_instruction<jasm::GetStatic>(U2_SPLIT(field_index));
+
+                jawa_class = CLASS_TABLE.load_class(class_type->class_name());
+                if (jawa_class == nullptr) {
+                    ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), class_type->class_name());
+                    return {};
+                }
+                class_name = class_type->class_name();
+            }
+
+            return {
+                    field_index,
+                    class_name,
+                    method_name
+            };
+        }
+
+
         return {
-                out_field_index,
-                method_class_name,
-                method_name
+                // TODO
         };
     }
 

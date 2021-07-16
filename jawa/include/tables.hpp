@@ -131,8 +131,10 @@ namespace jawa
     {
         Name name;
         TypeObs type;
+        jasm::u2 access_flags;
 
-        JawaField(Name name, TypeObs type) : name(std::move(name)), type(type)
+        JawaField(Name name, TypeObs type, jasm::u2 access_flags)
+                : name(std::move(name)), type(type), access_flags(access_flags)
         {
             assert(type != nullptr);
         }
@@ -169,6 +171,13 @@ namespace jawa
         JawaClass(TypeTable &type_table, jasm::Class &clazz);
 
         const JawaMethod *get_method(const JawaMethodSignature &signature) const;
+
+        const JawaField *get_field(const Name &name) const;
+
+        inline Name class_name() const
+        {
+            return name_;
+        }
 
         std::size_t hash() const;
 
