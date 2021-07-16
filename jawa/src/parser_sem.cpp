@@ -103,7 +103,22 @@ namespace jawa
         return Expression(TYPE_TABLE.get_class_type("java/lang/String"));
     }
 
-    void invoke_method(context_t ctx, const Name &method, const ExpressionArray &arguments)
+    ReferenceAndName resolve_method_class(context_t ctx, const Name &method)
+    {
+        Name class_name = "java/lang/System";
+        Name method_class_name = "java/io/PrintStream";
+        Name method_name = "println";
+        jasm::u2 out_field_index = BUILDER.add_field_constant(class_name, "out",
+                                                              *TYPE_TABLE.get_class_type(method_class_name));
+        BUILDER.make_instruction<jasm::GetStatic>(U2_SPLIT(out_field_index));
+        return ReferenceAndName{
+                out_field_index,
+                method_class_name,
+                method_name
+        };
+    }
+
+    void invoke_method(context_t ctx, const ReferenceAndName &method, const ExpressionArray &arguments)
     {
         TypeObsArray argument_types;
         for (auto &expr : arguments) {
@@ -111,25 +126,24 @@ namespace jawa
             argument_types.push_back(expr.type);
         }
 
-        // TODO: resolve the method name
-        Name method_class_name = "java/io/PrintStream";
-        Name method_name = "println";
+        JawaMethodSignature signature(method.method_name, argument_types);
 
-        JawaMethodSignature signature(method_name, argument_types);
-
-        const JawaClass *jawa_class = CLASS_TABLE.load_class(method_class_name);
+        const JawaClass *jawa_class = CLASS_TABLE.load_class(method.class_name);
         if (!jawa_class) {
-            ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), method_class_name);
+            ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), method.class_name);
             return;
         }
 
         const JawaMethod *jawa_method = jawa_class->get_method(signature);
         if (!jawa_method) {
-            ctx->message(errors::METHOD_NOT_FOUND, ctx->loc(), method_name, method_class_name);
+            ctx->message(errors::METHOD_NOT_FOUND, ctx->loc(), method.method_name, method.class_name);
             return;
         }
 
-        std::cout << "invoking method " << method_name << std::endl;
+        jasm::u2 method_index = BUILDER.add_method_constant(method.class_name, method.method_name, *jawa_method->type);
+        BUILDER.make_instruction<jasm::InvokeVirtual>(U2_SPLIT(method_index));
+
+        std::cout << "invoking method " << method.method_name << std::endl;
     }
 
 }

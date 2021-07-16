@@ -29,6 +29,13 @@ namespace jawa
         explicit Expression(TypeObs type) : type(type) {};
     };
 
+    struct ReferenceAndName
+    {
+        jasm::u2 reference;
+        Name class_name;
+        Name method_name;
+    };
+
     using ExpressionOpt = std::optional<Expression>;
     using ExpressionArray = std::vector<Expression>;
 
@@ -42,7 +49,9 @@ namespace jawa
 
     Expression load_string_literal(context_t ctx, const Name &name);
 
-    void invoke_method(context_t ctx, const Name &method, const ExpressionArray &arguments);
+    ReferenceAndName resolve_method_class(context_t ctx, const Name &method);
+
+    void invoke_method(context_t ctx, const ReferenceAndName &method, const ExpressionArray &arguments);
 
 }
 

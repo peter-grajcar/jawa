@@ -161,6 +161,7 @@ using namespace jawa;
 
 
 %type<Name>                 Identifier Name
+%type<ReferenceAndName>     MethodName
 %type<NameList>             NameList
 %type<TypeObs>              Type VoidType PrimitiveType ReferenceType NumericType IntegralType
 %type<TypeObs>              FloatingPointType ClassOrInterfaceType ArrayType
@@ -1058,7 +1059,7 @@ PrimaryNoName: Literal          { $$ = $1; }
              | VOID DOT CLASS
              | Name LBRA ExpressionNoName RBRA
              | Name LBRA Name RBRA
-             | Name Arguments  { invoke_method(ctx, $1, $2); }
+             | MethodName Arguments  { invoke_method(ctx, $1, $2); }
              | Name DOT CLASS
              | Name DOT ExplicitGenericInvocation
              | Name DOT THIS
@@ -1066,6 +1067,9 @@ PrimaryNoName: Literal          { $$ = $1; }
              | Name DOT NEW NonWildcardTypeArguments_opt InnerCreator
              | Name LBRA Dims DOT CLASS RBRA
              ;
+
+MethodName: Name    {  $$ = resolve_method_class(ctx, $1); }
+          ;
 
 Literal: INT_LIT
        | FLOAT_LIT
