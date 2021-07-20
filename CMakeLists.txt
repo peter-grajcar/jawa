@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_subdirectory("jawa")
 add_subdirectory("jasm")
+add_subdirectory("stdlib")
 
 # Doxygen setup
 find_package(Doxygen)

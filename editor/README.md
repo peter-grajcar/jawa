@@ -2,11 +2,7 @@
 
 ## Vim
 
-1. Copy `jawa.vim` to `~/.vim/syntax/`
-2. Then add this line to your `.vimrc`
-    ```vim
-    au BufRead,BufNewFile *.jawa set filetype=jawa
-    ```
+Copy `jawa.vim` to `~/.vim/syntax/`
 
 ## JetBrains IDE
 

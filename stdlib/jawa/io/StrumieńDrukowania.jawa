@@ -1,0 +1,7 @@
+pakiet jawa.io;
+
+publiczna klasa StrumieńDrukowania {
+
+    publiczny ojczysty void wydrukovać(Łańcuch x);
+
+}

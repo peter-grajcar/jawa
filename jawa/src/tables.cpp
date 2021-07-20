@@ -155,7 +155,7 @@ namespace jawa
         do {
             std::size_t end = class_paths_.find(':');
             std::string class_path(class_paths_, start, end);
-            class_path += "/java/lang";
+            class_path += "/jawa/jȩzyk";
 
             if (std::filesystem::exists(class_path) && std::filesystem::is_directory(class_path)) {
                 for (const auto &entry : std::filesystem::directory_iterator(class_path)) {
@@ -166,7 +166,7 @@ namespace jawa
                         continue;
 
                     std::string class_name(entry.path().stem());
-                    std::string fully_qualified_name("java/lang/");
+                    std::string fully_qualified_name("jawa/jȩzyk/");
                     fully_qualified_name += class_name;
 
                     imported_classes_.insert({class_name, JawaImport(fully_qualified_name, entry.path())});

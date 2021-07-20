@@ -9,6 +9,8 @@ if exists("b:current_syntax")
     finish
 endif
 
+au BufRead,BufNewFile *.jawa set filetype=jawa
+
 syn keyword modifiers       prywatny prywatny                               skipwhite
 syn keyword modifiers       chroniony chroniona                             skipwhite
 syn keyword modifiers       publiczny publiczna                             skipwhite

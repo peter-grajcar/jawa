@@ -22,11 +22,27 @@ cd build
 cmake -DBISON_ROOT=<bison_install_dir> -DFLEX_ROOT=<flex_install_dir> ..
 ```
 
+Jawa compiler:
+
+```
+make jawac
+```
+
+Jawa standard library:
+
+```
+make stdlib
+```
+
 ## Project Structure
 
 `jasm` is a library for low-level library for JVM byte code manipulation.
 
 `jawa` is a Jawa compiler implemented using `jasm`.
+
+## Compiling Jawa Programs
+
+TODO
 
 ## References
 

@@ -1,0 +1,9 @@
+pakiet jawa.jȩzyk;
+
+zaimportuj jawa.io.StrumieńDrukowania;
+
+publiczna klasa System {
+
+    statyczny StrumieńDrukowania wyjście = nowy StrumieńDrukowania();
+
+}
