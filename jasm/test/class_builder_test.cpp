@@ -26,13 +26,13 @@ int main()
     ClassType print_stream("java/io/PrintStream");
     ArrayType str_arr(&str_type, 1);
     PrimitiveType void_type = VoidType();
-    MethodSignatureType main_signature(&void_type, &str_arr);
-    MethodSignatureType constructor_signature(&void_type);
-    MethodSignatureType println_signature(&void_type, &str_type);
+    MethodType main_signature(&void_type, &str_arr);
+    MethodType constructor_signature(&void_type);
+    MethodType println_signature(&void_type, &str_type);
 
     u2 object_constructor = builder.add_method_constant("java/lang/Object", "<init>", constructor_signature);
 
-    builder.enter_constructor(constructor_signature, Method::ACC_PUBLIC);
+    builder.enter_method("<init>", constructor_signature, Method::ACC_PUBLIC);
     builder.make_instruction<RefLoad0>();
     builder.make_instruction<InvokeSpecial>(U2_SPLIT(object_constructor));
     builder.make_instruction<Return>();

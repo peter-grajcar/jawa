@@ -69,6 +69,13 @@ namespace jawa
         }
     }
 
+    void enter_static_initializer(context_t ctx)
+    {
+        VoidTypeObs void_type = TYPE_TABLE.get_void_type();
+        MethodTypeObs void_method_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
+        BUILDER.enter_method("<clinit>", *void_method_type, jasm::Method::ACC_STATIC);
+    }
+
     void leave_method(context_t ctx)
     {
         std::cout << "leaving method" << std::endl;
@@ -87,7 +94,7 @@ namespace jawa
     {
         VoidTypeObs void_type = TYPE_TABLE.get_void_type();
         MethodTypeObs void_method_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
-        BUILDER.enter_constructor(*void_method_type, jasm::Method::ACC_PUBLIC);
+        BUILDER.enter_method("<init>", *void_method_type, jasm::Method::ACC_PUBLIC);
         BUILDER.make_instruction<jasm::RefLoad0>();
         jasm::u2 object_constructor = BUILDER.add_method_constant("java/lang/Object", "<init>", *void_method_type);
         BUILDER.make_instruction<jasm::InvokeSpecial>(U2_SPLIT(object_constructor));

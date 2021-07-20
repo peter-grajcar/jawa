@@ -31,7 +31,7 @@ namespace jawa
     using FloatTypeObs = const jasm::FloatType *;
     using DoubleTypeObs = const jasm::DoubleType *;
     using BooleanTypeObs = const jasm::BooleanType *;
-    using MethodTypeObs = const jasm::MethodSignatureType *;
+    using MethodTypeObs = const jasm::MethodType *;
     using TypeObsArray = std::vector<TypeObs>;
     using ClassTypeObs = const jasm::ClassType *;
     using ArrayTypeObs = const jasm::ArrayType *;
@@ -53,7 +53,7 @@ namespace jawa
         jasm::FloatType float_type_;
         jasm::DoubleType double_type_;
         jasm::CharType char_type_;
-        std::unordered_set<jasm::MethodSignatureType, type_hasher_t> method_types_;
+        std::unordered_set<jasm::MethodType, type_hasher_t> method_types_;
         std::unordered_set<jasm::ArrayType, type_hasher_t> array_types_;
         std::unordered_set<jasm::ClassType, type_hasher_t> class_types_;
 

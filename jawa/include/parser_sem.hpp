@@ -41,6 +41,8 @@ namespace jawa
 
     void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types);
 
+    void enter_static_initializer(context_t ctx);
+
     void leave_method(context_t ctx);
 
     TypeObs find_class(context_t ctx, const Name &name);

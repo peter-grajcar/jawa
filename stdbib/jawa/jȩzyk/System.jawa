@@ -6,4 +6,8 @@ publiczna klasa System {
 
     statyczny StrumieńDrukowania wyjście = nowy StrumieńDrukowania();
 
+    statyczny void wczytajBibliotekę(Łańcuch nazwaBiblioteki) {
+        java.lang.Runtime.getRuntime().loadLibrary(nazwaBiblioteki);
+    }
+
 }

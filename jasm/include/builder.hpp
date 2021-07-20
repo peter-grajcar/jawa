@@ -68,9 +68,7 @@ namespace jasm
 
         InsertionPoint create_basic_block();
 
-        InsertionPoint enter_constructor(const MethodSignatureType &type, u2 access_flags);
-
-        InsertionPoint enter_method(const utf8 &method_name, const MethodSignatureType &type, u2 access_flags = 0);
+        InsertionPoint enter_method(const utf8 &method_name, const MethodType &type, u2 access_flags = 0);
 
         void leave_method();
 

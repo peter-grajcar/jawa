@@ -118,13 +118,8 @@ namespace jasm
         return index;
     }
 
-    ClassBuilder::InsertionPoint ClassBuilder::enter_constructor(const MethodSignatureType &type, u2 access_flags)
-    {
-        return enter_method("<init>", type, access_flags);
-    }
-
     ClassBuilder::InsertionPoint
-    ClassBuilder::enter_method(const utf8 &method_name, const MethodSignatureType &type, u2 access_flags)
+    ClassBuilder::enter_method(const utf8 &method_name, const MethodType &type, u2 access_flags)
     {
         InsertionPoint insertion_point = create_basic_block();
         current_insertion_point_ = insertion_point;

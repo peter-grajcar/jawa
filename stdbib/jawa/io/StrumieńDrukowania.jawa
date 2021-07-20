@@ -2,6 +2,10 @@ pakiet jawa.io;
 
 publiczna klasa StrumieńDrukowania {
 
+    statyczny {
+        System.wczytajBibliotekę("jawa_stdlib");
+    }
+
     publiczny ojczysty void wydrukovać(Łańcuch x);
 
 }

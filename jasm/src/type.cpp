@@ -76,12 +76,12 @@ namespace jasm
         return std::string(1, prefix());
     }
 
-    char MethodSignatureType::prefix() const
+    char MethodType::prefix() const
     {
         return '(';
     }
 
-    utf8 MethodSignatureType::descriptor() const
+    utf8 MethodType::descriptor() const
     {
         std::ostringstream ss;
         ss << '(';
@@ -92,20 +92,20 @@ namespace jasm
         return ss.str();
     }
 
-    bool MethodSignatureType::is_reference_type() const
+    bool MethodType::is_reference_type() const
     {
         return false;
     }
 
-    bool MethodSignatureType::operator==(const BaseType &type) const
+    bool MethodType::operator==(const BaseType &type) const
     {
-        auto method_type = dynamic_cast<const MethodSignatureType *>(&type);
+        auto method_type = dynamic_cast<const MethodType *>(&type);
         if (!method_type)
             return false;
         return *this == *method_type;
     }
 
-    bool MethodSignatureType::operator==(const MethodSignatureType &method_type) const
+    bool MethodType::operator==(const MethodType &method_type) const
     {
         if (method_type.return_type_ != return_type_)
             return false;

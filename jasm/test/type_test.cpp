@@ -29,7 +29,7 @@ int main()
     ClassType str("java/lang/String");
     ArrayType str_arr(&str, 1);
     PrimitiveType void_type = VoidType();
-    MethodSignatureType main_signature(&void_type, &str_arr);
+    MethodType main_signature(&void_type, &str_arr);
     std::cout << main_signature.descriptor() << std::endl;
 
 
@@ -39,9 +39,9 @@ int main()
     std::cout << "Thread == String      " << (ref == ClassType("java/lang/String")) << std::endl;
     std::cout << "Thread == int         " << (ref == IntType()) << std::endl;
     std::cout << "Thread[] == Thread[]  " << (ref_arr == ArrayType(&ref, 1)) << std::endl;
-    std::cout << "void(String[]) == void(String[])  " << (main_signature == MethodSignatureType(&void_type, &str_arr))
+    std::cout << "void(String[]) == void(String[])  " << (main_signature == MethodType(&void_type, &str_arr))
               << std::endl;
-    std::cout << "void(String[]) == void(String)    " << (main_signature == MethodSignatureType(&void_type, &str))
+    std::cout << "void(String[]) == void(String)    " << (main_signature == MethodType(&void_type, &str))
               << std::endl;
 
 

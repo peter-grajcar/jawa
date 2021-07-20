@@ -503,8 +503,11 @@ ClassBodyDeclarations: ClassBodyDeclaration
 
 ClassBodyDeclaration: SEMIC
                     | Modifiers_opt MemberDecl
-                    | STATIC Block
+                    | StaticInitializerHead Block { leave_method(ctx); }
                     ;
+
+StaticInitializerHead: STATIC { enter_static_initializer(ctx); }
+                     ;
 
 MemberDecl: MethodOrFieldDecl
           | Identifier ConstructorDeclaratorRest

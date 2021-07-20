@@ -204,14 +204,14 @@ namespace jasm
 
     };
 
-    class MethodSignatureType : public BaseType
+    class MethodType : public BaseType
     {
     private:
         const Type *return_type_;
         std::vector<const Type *> argument_types_;
     public:
         template <typename ...Args>
-        MethodSignatureType(const Type *return_type, Args ...argument_types)
+        MethodType(const Type *return_type, Args ...argument_types)
                 : return_type_(return_type), argument_types_{argument_types...}
         {
             assert(return_type_);
@@ -219,7 +219,7 @@ namespace jasm
                 assert(arg);
         }
 
-        MethodSignatureType(const Type *return_type, std::vector<const Type *> &&argument_types)
+        MethodType(const Type *return_type, std::vector<const Type *> &&argument_types)
                 : return_type_(return_type), argument_types_(argument_types)
         {
             assert(return_type_);
@@ -253,7 +253,7 @@ namespace jasm
 
         bool operator==(const BaseType &type) const override;
 
-        bool operator==(const MethodSignatureType &type) const;
+        bool operator==(const MethodType &type) const;
 
     };
 

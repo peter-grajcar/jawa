@@ -14,5 +14,9 @@ JNIEXPORT void JNICALL
 Java_jawa_io_Strumie_00144Drukowania_wydrukova_00107(JNIEnv *env, jobject obj, jstring str)
 {
     jboolean is_copy = false;
-    std::cout << (const char *) env->GetStringChars(str, &is_copy) << std::endl;
+    auto *ch = env->GetStringUTFChars(str, &is_copy);
+    jsize size = env->GetStringUTFLength(str);
+    for (jsize i = 0; i < size; ++i, ++ch)
+        std::cout << (char) *ch;
+    std::cout << std::endl;
 }
