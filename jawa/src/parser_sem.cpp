@@ -71,6 +71,7 @@ namespace jawa
 
     void enter_static_initializer(context_t ctx)
     {
+        std::cout << "entering static initializer" << std::endl;
         VoidTypeObs void_type = TYPE_TABLE.get_void_type();
         MethodTypeObs void_method_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
         BUILDER.enter_method("<clinit>", *void_method_type, jasm::Method::ACC_STATIC);
@@ -136,7 +137,7 @@ namespace jawa
 
         Name class_name;
         std::vector<std::size_t>::iterator it;
-        for (it = splits.begin() + 1; it + 2 < splits.end(); ++it) {
+        for (it = splits.begin() + 1; it + 1 < splits.end(); ++it) {
             Name name = CLASS_TABLE.get_fully_qualified_name(method.substr(0, *it));
             if (!name.empty()) {
                 class_name = name;
@@ -180,7 +181,6 @@ namespace jawa
             }
 
             return {
-                    field_index,
                     class_name,
                     method_name
             };
@@ -188,7 +188,8 @@ namespace jawa
 
 
         return {
-                // TODO
+                class_name,
+                method_name
         };
     }
 

@@ -3,7 +3,7 @@ pakiet jawa.io;
 publiczna klasa StrumieńDrukowania {
 
     statyczny {
-        System.wczytajBibliotekę("jawa_stdlib");
+        System.wczytajBibliotekę("jawa_stdbib");
     }
 
     publiczny ojczysty void wydrukovać(Łańcuch x);

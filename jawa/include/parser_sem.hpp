@@ -31,7 +31,6 @@ namespace jawa
 
     struct MethodReferenceAndName
     {
-        jasm::u2 reference;
         Name class_name;
         Name method_name;
     };

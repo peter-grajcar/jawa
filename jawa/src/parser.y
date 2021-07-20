@@ -317,7 +317,7 @@ ClassOrInterfaceTypeNoName: Name TypeArguments
                           | TypeDeclSpecifier TypeArguments
                           ;
 
-ClassOrInterfaceType: Name
+ClassOrInterfaceType: Name  { $$ = find_class(ctx, $1); }
                     | Name TypeArguments
                     | TypeDeclSpecifier
                     | TypeDeclSpecifier TypeArguments
