@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    const char *classpath;
+    const char *classpath = ".";
     std::vector<const char *> sources;
 
     for (int i = 1; i < argc; ++i) {

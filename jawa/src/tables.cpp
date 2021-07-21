@@ -324,4 +324,49 @@ namespace jawa
         return type;
     }
 
+    const LocalVariable *VariableScope::get_var(const Name &name) const
+    {
+        auto search = local_variables_.find(name);
+        if (search == local_variables_.end())
+            return nullptr;
+        return &search->second;
+    }
+
+
+    void VariableScope::add_var(Name name, TypeObs type, jasm::u2 index)
+    {
+        local_variables_.emplace(name, LocalVariable{
+                std::move(name),
+                type,
+                index
+        });
+    }
+
+    void VariableScopeTable::enter_scope()
+    {
+        scopes_.emplace_back();
+    }
+
+    void VariableScopeTable::leave_scope()
+    {
+        assert(scopes_.size() > 0);
+        count_ -= scopes_.back().local_variables_.size();
+        scopes_.pop_back();
+    }
+
+    const LocalVariable *VariableScopeTable::get_var(const Name &name) const
+    {
+        for (auto scope = scopes_.rbegin(); scope < scopes_.rend(); ++scope) {
+            const LocalVariable *var = scope->get_var(name);
+            if (var != nullptr)
+                return var;
+        }
+        return nullptr;
+    }
+
+    void VariableScopeTable::add_var(Name name, TypeObs type)
+    {
+        assert(scopes_.size() > 0);
+        scopes_.back().add_var(std::move(name), type, ++count_);
+    }
 }

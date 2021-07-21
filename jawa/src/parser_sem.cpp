@@ -77,14 +77,15 @@ namespace jawa
         BUILDER.enter_method("<clinit>", *void_method_type, jasm::Method::ACC_STATIC);
     }
 
-    void leave_method(context_t ctx)
+    void leave_method(context_t ctx, const ModifierAndAnnotationPack &pack)
     {
         std::cout << "leaving method" << std::endl;
+        // TODO: BUILDER.current_method()->set_access_flags();
         BUILDER.make_instruction<jasm::Return>();
         BUILDER.leave_method();
     }
 
-    void declare_method(context_t ctx)
+    void declare_method(context_t ctx, const ModifierAndAnnotationPack &pack)
     {
         std::cout << "declaring method" << std::endl;
         BUILDER.leave_method();
@@ -267,6 +268,11 @@ namespace jawa
 
         std::cout << "invoking method " << method.name << std::endl;
         return Expression(jawa_method->method_type()->return_type());
+    }
+
+    Expression resolve_name_expression(context_t ctx, const Name &name)
+    {
+        return {};
     }
 
 }

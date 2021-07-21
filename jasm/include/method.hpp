@@ -60,6 +60,11 @@ namespace jasm
             return descriptor_index_;
         }
 
+        inline void set_access_flags(u2 access_flags)
+        {
+            access_flags_ = access_flags;
+        }
+
         void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const;
 
         void emit_bytecode(std::ostream &os) const;

@@ -246,6 +246,43 @@ namespace jawa
         const JawaClass *load_class(const Name &class_name);
     };
 
+    struct LocalVariable
+    {
+        Name name;
+        TypeObs type;
+        jasm::u2 index;
+    };
+
+    class VariableScope
+    {
+    private:
+        std::unordered_map<Name, LocalVariable> local_variables_;
+
+        friend class VariableScopeTable;
+
+    public:
+        const LocalVariable *get_var(const Name &name) const;
+
+        void add_var(Name name, TypeObs type, jasm::u2 index);
+    };
+
+    class VariableScopeTable
+    {
+    private:
+        std::vector<VariableScope> scopes_;
+
+        jasm::u2 count_;
+
+    public:
+        void enter_scope();
+
+        void leave_scope();
+
+        const LocalVariable *get_var(const Name &name) const;
+
+        void add_var(Name name, TypeObs type);
+    };
+
 }
 
 #endif //JAWA_TABLES_HPP

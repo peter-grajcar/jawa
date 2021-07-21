@@ -16,14 +16,15 @@
 namespace jawa
 {
 
-    enum class Gender
+    enum class ModifierForm
     {
+        NONE,
         FEM,
         MASC,
         NEUT,
     };
 
-    Gender get_gender(Name name);
+    ModifierForm get_form(Name name);
 
     enum class Modifier
     {
@@ -46,14 +47,14 @@ namespace jawa
         uint32_t mod_flags_masc_;
         uint32_t mod_flags_fem_;
     public:
-        void set(Modifier mod, Gender gender = Gender::NEUT);
+        void set(Modifier mod, ModifierForm form = ModifierForm::NEUT);
 
-        bool is_set(Modifier mod, Gender gender) const;
+        ModifierForm get(Modifier mod) const;
     };
 
     struct ModifierAndAnnotationPack
     {
-        ModifierPack modifier_pack_;
+        ModifierPack modifier_pack;
         // TODO: AnnotationPack annotation_pack_;
     };
 

@@ -51,16 +51,16 @@ using namespace jawa;
 %token                      EOF     0       "koniec pliku"
 
 /* modifiers */
-%token<Gender>              PRIVATE         "prywatny/prywatna"
-%token<Gender>              PROTECTED       "chroniony/chroniona"
-%token<Gender>              PUBLIC          "publiczny/publiczna"
-%token<Gender>              STATIC          "statyczny/statyczna"
-%token<Gender>              FINAL           "końcowy/końcowa"
-%token<Gender>              NATIVE          "ojczysty/ojczysta"
-%token<Gender>              VOLATILE        "zmeinny/zmeinna"
-%token<Gender>              SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
-%token<Gender>              ABSTRACT        "abstrakcyjny/abstrakcyjna"
-%token<Gender>              TRANSIENT       "przejściowy/przejściowa"
+%token<ModifierForm>        PRIVATE         "prywatny/prywatna"
+%token<ModifierForm>        PROTECTED       "chroniony/chroniona"
+%token<ModifierForm>        PUBLIC          "publiczny/publiczna"
+%token<ModifierForm>        STATIC          "statyczny/statyczna"
+%token<ModifierForm>        FINAL           "końcowy/końcowa"
+%token<ModifierForm>        NATIVE          "ojczysty/ojczysta"
+%token<ModifierForm>        VOLATILE        "zmeinny/zmeinna"
+%token<ModifierForm>        SYNCHRONIZED    "zsynchronizowany/zsynchronizowana"
+%token<ModifierForm>        ABSTRACT        "abstrakcyjny/abstrakcyjna"
+%token<ModifierForm>        TRANSIENT       "przejściowy/przejściowa"
 %token                      STRICTFP        "ścisłezp"
 
 /* control flow */
@@ -177,6 +177,7 @@ using namespace jawa;
 %type<Expression>           ConditionalAndExpressionNoName
 %type<ExpressionOpt>        ExpressionNoName_opt
 %type<ClassAndName>         MethodName
+%type<ModifierAndAnnotationPack> Modifiers_opt Modifiers StaticInitializerHead
 
 %%
 
@@ -502,23 +503,23 @@ ClassBodyDeclarations: ClassBodyDeclaration
                      ;
 
 ClassBodyDeclaration: SEMIC
-                    | Modifiers_opt MemberDecl
-                    | StaticInitializerHead Block { leave_method(ctx); }
+                    | MemberDecl
+                    | StaticInitializerHead Block { leave_method(ctx, $1); }
                     ;
 
 StaticInitializerHead: STATIC { enter_static_initializer(ctx); }
                      ;
 
 MemberDecl: MethodOrFieldDecl
-          | Identifier ConstructorDeclaratorRest
-          | GenericMethodOrConstructorDecl
-          | ClassDeclaration
-          | InterfaceDeclaration
+          | Modifiers_opt Identifier ConstructorDeclaratorRest
+          | Modifiers_opt GenericMethodOrConstructorDecl
+          | Modifiers_opt ClassDeclaration
+          | Modifiers_opt InterfaceDeclaration
           ;
 
-MethodOrFieldDecl: FieldDeclHead FieldDeclaratorsRest SEMIC
-                 | MethodDeclHead Block                  { leave_method(ctx); }
-                 | MethodDeclHead SEMIC                  { declare_method(ctx); }
+MethodOrFieldDecl: Modifiers_opt FieldDeclHead FieldDeclaratorsRest SEMIC
+                 | Modifiers_opt MethodDeclHead Block                  { leave_method(ctx, $1); }
+                 | Modifiers_opt MethodDeclHead SEMIC                  { declare_method(ctx, $1); }
                  ;
 
 FieldDeclHead: Type Identifier

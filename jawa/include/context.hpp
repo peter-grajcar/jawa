@@ -42,14 +42,15 @@ namespace jawa
         loc_t loc_;
         TypeTable type_table_;
         ClassTable class_table_;
+        VariableScopeTable scope_table_;
         std::locale locale_;
         std::unique_ptr<jasm::ClassBuilder> builder_;
 
         void message_line(loc_t const &loc) const;
 
     public:
-        Context(const std::string &class_paths) : locale_("pl_PL.UTF-8"), type_table_(),
-                                                  class_table_(type_table_, class_paths) {}
+        explicit Context(const std::string &class_paths) : locale_("pl_PL.UTF-8"), type_table_(),
+                                                           class_table_(type_table_, class_paths) {}
 
         /**
          * Returns current location of the parser.

@@ -90,6 +90,11 @@ namespace jasm
 
         u2 add_string_constant(const utf8 &str);
 
+        inline Method *current_method()
+        {
+            return current_method_;
+        }
+
         template <typename T, typename ...Args>
         inline void make_instruction(Args ...args)
         {

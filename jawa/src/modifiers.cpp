@@ -12,41 +12,44 @@
 namespace jawa
 {
 
-    Gender get_gender(Name name)
+    ModifierForm get_form(Name name)
     {
         switch (name.back()) {
-            case 'a':
-                return Gender::FEM;
-            case 'y':
-                return Gender::MASC;
-            default:
-                return Gender::NEUT;
+        case 'a':
+            return ModifierForm::FEM;
+        case 'y':
+            return ModifierForm::MASC;
+        default:
+            return ModifierForm::NEUT;
         }
     }
 
-    void ModifierPack::set(Modifier mod, Gender gender)
+    void ModifierPack::set(Modifier mod, ModifierForm form)
     {
         uint32_t mask = 1U << (size_t) mod;
         assert((mod_flags_masc_ & mask) == 0 && (mod_flags_fem_ & mask) == 0);
-        if (gender == Gender::NEUT || gender == Gender::MASC) {
+        if (form == ModifierForm::NEUT || form == ModifierForm::MASC) {
             mod_flags_masc_ |= mask;
         }
-        if (gender == Gender::NEUT || gender == Gender::FEM) {
+        if (form == ModifierForm::NEUT || form == ModifierForm::FEM) {
             mod_flags_fem_ |= mask;
+        }
+        if (form == ModifierForm::NONE) {
+            mod_flags_fem_ &= ~mask;
+            mod_flags_masc_ &= ~mask;
         }
     }
 
-    bool ModifierPack::is_set(Modifier mod, Gender gender) const
+    ModifierForm ModifierPack::get(Modifier mod) const
     {
         uint32_t mask = 1U << (size_t) mod;
-        switch (gender) {
-            case Gender::FEM:
-                return (mod_flags_fem_ & mask) && !(mod_flags_masc_ & mask);
-            case Gender::MASC:
-                return !(mod_flags_fem_ & mask) && (mod_flags_masc_ & mask);
-            case Gender::NEUT:
-                return (mod_flags_fem_ & mask) && (mod_flags_masc_ & mask);
-        }
+        if ((mod_flags_masc_ & mask) && (mod_flags_fem_ & mask))
+            return ModifierForm::NEUT;
+        if (mod_flags_masc_ & mask)
+            return ModifierForm::MASC;
+        if (mod_flags_fem_ & mask)
+            return ModifierForm::FEM;
+        return ModifierForm::NONE;
     }
 
 

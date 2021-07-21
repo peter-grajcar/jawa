@@ -64,16 +64,16 @@ std::ostringstream str_buffer;
 
     /* Keywords */
 
-prywatn[ya]                 return jawa::parser::make_PRIVATE(jawa::get_gender(yytext), ctx->loc());
-chronion[ya]                return jawa::parser::make_PROTECTED(jawa::get_gender(yytext), ctx->loc());
-publiczn[ya]                return jawa::parser::make_PUBLIC(jawa::get_gender(yytext), ctx->loc());
-statyczn[ya]                return jawa::parser::make_STATIC(jawa::get_gender(yytext), ctx->loc());
-końcow[ya]                  return jawa::parser::make_FINAL(jawa::get_gender(yytext), ctx->loc());
-ojczyst[ya]                 return jawa::parser::make_NATIVE(jawa::get_gender(yytext), ctx->loc());
-zmeinn[ya]                  return jawa::parser::make_VOLATILE(jawa::get_gender(yytext), ctx->loc());
-zsynchronizowan[ya]         return jawa::parser::make_SYNCHRONIZED(jawa::get_gender(yytext), ctx->loc());
-abstrakcyjn[ya]             return jawa::parser::make_ABSTRACT(jawa::get_gender(yytext), ctx->loc());
-rzejściow[ya]               return jawa::parser::make_TRANSIENT(jawa::get_gender(yytext), ctx->loc());
+prywatn[ya]                 return jawa::parser::make_PRIVATE(jawa::get_form(yytext), ctx->loc());
+chronion[ya]                return jawa::parser::make_PROTECTED(jawa::get_form(yytext), ctx->loc());
+publiczn[ya]                return jawa::parser::make_PUBLIC(jawa::get_form(yytext), ctx->loc());
+statyczn[ya]                return jawa::parser::make_STATIC(jawa::get_form(yytext), ctx->loc());
+końcow[ya]                  return jawa::parser::make_FINAL(jawa::get_form(yytext), ctx->loc());
+ojczyst[ya]                 return jawa::parser::make_NATIVE(jawa::get_form(yytext), ctx->loc());
+zmeinn[ya]                  return jawa::parser::make_VOLATILE(jawa::get_form(yytext), ctx->loc());
+zsynchronizowan[ya]         return jawa::parser::make_SYNCHRONIZED(jawa::get_form(yytext), ctx->loc());
+abstrakcyjn[ya]             return jawa::parser::make_ABSTRACT(jawa::get_form(yytext), ctx->loc());
+rzejściow[ya]               return jawa::parser::make_TRANSIENT(jawa::get_form(yytext), ctx->loc());
 ścisłezp                    return jawa::parser::make_STRICTFP(ctx->loc());
 
 jeżeli                      return jawa::parser::make_IF(ctx->loc());

@@ -12,13 +12,10 @@
 #define JAWA_PARSER_SEM_CPP_HPP
 
 #include "context.hpp"
+#include "modifiers.hpp"
 
 namespace jawa
 {
-
-    void enter_class(context_t ctx, const Name &class_name);
-
-    void leave_class(context_t ctx);
 
     struct Expression
     {
@@ -35,16 +32,27 @@ namespace jawa
         Name name;
     };
 
+    struct ArgumentPack
+    {
+        TypeObs type;
+        Name name;
+    };
+
     using ExpressionOpt = std::optional<Expression>;
     using ExpressionArray = std::vector<Expression>;
+    using ArgumentPackArray = std::vector<ArgumentPack>;
+
+    void enter_class(context_t ctx, const Name &class_name);
+
+    void leave_class(context_t ctx);
 
     void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types);
 
     void enter_static_initializer(context_t ctx);
 
-    void leave_method(context_t ctx);
+    void leave_method(context_t ctx, const ModifierAndAnnotationPack &pack);
 
-    void declare_method(context_t ctx);
+    void declare_method(context_t ctx, const ModifierAndAnnotationPack &pack);
 
     TypeObs find_class(context_t ctx, const Name &name);
 
@@ -58,6 +66,8 @@ namespace jawa
     invoke_method(context_t ctx, const Expression &expr, const Name &method_name, const ExpressionArray &arguments);
 
     Expression invoke_method(context_t ctx, const ClassAndName &method, const ExpressionArray &arguments);
+
+    Expression resolve_name_expression(context_t ctx, const Name &name);
 
 }
 
