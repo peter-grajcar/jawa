@@ -13,27 +13,54 @@
 
 using namespace jawa;
 
+void show_usage(const char *name)
+{
+    std::cerr << "usage: " << name << " [--ścieżkaklasy ŚCIEŻKAKLASY] <PLIK_ŹRÓDŁOWY ...>" << std::endl;
+}
+
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
-        std::cerr << "usage: " << argv[0] << " <source file>" << std::endl;
+    if (argc < 2) {
+        show_usage(argv[0]);
         return 1;
     }
 
-    Context ctx("/Users/petergrajcar/Desktop/classpath");
+    const char *classpath;
+    std::vector<const char *> sources;
 
-    FILE *iff = fopen(argv[1], "r");
-    if (!iff) {
-        std::cerr << "could not open file " << argv[1] << std::endl;
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "--ścieżkaklasy") == 0) {
+            if (i + 1 >= argc) {
+                show_usage(argv[0]);
+                return 1;
+            }
+            classpath = argv[++i];
+        } else {
+            sources.push_back(argv[i]);
+        }
+    }
+
+    if (sources.empty()) {
+        show_usage(argv[0]);
         return 1;
     }
 
-    auto scn = lexer_init(iff);
-    parser prs(scn, &ctx);
+    Context ctx(classpath);
 
-    prs.parse();
+    for (auto file : sources) {
+        FILE *iff = fopen(file, "r");
+        if (!iff) {
+            std::cerr << "could not open file " << argv[1] << std::endl;
+            return 1;
+        }
 
-    lexer_shutdown(scn);
+        auto scn = lexer_init(iff);
+        parser prs(scn, &ctx);
+
+        prs.parse();
+
+        lexer_shutdown(scn);
+    }
 
     return 0;
 }
