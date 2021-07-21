@@ -176,7 +176,7 @@ using namespace jawa;
 %type<Expression>           ConstantExpressionNoName PrimaryNoName Literal ConditionalOrExpressionNoName
 %type<Expression>           ConditionalAndExpressionNoName
 %type<ExpressionOpt>        ExpressionNoName_opt
-%type<MethodReferenceAndName>   MethodName
+%type<ClassAndName>         MethodName
 
 %%
 
@@ -517,7 +517,8 @@ MemberDecl: MethodOrFieldDecl
           ;
 
 MethodOrFieldDecl: FieldDeclHead FieldDeclaratorsRest SEMIC
-                 | MethodDeclHead MethodDeclaratorRest                  { leave_method(ctx); }
+                 | MethodDeclHead Block                  { leave_method(ctx); }
+                 | MethodDeclHead SEMIC                  { declare_method(ctx); }
                  ;
 
 FieldDeclHead: Type Identifier
@@ -1062,13 +1063,15 @@ PrimaryNoName: Literal          { $$ = $1; }
              | VOID DOT CLASS
              | Name LBRA ExpressionNoName RBRA
              | Name LBRA Name RBRA
-             | MethodName Arguments  { invoke_method(ctx, $1, $2); }
+             | MethodName Arguments  { $$ = invoke_method(ctx, $1, $2); }
              | Name DOT CLASS
              | Name DOT ExplicitGenericInvocation
              | Name DOT THIS
              | Name DOT SUPER Arguments
              | Name DOT NEW NonWildcardTypeArguments_opt InnerCreator
              | Name LBRA Dims DOT CLASS RBRA
+             | PrimaryNoName DOT Identifier Arguments { $$ = invoke_method(ctx, $1, $3, $4); }
+             | PrimaryNoName DOT Identifier
              ;
 
 MethodName: Name    {  $$ = resolve_method_class(ctx, $1); }

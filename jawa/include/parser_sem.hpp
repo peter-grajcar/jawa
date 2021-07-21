@@ -29,10 +29,10 @@ namespace jawa
         explicit Expression(TypeObs type) : type(type) {};
     };
 
-    struct MethodReferenceAndName
+    struct ClassAndName
     {
         Name class_name;
-        Name method_name;
+        Name name;
     };
 
     using ExpressionOpt = std::optional<Expression>;
@@ -44,15 +44,20 @@ namespace jawa
 
     void leave_method(context_t ctx);
 
+    void declare_method(context_t ctx);
+
     TypeObs find_class(context_t ctx, const Name &name);
 
     void generate_default_constructor(context_t ctx);
 
     Expression load_string_literal(context_t ctx, const Name &name);
 
-    MethodReferenceAndName resolve_method_class(context_t ctx, const Name &method);
+    ClassAndName resolve_method_class(context_t ctx, const Name &method);
 
-    void invoke_method(context_t ctx, const MethodReferenceAndName &method, const ExpressionArray &arguments);
+    Expression
+    invoke_method(context_t ctx, const Expression &expr, const Name &method_name, const ExpressionArray &arguments);
+
+    Expression invoke_method(context_t ctx, const ClassAndName &method, const ExpressionArray &arguments);
 
 }
 

@@ -114,27 +114,48 @@ namespace jawa
         bool operator==(const JawaMethodSignature &signature) const;
     };
 
-    struct JawaMethod
+    class JawaClassMember
     {
-        Name name;
-        MethodTypeObs type;
+    protected:
+        Name name_;
+        jasm::u2 access_flags_;
+        TypeObs type_;
+    public:
 
-        JawaMethod(Name name, MethodTypeObs type) : name(std::move(name)), type(type)
+        JawaClassMember(Name name, TypeObs type, jasm::u2 access_flags)
+                : name_(std::move(name)), type_(type), access_flags_(access_flags) {}
+
+        inline Name name() const { return name_; }
+
+        inline TypeObs type() const { return type_; }
+
+        inline jasm::u2 access_flags() const { return access_flags_; }
+
+        virtual ~JawaClassMember() = default;
+    };
+
+    class JawaMethod : public JawaClassMember
+    {
+    public:
+        JawaMethod(Name name, MethodTypeObs type, jasm::u2 access_flags)
+                : JawaClassMember(std::move(name), type, access_flags)
         {
             assert(type != nullptr);
+        }
+
+        inline MethodTypeObs method_type() const
+        {
+            return dynamic_cast<MethodTypeObs>(type_);
         }
 
         JawaMethodSignature signature() const;
     };
 
-    struct JawaField
+    class JawaField : public JawaClassMember
     {
-        Name name;
-        TypeObs type;
-        jasm::u2 access_flags;
-
+    public:
         JawaField(Name name, TypeObs type, jasm::u2 access_flags)
-                : name(std::move(name)), type(type), access_flags(access_flags)
+                : JawaClassMember(std::move(name), type, access_flags)
         {
             assert(type != nullptr);
         }

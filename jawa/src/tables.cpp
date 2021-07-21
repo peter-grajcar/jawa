@@ -38,17 +38,17 @@ namespace jawa
 
     JawaMethodSignature JawaMethod::signature() const
     {
-        return JawaMethodSignature(name, type->argument_types());
+        return JawaMethodSignature(name_, method_type()->argument_types());
     }
 
     size_t JawaField::hash() const
     {
-        return std::hash<std::string>()(name) ^ type->hash();
+        return std::hash<std::string>()(name_) ^ type_->hash();
     }
 
     bool JawaField::operator==(const JawaField &field) const
     {
-        return name == field.name && type == field.type;
+        return name_ == field.name_ && type_ == field.type_;
     }
 
     size_t JawaClass::hash() const
@@ -101,7 +101,7 @@ namespace jawa
             // TODO: modifiers
             jasm::u2 access_flags = method.access_flags();
 
-            JawaMethod jawa_method(name_constant->value(), type);
+            JawaMethod jawa_method(name_constant->value(), type, access_flags);
             methods_.insert({jawa_method.signature(), std::move(jawa_method)});
         }
     }

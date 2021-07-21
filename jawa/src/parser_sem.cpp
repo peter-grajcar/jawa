@@ -84,6 +84,12 @@ namespace jawa
         BUILDER.leave_method();
     }
 
+    void declare_method(context_t ctx)
+    {
+        std::cout << "declaring method" << std::endl;
+        BUILDER.leave_method();
+    }
+
     TypeObs find_class(context_t ctx, const Name &name)
     {
         if (name == "Łańcuch") // temporary measure
@@ -124,7 +130,7 @@ namespace jawa
         return indices;
     }
 
-    MethodReferenceAndName resolve_method_class(context_t ctx, const Name &method)
+    ClassAndName resolve_method_class(context_t ctx, const Name &method)
     {
         auto splits = split_name(method);
 
@@ -163,8 +169,8 @@ namespace jawa
                     ctx->message(errors::FIELD_NOT_FOUND, ctx->loc(), field_name, class_name);
                     return {};
                 }
-                assert(jawa_field->access_flags & jasm::Field::ACC_STATIC);
-                auto class_type = dynamic_cast<ClassTypeObs>(jawa_field->type);
+                assert(jawa_field->access_flags() & jasm::Field::ACC_STATIC);
+                auto class_type = dynamic_cast<ClassTypeObs>(jawa_field->type());
                 assert(class_type); // in fact it could also be an array
 
                 field_index = BUILDER.add_field_constant(class_name, field_name,
@@ -193,7 +199,8 @@ namespace jawa
         };
     }
 
-    void invoke_method(context_t ctx, const MethodReferenceAndName &method, const ExpressionArray &arguments)
+    Expression
+    invoke_method(context_t ctx, const Expression &expr, const Name &method_name, const ExpressionArray &arguments)
     {
         TypeObsArray argument_types;
         for (auto &expr : arguments) {
@@ -201,24 +208,65 @@ namespace jawa
             argument_types.push_back(expr.type);
         }
 
-        JawaMethodSignature signature(method.method_name, argument_types);
+        JawaMethodSignature signature(method_name, argument_types);
 
-        const JawaClass *jawa_class = CLASS_TABLE.load_class(method.class_name);
+        // TODO: array_type
+        auto class_type = dynamic_cast<ClassTypeObs>(expr.type);
+        if (class_type == nullptr) {
+            ctx->message(errors::EXPECTED_REFERENCE_TYPE, ctx->loc());
+            return Expression();
+        }
+
+        const JawaClass *jawa_class = CLASS_TABLE.load_class(class_type->class_name());
         if (!jawa_class) {
-            ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), method.class_name);
-            return;
+            ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), class_type->class_name());
+            return Expression();
         }
 
         const JawaMethod *jawa_method = jawa_class->get_method(signature);
         if (!jawa_method) {
-            ctx->message(errors::METHOD_NOT_FOUND, ctx->loc(), method.method_name, method.class_name);
-            return;
+            ctx->message(errors::METHOD_NOT_FOUND, ctx->loc(), method_name, class_type->class_name());
+            return Expression();
         }
 
-        jasm::u2 method_index = BUILDER.add_method_constant(method.class_name, method.method_name, *jawa_method->type);
+        jasm::u2 method_index = BUILDER.add_method_constant(class_type->class_name(), method_name,
+                                                            *jawa_method->type());
         BUILDER.make_instruction<jasm::InvokeVirtual>(U2_SPLIT(method_index));
 
-        std::cout << "invoking method " << method.method_name << std::endl;
+        std::cout << "invoking method " << method_name << std::endl;
+        return Expression(jawa_method->method_type()->return_type());
+    }
+
+    Expression invoke_method(context_t ctx, const ClassAndName &method, const ExpressionArray &arguments)
+    {
+        if (method.name.empty())
+            return Expression();
+
+        TypeObsArray argument_types;
+        for (auto &expr : arguments) {
+            assert(expr.type != nullptr);
+            argument_types.push_back(expr.type);
+        }
+
+        JawaMethodSignature signature(method.name, argument_types);
+
+        const JawaClass *jawa_class = CLASS_TABLE.load_class(method.class_name);
+        if (!jawa_class) {
+            ctx->message(errors::CLASS_NOT_FOUND, ctx->loc(), method.class_name);
+            return Expression();
+        }
+
+        const JawaMethod *jawa_method = jawa_class->get_method(signature);
+        if (!jawa_method) {
+            ctx->message(errors::METHOD_NOT_FOUND, ctx->loc(), method.name, method.class_name);
+            return Expression();
+        }
+
+        jasm::u2 method_index = BUILDER.add_method_constant(method.class_name, method.name, *jawa_method->type());
+        BUILDER.make_instruction<jasm::InvokeVirtual>(U2_SPLIT(method_index));
+
+        std::cout << "invoking method " << method.name << std::endl;
+        return Expression(jawa_method->method_type()->return_type());
     }
 
 }

@@ -20,4 +20,5 @@ namespace jawa::errors
     err_n CLASS_NOT_FOUND{"klasa \'%\' nie została znaleziona"};
     err_nn METHOD_NOT_FOUND{"metoda \'%\' klasy \'%\' nie została znaleziona"};
     err_nn FIELD_NOT_FOUND{"pole \'%\' klasy \'%\' nie zostało znalezione"};
+    err EXPECTED_REFERENCE_TYPE{"oczekiwany typ referencyjny"};
 }
