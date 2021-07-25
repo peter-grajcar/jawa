@@ -11,8 +11,7 @@
 #ifndef JAWA_OPERATORS_HPP
 #define JAWA_OPERATORS_HPP
 
-namespace jawa::operators
-{
+namespace jawa::operators {
 
     enum addop
     {
@@ -62,4 +61,4 @@ namespace jawa::operators
 
 }
 
-#endif //JAWA_OPERATORS_HPP
+#endif // JAWA_OPERATORS_HPP

@@ -12,15 +12,14 @@
 #define JAWA_BYTE_CODE_HPP
 
 #include <bit>
-#include <iostream>
 #include <fstream>
+#include <iostream>
 
-#define U2_HIGH(X) ((jasm::u1) ((X & 0xFF00u) >> 8u))
-#define U2_LOW(X) ((jasm::u1) (X & 0x00FFu))
+#define U2_HIGH(X) ((jasm::u1)((X & 0xFF00u) >> 8u))
+#define U2_LOW(X) ((jasm::u1)(X & 0x00FFu))
 #define U2_SPLIT(X) U2_HIGH(X), U2_LOW(X)
 
-namespace jasm::byte_code
-{
+namespace jasm::byte_code {
 
     using u1 = uint8_t;
     using u2 = uint16_t;
@@ -51,7 +50,7 @@ namespace jasm::byte_code
      * @param src source value.
      * @return source value with swapped endianness.
      */
-    template <typename T>
+    template<typename T>
     T swap_endianness(T src)
     {
         if (sizeof(T) == 1)
@@ -69,7 +68,7 @@ namespace jasm::byte_code
      * @param is stream to read from.
      * @return value
      */
-    template <typename T>
+    template<typename T>
     T read_big_endian(std::istream &is)
     {
         T dst;
@@ -87,7 +86,7 @@ namespace jasm::byte_code
      * @param os output stream.
      * @param val value to write.
      */
-    template <typename T>
+    template<typename T>
     void write_big_endian(std::ostream &os, T val)
     {
 #ifdef IS_LITTLE_ENDIAN
@@ -96,7 +95,6 @@ namespace jasm::byte_code
         os.write(reinterpret_cast<char *>(&val), sizeof(T));
     }
 
-
 }
 
-#endif //JAWA_BYTE_CODE_HPP
+#endif // JAWA_BYTE_CODE_HPP

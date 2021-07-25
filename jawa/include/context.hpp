@@ -14,19 +14,22 @@
 #include <iostream>
 #include <sstream>
 
-#include "format.hpp"
-#include "error.hpp"
-#include "tables.hpp"
 #include "builder.hpp"
+#include "error.hpp"
+#include "format.hpp"
+#include "tables.hpp"
 
-namespace jawa
-{
+namespace jawa {
 
     extern std::ostringstream line_buffer;
 
     struct loc_t
     {
-        loc_t() : line(1), column_start(1), column_end(1) {}
+        loc_t()
+          : line(1)
+          , column_start(1)
+          , column_end(1)
+        {}
 
         unsigned line;
         unsigned column_start;
@@ -49,28 +52,25 @@ namespace jawa
         void message_line(loc_t const &loc) const;
 
     public:
-        explicit Context(const std::string &class_paths) : locale_("pl_PL.UTF-8"), type_table_(),
-                                                           class_table_(type_table_, class_paths) {}
+        explicit Context(const std::string &class_paths)
+          : locale_("pl_PL.UTF-8")
+          , type_table_()
+          , class_table_(type_table_, class_paths)
+        {}
 
         /**
          * Returns current location of the parser.
          *
          * @return current location.
          */
-        inline const loc_t &loc() const
-        {
-            return loc_;
-        }
+        inline const loc_t &loc() const { return loc_; }
 
         /**
          * Returns used locale.
          *
          * @return locale.
          */
-        inline const std::locale &locale() const
-        {
-            return locale_;
-        }
+        inline const std::locale &locale() const { return locale_; }
 
         /**
          * Increments the line number.
@@ -106,7 +106,7 @@ namespace jawa
          * @param err type of the error.
          * @param loc location of the error.
          */
-        template <typename ...Args>
+        template<typename... Args>
         void message(errors::error_object<Args...> err, const loc_t &loc, Args... args) const
         {
             std::cerr << "błąd:" << std::dec << loc.line << ':' << loc.column_start << ": ";
@@ -136,10 +136,7 @@ namespace jawa
          *
          * @return class builder.
          */
-        inline jasm::ClassBuilder &class_builder()
-        {
-            return *builder_;
-        }
+        inline jasm::ClassBuilder &class_builder() { return *builder_; }
 
         /**
          * Creates a new class builder.
@@ -153,24 +150,23 @@ namespace jawa
          *
          * @return reference to the type table.
          */
-        inline TypeTable &type_table()
-        {
-            return type_table_;
-        }
+        inline TypeTable &type_table() { return type_table_; }
 
         /**
          *
          * @return reference to the class table.
          */
-        inline ClassTable &class_table()
-        {
-            return class_table_;
-        }
+        inline ClassTable &class_table() { return class_table_; }
 
+        /**
+         *
+         * @return reference to the variable scope table.
+         */
+        inline VariableScopeTable &scope_table() { return scope_table_; }
     };
 
     using context_t = Context *;
 
 }
 
-#endif //JAWA_CONTEXT_HPP
+#endif // JAWA_CONTEXT_HPP

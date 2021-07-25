@@ -13,8 +13,7 @@
 
 #include "context.hpp"
 
-namespace jawa
-{
+namespace jawa {
 
     enum class ModifierForm
     {
@@ -46,6 +45,7 @@ namespace jawa
     private:
         uint32_t mod_flags_masc_;
         uint32_t mod_flags_fem_;
+
     public:
         void set(Modifier mod, ModifierForm form = ModifierForm::NEUT);
 
@@ -60,4 +60,4 @@ namespace jawa
 
 }
 
-#endif //JAWA_MODIFIERS_HPP
+#endif // JAWA_MODIFIERS_HPP

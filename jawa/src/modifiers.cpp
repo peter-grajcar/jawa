@@ -9,8 +9,7 @@
  */
 #include "modifiers.hpp"
 
-namespace jawa
-{
+namespace jawa {
 
     ModifierForm get_form(Name name)
     {
@@ -51,6 +50,5 @@ namespace jawa
             return ModifierForm::FEM;
         return ModifierForm::NONE;
     }
-
 
 }

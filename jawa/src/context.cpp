@@ -8,11 +8,10 @@
  * Copyright (c) 2021 Peter Grajcar
  */
 #include "context.hpp"
-#include <sstream>
 #include <iomanip>
+#include <sstream>
 
-namespace jawa
-{
+namespace jawa {
 
     std::ostringstream line_buffer{};
 
@@ -20,18 +19,16 @@ namespace jawa
     {
         std::ostringstream oss;
         if (ch < 32 || ch > 126 || ch == '\'' || ch == '"')
-            oss << "\\x" << std::hex << std::setfill('0')
-                << std::setw(2) << (int) ch;
+            oss << "\\x" << std::hex << std::setfill('0') << std::setw(2) << (int) ch;
         else
             oss.put(ch);
         return std::move(oss).str();
-
     }
 
     void Context::message_line(loc_t const &loc) const
     {
-        std::cerr << ' ' << std::setw(5) << std::setfill(' ') << loc.line << " | "
-                  << jawa::line_buffer.str() << std::endl
+        std::cerr << ' ' << std::setw(5) << std::setfill(' ') << loc.line << " | " << jawa::line_buffer.str()
+                  << std::endl
                   << "       | ";
         // column starts at 1, so subtracting 1 is safe
         for (unsigned i = 0; i < loc.column_start - 1; ++i) {
@@ -63,7 +60,6 @@ namespace jawa
     {
         builder_ = std::make_unique<jasm::ClassBuilder>(class_name);
         return *builder_;
-
     }
 
 }

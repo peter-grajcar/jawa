@@ -11,15 +11,14 @@
 #ifndef JAWA_TABLES_HPP
 #define JAWA_TABLES_HPP
 
-#include <unordered_set>
-#include <unordered_map>
 #include <class.hpp>
+#include <unordered_map>
+#include <unordered_set>
 
-#include "types.hpp"
 #include "type.hpp"
+#include "types.hpp"
 
-namespace jawa
-{
+namespace jawa {
 
     using TypeObs = const jasm::Type *;
     using VoidTypeObs = const jasm::VoidType *;
@@ -85,16 +84,9 @@ namespace jawa
             return &*method_types_.emplace(return_type, std::move(arguments)).first;
         }
 
-        ClassTypeObs get_class_type(const Name &class_name)
-        {
-            return &*class_types_.emplace(class_name).first;
-        }
+        ClassTypeObs get_class_type(const Name &class_name) { return &*class_types_.emplace(class_name).first; }
 
-        ArrayTypeObs get_array_type(TypeObs type, size_t dims)
-        {
-            return &*array_types_.emplace(type, dims).first;
-        }
-
+        ArrayTypeObs get_array_type(TypeObs type, size_t dims) { return &*array_types_.emplace(type, dims).first; }
     };
 
     struct JawaMethodSignature
@@ -102,8 +94,9 @@ namespace jawa
         Name name;
         TypeObsArray argument_types;
 
-        JawaMethodSignature(Name name, TypeObsArray argument_types) : name(std::move(name)),
-                                                                      argument_types(std::move(argument_types))
+        JawaMethodSignature(Name name, TypeObsArray argument_types)
+          : name(std::move(name))
+          , argument_types(std::move(argument_types))
         {
             for (TypeObs arg : argument_types)
                 assert(arg != nullptr);
@@ -120,10 +113,13 @@ namespace jawa
         Name name_;
         jasm::u2 access_flags_;
         TypeObs type_;
-    public:
 
+    public:
         JawaClassMember(Name name, TypeObs type, jasm::u2 access_flags)
-                : name_(std::move(name)), type_(type), access_flags_(access_flags) {}
+          : name_(std::move(name))
+          , type_(type)
+          , access_flags_(access_flags)
+        {}
 
         inline Name name() const { return name_; }
 
@@ -138,15 +134,12 @@ namespace jawa
     {
     public:
         JawaMethod(Name name, MethodTypeObs type, jasm::u2 access_flags)
-                : JawaClassMember(std::move(name), type, access_flags)
+          : JawaClassMember(std::move(name), type, access_flags)
         {
             assert(type != nullptr);
         }
 
-        inline MethodTypeObs method_type() const
-        {
-            return dynamic_cast<MethodTypeObs>(type_);
-        }
+        inline MethodTypeObs method_type() const { return dynamic_cast<MethodTypeObs>(type_); }
 
         JawaMethodSignature signature() const;
     };
@@ -155,7 +148,7 @@ namespace jawa
     {
     public:
         JawaField(Name name, TypeObs type, jasm::u2 access_flags)
-                : JawaClassMember(std::move(name), type, access_flags)
+          : JawaClassMember(std::move(name), type, access_flags)
         {
             assert(type != nullptr);
         }
@@ -170,8 +163,10 @@ namespace jawa
         Name fully_qualified_name;
         Name class_file_path;
 
-        JawaImport(Name fully_qualified_name, Name class_file_path) : fully_qualified_name(fully_qualified_name),
-                                                                      class_file_path(class_file_path) {}
+        JawaImport(Name fully_qualified_name, Name class_file_path)
+          : fully_qualified_name(fully_qualified_name)
+          , class_file_path(class_file_path)
+        {}
     };
 
     class JawaClass
@@ -179,15 +174,13 @@ namespace jawa
     private:
         struct signature_hasher_t
         {
-            std::size_t operator()(const JawaMethodSignature &signature) const
-            {
-                return signature.hash();
-            }
+            std::size_t operator()(const JawaMethodSignature &signature) const { return signature.hash(); }
         };
 
         Name name_;
         std::unordered_map<JawaMethodSignature, JawaMethod, signature_hasher_t> methods_;
         std::unordered_map<Name, JawaField> fields_;
+
     public:
         JawaClass(TypeTable &type_table, jasm::Class &clazz);
 
@@ -195,10 +188,7 @@ namespace jawa
 
         const JawaField *get_field(const Name &name) const;
 
-        inline Name class_name() const
-        {
-            return name_;
-        }
+        inline Name class_name() const { return name_; }
 
         std::size_t hash() const;
 
@@ -221,8 +211,9 @@ namespace jawa
         void implicit_import();
 
     public:
-        ClassTable(TypeTable &type_table, std::string class_paths) : class_paths_(std::move(class_paths)),
-                                                                     type_table_(type_table)
+        ClassTable(TypeTable &type_table, std::string class_paths)
+          : class_paths_(std::move(class_paths))
+          , type_table_(type_table)
         {
             implicit_import();
         }
@@ -285,4 +276,4 @@ namespace jawa
 
 }
 
-#endif //JAWA_TABLES_HPP
+#endif // JAWA_TABLES_HPP

@@ -10,7 +10,8 @@
 
 #include "format.hpp"
 
-std::ostream &format(std::ostream &os, const char *fmt)
+std::ostream &
+format(std::ostream &os, const char *fmt)
 {
     while (*fmt) {
         if (*fmt != '%')

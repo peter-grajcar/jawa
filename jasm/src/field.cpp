@@ -9,8 +9,7 @@
  */
 #include "field.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     void Field::jasm(std::ostream &os, const ConstantPool *pool) const
     {

@@ -9,8 +9,7 @@
  */
 #include "unicode.hpp"
 
-namespace jawa::unicode
-{
+namespace jawa::unicode {
 
     int utf8_length(const char *str)
     {

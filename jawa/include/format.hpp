@@ -21,7 +21,8 @@
  * @param fmt format.
  * @return output stream.
  */
-std::ostream &format(std::ostream &os, const char *fmt);
+std::ostream &
+format(std::ostream &os, const char *fmt);
 
 /**
  * TODO:
@@ -34,8 +35,9 @@ std::ostream &format(std::ostream &os, const char *fmt);
  * @param args other arguments.
  * @return output stream.
  */
-template <typename T, typename ...Args>
-std::ostream &format(std::ostream &os, const char *fmt, T arg, Args ...args)
+template<typename T, typename... Args>
+std::ostream &
+format(std::ostream &os, const char *fmt, T arg, Args... args)
 {
     while (*fmt && *fmt != '%') {
         os << *fmt;
@@ -51,4 +53,4 @@ std::ostream &format(std::ostream &os, const char *fmt, T arg, Args ...args)
     return os;
 }
 
-#endif //JAWA_FORMAT_HPP
+#endif // JAWA_FORMAT_HPP

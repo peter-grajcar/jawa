@@ -14,11 +14,10 @@
 #include <vector>
 
 #include "byte_code.hpp"
-#include "instruction.hpp"
 #include "constant_pool.hpp"
+#include "instruction.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     using namespace byte_code;
 
@@ -26,10 +25,13 @@ namespace jasm
     {
     protected:
         u2 attribute_name_index_;
+
     public:
         virtual ~Attribute() = default;
 
-        explicit Attribute(u2 attribute_name_index) : attribute_name_index_(attribute_name_index) {}
+        explicit Attribute(u2 attribute_name_index)
+          : attribute_name_index_(attribute_name_index)
+        {}
 
         virtual void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const = 0;
 
@@ -42,6 +44,7 @@ namespace jasm
     {
     protected:
         std::vector<std::unique_ptr<Attribute>> attributes_;
+
     public:
         Attributable() = default;
 
@@ -55,23 +58,17 @@ namespace jasm
 
         virtual ~Attributable() = default;
 
-        inline std::vector<std::unique_ptr<Attribute>> &attributes()
-        {
-            return attributes_;
-        }
+        inline std::vector<std::unique_ptr<Attribute>> &attributes() { return attributes_; }
 
-        inline const std::vector<std::unique_ptr<Attribute>> &attributes() const
-        {
-            return attributes_;
-        }
+        inline const std::vector<std::unique_ptr<Attribute>> &attributes() const { return attributes_; }
 
-        template <typename T, typename ...Args>
-        inline void make_attribute(Args ...args)
+        template<typename T, typename... Args>
+        inline void make_attribute(Args... args)
         {
             attributes_.push_back(std::make_unique<T>(args...));
         }
 
-        template <typename T>
+        template<typename T>
         inline void add_attribute(T &&attr)
         {
             attributes_.push_back(std::make_unique<T>(std::forward<T>(attr)));
@@ -82,17 +79,19 @@ namespace jasm
     {
     private:
         u2 constant_value_index_;
+
     public:
         ConstantValueAttribute(u2 attribute_name_index, u2 constant_value_index)
-                : Attribute(attribute_name_index), constant_value_index_(constant_value_index) {}
+          : Attribute(attribute_name_index)
+          , constant_value_index_(constant_value_index)
+        {}
 
-        inline u4 length() const override
-        {
-            return 2;
-        }
+        inline u4 length() const override { return 2; }
     };
 
-    class CodeAttribute : public Attribute, public Attributable
+    class CodeAttribute
+      : public Attribute
+      , public Attributable
     {
     public:
         struct ExceptionTableEntry
@@ -103,8 +102,11 @@ namespace jasm
             u2 catch_type;
 
             ExceptionTableEntry(u2 start_pc, u2 end_pc, u2 handler_pc, u2 catch_type)
-                    : start_pc(start_pc), end_pc(end_pc), handler_pc(handler_pc),
-                      catch_type(catch_type) {}
+              : start_pc(start_pc)
+              , end_pc(end_pc)
+              , handler_pc(handler_pc)
+              , catch_type(catch_type)
+            {}
         };
 
     private:
@@ -121,49 +123,37 @@ namespace jasm
 
     public:
         CodeAttribute(u2 name_index, u2 max_stack, u2 max_locals)
-                : Attribute(name_index), max_stack_(max_stack), max_locals_(max_locals) {}
+          : Attribute(name_index)
+          , max_stack_(max_stack)
+          , max_locals_(max_locals)
+        {}
 
         inline void make_exception_table_entry(u2 start_pc, u2 end_pc, u2 handler_pc, u2 catch_type)
         {
             exception_table_.emplace_back(start_pc, end_pc, handler_pc, catch_type);
         }
 
-        template <typename T, typename ...Args>
-        inline void make_instruction(Args ...args)
+        template<typename T, typename... Args>
+        inline void make_instruction(Args... args)
         {
             code_.emplace_back(std::make_unique<T>(args...));
         }
 
-        template <typename T>
+        template<typename T>
         inline void add_instruction(T &&inst)
         {
             code_.emplace_back(std::forward<T>(inst));
         }
 
-        inline std::vector<std::unique_ptr<Instruction>> &code()
-        {
-            return code_;
-        }
+        inline std::vector<std::unique_ptr<Instruction>> &code() { return code_; }
 
-        inline u2 locals_limit() const
-        {
-            return max_locals_;
-        }
+        inline u2 locals_limit() const { return max_locals_; }
 
-        inline u2 stack_limit() const
-        {
-            return max_stack_;
-        }
+        inline u2 stack_limit() const { return max_stack_; }
 
-        inline void set_locals_limit(u2 max_locals)
-        {
-            max_locals_ = max_locals;
-        }
+        inline void set_locals_limit(u2 max_locals) { max_locals_ = max_locals; }
 
-        inline void set_stack_limit(u2 max_stack)
-        {
-            max_stack_ = max_stack;
-        }
+        inline void set_stack_limit(u2 max_stack) { max_stack_ = max_stack; }
 
         void jasm(std::ostream &os, const ConstantPool *pool) const override;
 
@@ -206,18 +196,18 @@ namespace jasm
     {
     private:
         u2 source_file_index_;
+
     public:
         SourceFileAttribute(u2 attribute_name_index, u2 source_file_index)
-                : Attribute(attribute_name_index), source_file_index_(source_file_index) {}
+          : Attribute(attribute_name_index)
+          , source_file_index_(source_file_index)
+        {}
 
         void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const override;
 
         void emit_bytecode(std::ostream &os) const override;
 
-        inline u4 length() const override
-        {
-            return 2;
-        }
+        inline u4 length() const override { return 2; }
     };
 
     class SourceDebugExtensionAttribute : public Attribute
@@ -234,13 +224,18 @@ namespace jasm
             u2 line_number;
 
             LineNumberTableEntry(u2 start_pc, u2 line_number)
-                    : start_pc(start_pc), line_number(line_number) {}
+              : start_pc(start_pc)
+              , line_number(line_number)
+            {}
         };
 
     private:
         std::vector<LineNumberTableEntry> line_number_table_;
+
     public:
-        LineNumberTableAttribute(u2 attribute_name_index) : Attribute(attribute_name_index) {}
+        LineNumberTableAttribute(u2 attribute_name_index)
+          : Attribute(attribute_name_index)
+        {}
 
         inline void make_line_number_table_entry(u2 start_pc, u2 line_number)
         {
@@ -295,4 +290,4 @@ namespace jasm
 
 }
 
-#endif //JAWA_ATTRIBUTE_HPP
+#endif // JAWA_ATTRIBUTE_HPP

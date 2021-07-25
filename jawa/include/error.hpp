@@ -11,26 +11,25 @@
 #ifndef JAWA_ERROR_HPP
 #define JAWA_ERROR_HPP
 
-#include <string>
 #include <array>
+#include <string>
 
 #include "types.hpp"
 
-namespace jawa::errors
-{
+namespace jawa::errors {
 
-    template <typename ... Args>
+    template<typename... Args>
     class error_object
     {
     private:
         const char *msg_;
-    public:
-        error_object(const char *msg) : msg_(msg) {}
 
-        inline const char *msg() const
-        {
-            return msg_;
-        }
+    public:
+        error_object(const char *msg)
+          : msg_(msg)
+        {}
+
+        inline const char *msg() const { return msg_; }
     };
 
     using err = error_object<>;
@@ -51,4 +50,4 @@ namespace jawa::errors
 
 }
 
-#endif //JAWA_ERROR_HPP
+#endif // JAWA_ERROR_HPP

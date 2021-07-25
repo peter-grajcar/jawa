@@ -4,17 +4,16 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * 
+ *
  * Copyright (c) 2021 Peter Grajcar
  */
 
 #include "tables.hpp"
+#include <class.hpp>
 #include <filesystem>
 #include <sstream>
-#include <class.hpp>
 
-namespace jawa
-{
+namespace jawa {
 
     size_t JawaMethodSignature::hash() const
     {
@@ -41,25 +40,13 @@ namespace jawa
         return JawaMethodSignature(name_, method_type()->argument_types());
     }
 
-    size_t JawaField::hash() const
-    {
-        return std::hash<std::string>()(name_) ^ type_->hash();
-    }
+    size_t JawaField::hash() const { return std::hash<std::string>()(name_) ^ type_->hash(); }
 
-    bool JawaField::operator==(const JawaField &field) const
-    {
-        return name_ == field.name_ && type_ == field.type_;
-    }
+    bool JawaField::operator==(const JawaField &field) const { return name_ == field.name_ && type_ == field.type_; }
 
-    size_t JawaClass::hash() const
-    {
-        return std::hash<std::string>()(name_);
-    }
+    size_t JawaClass::hash() const { return std::hash<std::string>()(name_); }
 
-    bool JawaClass::operator==(const JawaClass &clazz) const
-    {
-        return name_ == clazz.name_;
-    }
+    bool JawaClass::operator==(const JawaClass &clazz) const { return name_ == clazz.name_; }
 
     const JawaMethod *JawaClass::get_method(const JawaMethodSignature &signature) const
     {
@@ -86,7 +73,7 @@ namespace jawa
 
             jasm::u2 access_flags = field.access_flags();
 
-            fields_.insert({name_constant->value(), JawaField(name_constant->value(), type, access_flags)});
+            fields_.insert({ name_constant->value(), JawaField(name_constant->value(), type, access_flags) });
         }
 
         for (auto &method : clazz.methods()) {
@@ -102,7 +89,7 @@ namespace jawa
             jasm::u2 access_flags = method.access_flags();
 
             JawaMethod jawa_method(name_constant->value(), type, access_flags);
-            methods_.insert({jawa_method.signature(), std::move(jawa_method)});
+            methods_.insert({ jawa_method.signature(), std::move(jawa_method) });
         }
     }
 
@@ -145,7 +132,7 @@ namespace jawa
         std::size_t index = fully_qualified_name.rfind('/');
         Name last_part = fully_qualified_name.substr(index, std::string::npos);
 
-        imported_classes_.insert({last_part, JawaImport(fully_qualified_name, file)});
+        imported_classes_.insert({ last_part, JawaImport(fully_qualified_name, file) });
         return true;
     }
 
@@ -169,7 +156,7 @@ namespace jawa
                     std::string fully_qualified_name("jawa/jȩzyk/");
                     fully_qualified_name += class_name;
 
-                    imported_classes_.insert({class_name, JawaImport(fully_qualified_name, entry.path())});
+                    imported_classes_.insert({ class_name, JawaImport(fully_qualified_name, entry.path()) });
                 }
             }
 
@@ -194,7 +181,7 @@ namespace jawa
         is.close();
 
         JawaClass jawa_class(type_table_, clazz);
-        auto inserted = classes_.insert({class_name, std::move(jawa_class)});
+        auto inserted = classes_.insert({ class_name, std::move(jawa_class) });
 
         return &inserted.first->second;
     }
@@ -213,10 +200,12 @@ namespace jawa
     {
         enum Action
         {
-            GET_TYPE, // reads one type
+            GET_TYPE,     // reads one type
             ADD_ARGUMENT, // adds last read type to the argument list on top of the stack
-            MAKE_ARRAY, // creates an array type with last read type as an element type and dimensions from the top of the stack
-            MAKE_METHOD // creates a method type using the argument list on the top of the stack and read type as return type
+            MAKE_ARRAY,   // creates an array type with last read type as an element type and
+                          // dimensions from the top of the stack
+            MAKE_METHOD   // creates a method type using the argument list on the top of the stack and
+                          // read type as return type
         };
 
         std::stack<Action> action_stack;
@@ -332,20 +321,12 @@ namespace jawa
         return &search->second;
     }
 
-
     void VariableScope::add_var(Name name, TypeObs type, jasm::u2 index)
     {
-        local_variables_.emplace(name, LocalVariable{
-                std::move(name),
-                type,
-                index
-        });
+        local_variables_.emplace(name, LocalVariable{ std::move(name), type, index });
     }
 
-    void VariableScopeTable::enter_scope()
-    {
-        scopes_.emplace_back();
-    }
+    void VariableScopeTable::enter_scope() { scopes_.emplace_back(); }
 
     void VariableScopeTable::leave_scope()
     {

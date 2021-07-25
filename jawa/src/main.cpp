@@ -7,18 +7,20 @@
  *
  * Copyright (c) 2021 Peter Grajcar
  */
-#include <iostream>
 #include "context.hpp"
 #include "parser.hpp"
+#include <iostream>
 
 using namespace jawa;
 
-void show_usage(const char *name)
+void
+show_usage(const char *name)
 {
     std::cerr << "usage: " << name << " [--ścieżkaklasy ŚCIEŻKAKLASY] <PLIK_ŹRÓDŁOWY ...>" << std::endl;
 }
 
-int main(int argc, char *argv[])
+int
+main(int argc, char *argv[])
 {
     if (argc < 2) {
         show_usage(argv[0]);

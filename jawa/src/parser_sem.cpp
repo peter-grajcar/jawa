@@ -4,20 +4,20 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * 
+ *
  * Copyright (c) 2021 Peter Grajcar
  */
 
 #include "parser_sem.hpp"
-#include <iostream>
 #include "class.hpp"
+#include <iostream>
 
 #define BUILDER ctx->class_builder()
 #define TYPE_TABLE ctx->type_table()
 #define CLASS_TABLE ctx->class_table()
+#define SCOPE_TABLE ctx->scope_table()
 
-namespace jawa
-{
+namespace jawa {
 
     void enter_class(context_t ctx, const Name &class_name)
     {
@@ -42,7 +42,6 @@ namespace jawa
         os.close();
     }
 
-
     bool is_main(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types)
     {
         if (method_name != "głowny")
@@ -56,9 +55,14 @@ namespace jawa
         return argument_types[0] == str_arr_type;
     }
 
-    void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types)
+    void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, FormalParamArray &formal_params)
     {
         std::cout << "entering method " << method_name << std::endl;
+
+        TypeObsArray argument_types;
+        for (auto &formal_param : formal_params)
+            argument_types.push_back(formal_param.type);
+
         MethodTypeObs method_type = TYPE_TABLE.get_method_type(return_type, argument_types);
         if (is_main(ctx, method_name, return_type, argument_types)) {
             BUILDER.enter_method("main", *method_type,
@@ -67,6 +71,12 @@ namespace jawa
         } else {
             BUILDER.enter_method(method_name, *method_type);
         }
+
+        SCOPE_TABLE.enter_scope();
+        // TODO: if the function is not static
+        // SCOPE_TABLE.add_var("this", TYPE_TABLE.get_class_type(BUILDER.class_name()));
+        for (auto &formal_param : formal_params)
+            SCOPE_TABLE.add_var(formal_param.name, formal_param.type);
     }
 
     void enter_static_initializer(context_t ctx)
@@ -175,8 +185,7 @@ namespace jawa
                 assert(class_type); // in fact it could also be an array
 
                 field_index = BUILDER.add_field_constant(class_name, field_name,
-                                                         *TYPE_TABLE.get_class_type(
-                                                                 class_type->class_name()));
+                                                         *TYPE_TABLE.get_class_type(class_type->class_name()));
                 BUILDER.make_instruction<jasm::GetStatic>(U2_SPLIT(field_index));
 
                 jawa_class = CLASS_TABLE.load_class(class_type->class_name());
@@ -187,21 +196,16 @@ namespace jawa
                 class_name = class_type->class_name();
             }
 
-            return {
-                    class_name,
-                    method_name
-            };
+            return { class_name, method_name };
         }
 
-
-        return {
-                class_name,
-                method_name
-        };
+        return { class_name, method_name };
     }
 
-    Expression
-    invoke_method(context_t ctx, const Expression &expr, const Name &method_name, const ExpressionArray &arguments)
+    Expression invoke_method(context_t ctx,
+                             const Expression &expr,
+                             const Name &method_name,
+                             const ExpressionArray &arguments)
     {
         TypeObsArray argument_types;
         for (auto &expr : arguments) {
@@ -230,8 +234,8 @@ namespace jawa
             return Expression();
         }
 
-        jasm::u2 method_index = BUILDER.add_method_constant(class_type->class_name(), method_name,
-                                                            *jawa_method->type());
+        jasm::u2 method_index =
+          BUILDER.add_method_constant(class_type->class_name(), method_name, *jawa_method->type());
         BUILDER.make_instruction<jasm::InvokeVirtual>(U2_SPLIT(method_index));
 
         std::cout << "invoking method " << method_name << std::endl;
@@ -270,9 +274,6 @@ namespace jawa
         return Expression(jawa_method->method_type()->return_type());
     }
 
-    Expression resolve_name_expression(context_t ctx, const Name &name)
-    {
-        return {};
-    }
+    Expression resolve_name_expression(context_t ctx, const Name &name) { return {}; }
 
 }

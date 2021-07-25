@@ -9,15 +9,12 @@
  */
 #include "attribute.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     void SourceFileAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         if (pool) {
-            auto source_file_const = dynamic_cast<const Utf8Constant *>(pool->get(
-                    source_file_index_)
-            );
+            auto source_file_const = dynamic_cast<const Utf8Constant *>(pool->get(source_file_index_));
             os << "SourceFile: \"" << source_file_const->value() << '\"' << std::endl;
         } else {
             os << "SourceFile: #" << source_file_index_ << std::endl;
@@ -42,10 +39,7 @@ namespace jasm
         }
     }
 
-    u4 CodeAttribute::length() const
-    {
-        return 12 + exception_table_length() + code_length() + attributes_length();
-    }
+    u4 CodeAttribute::length() const { return 12 + exception_table_length() + code_length() + attributes_length(); }
 
     u4 CodeAttribute::code_length() const
     {
@@ -55,10 +49,7 @@ namespace jasm
         return code_length;
     }
 
-    u4 CodeAttribute::exception_table_length() const
-    {
-        return 8 * exception_table_.size();
-    }
+    u4 CodeAttribute::exception_table_length() const { return 8 * exception_table_.size(); }
 
     u4 CodeAttribute::attributes_length() const
     {

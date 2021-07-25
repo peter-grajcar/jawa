@@ -12,15 +12,16 @@
 #ifndef _Included_jawa_io_Strumie_00144Drukowania
 #define _Included_jawa_io_Strumie_00144Drukowania
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
-/*
- * Class:     jawa_io_StrumieńDrukowania
- * Method:    wydrukovać
- * Signature: (Ljava/lang/String;)V
- */
-JNIEXPORT void JNICALL
-Java_jawa_io_Strumie_00144Drukowania_wydrukova_00107(JNIEnv *, jobject, jstring);
+
+    /*
+     * Class:     jawa_io_StrumieńDrukowania
+     * Method:    wydrukovać
+     * Signature: (Ljava/lang/String;)V
+     */
+    JNIEXPORT void JNICALL Java_jawa_io_Strumie_00144Drukowania_wydrukova_00107(JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
 }

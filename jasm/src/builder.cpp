@@ -4,15 +4,14 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * 
+ *
  * Copyright (c) 2021 Peter Grajcar
  */
 
 #include <builder.hpp>
 #include <utility>
 
-namespace jasm
-{
+namespace jasm {
 
     u4 jasm::BasicBlock::length() const
     {
@@ -23,13 +22,19 @@ namespace jasm
     }
 
     ClassBuilder::ClassBuilder(utf8 class_name)
-            : current_insertion_point_(), class_name_(std::move(class_name)), current_code_(), current_method_()
+      : current_insertion_point_()
+      , class_name_(std::move(class_name))
+      , current_code_()
+      , current_method_()
     {
         init();
     }
 
     ClassBuilder::ClassBuilder(const char *class_name)
-            : current_insertion_point_(), class_name_(class_name), current_code_(), current_method_()
+      : current_insertion_point_()
+      , class_name_(class_name)
+      , current_code_()
+      , current_method_()
     {
         init();
     }
@@ -40,7 +45,6 @@ namespace jasm
         utf8 object = "java/lang/Object";
         class_.super_class_ = add_class_constant(object);
     }
-
 
     ClassBuilder::InsertionPoint ClassBuilder::create_basic_block()
     {
@@ -72,7 +76,7 @@ namespace jasm
         if (search != utf8_constants_.end())
             return search->second;
         u2 index = class_.constant_pool_.make_constant<Utf8Constant>(value);
-        utf8_constants_.insert({value, index});
+        utf8_constants_.insert({ value, index });
         return index;
     }
 
@@ -114,12 +118,13 @@ namespace jasm
             return search->second;
         u2 utf8_index = class_.constant_pool_.make_constant<Utf8Constant>(str);
         u2 index = class_.constant_pool_.make_constant<StringConstant>(utf8_index);
-        string_constants_.insert({str, index});
+        string_constants_.insert({ str, index });
         return index;
     }
 
-    ClassBuilder::InsertionPoint
-    ClassBuilder::enter_method(const utf8 &method_name, const MethodType &type, u2 access_flags)
+    ClassBuilder::InsertionPoint ClassBuilder::enter_method(const utf8 &method_name,
+                                                            const MethodType &type,
+                                                            u2 access_flags)
     {
         InsertionPoint insertion_point = create_basic_block();
         current_insertion_point_ = insertion_point;

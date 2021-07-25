@@ -13,8 +13,7 @@
 
 #include <locale>
 
-namespace jawa::unicode
-{
+namespace jawa::unicode {
 
     /**
      * Computes the length of a string by counting only the first bytes of
@@ -27,4 +26,4 @@ namespace jawa::unicode
 
 }
 
-#endif //JAWA_UNICODE_HPP
+#endif // JAWA_UNICODE_HPP

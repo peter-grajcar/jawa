@@ -19,39 +19,37 @@
 
 #define YY_USER_ACTION ctx->inc_column(jawa::unicode::utf8_length(yytext));
 
-#define IGNORE_MATCHED ctx->dec_column(jawa::unicode::utf8_length(yytext)); \
-                       yyless(0);
+#define IGNORE_MATCHED                                                                                                 \
+    ctx->dec_column(jawa::unicode::utf8_length(yytext));                                                               \
+    yyless(0);
 
-#define YYLLOC_DEFAULT(res, rhs, N) (res = (N) \
-                                     ? YYRHSLOC(rhs, 1) \
-                                     : YYRHSLOC(rhs, 0))
+#define YYLLOC_DEFAULT(res, rhs, N) (res = (N) ? YYRHSLOC(rhs, 1) : YYRHSLOC(rhs, 0))
 
-#define YY_INPUT(buf, result, max_size) \
-                    jawa::line_buffer.str(""); \
-                    int c = '*'; \
-                    int n; \
-                    for (n = 0; n < max_size && (c = getc(yyin)) != EOF && c != '\n'; ++n) { \
-                        buf[n] = (char) c; \
-                        jawa::line_buffer << (char) c; \
-                    } \
-                    if (c == '\n') { \
-                        buf[n++] = (char) c; \
-                    } \
-                    if (c == EOF && ferror(yyin)) { \
-                        YY_FATAL_ERROR("input in flex scanner failed"); \
-                    } \
-                    result = n;
+#define YY_INPUT(buf, result, max_size)                                                                                \
+    jawa::line_buffer.str("");                                                                                         \
+    int c = '*';                                                                                                       \
+    int n;                                                                                                             \
+    for (n = 0; n < max_size && (c = getc(yyin)) != EOF && c != '\n'; ++n) {                                           \
+        buf[n] = (char) c;                                                                                             \
+        jawa::line_buffer << (char) c;                                                                                 \
+    }                                                                                                                  \
+    if (c == '\n') {                                                                                                   \
+        buf[n++] = (char) c;                                                                                           \
+    }                                                                                                                  \
+    if (c == EOF && ferror(yyin)) {                                                                                    \
+        YY_FATAL_ERROR("input in flex scanner failed");                                                                \
+    }                                                                                                                  \
+    result = n;
 
 #ifndef YY_TYPEDEF_YY_SCANNER_T
 #define YY_TYPEDEF_YY_SCANNER_T
-typedef void* yyscan_t;
+typedef void *yyscan_t;
 #endif
 
-namespace jawa
-{
+namespace jawa {
     yyscan_t lexer_init(FILE *iff);
 
     void lexer_shutdown(yyscan_t scanner);
 }
 
-#endif //JAWA_BISONFLEX_HPP
+#endif // JAWA_BISONFLEX_HPP

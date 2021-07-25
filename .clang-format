@@ -1,0 +1,13 @@
+---
+BasedOnStyle: Mozilla
+IndentWidth: 4
+PointerAlignment: Right
+UseTab: Never
+AlignAfterOpenBracket: Align
+BinPackArguments: true
+AccessModifierOffset: -4
+ColumnLimit: 120
+NamespaceIndentation: All
+IndentCaseLabels: false
+SpaceAfterCStyleCast: true
+...

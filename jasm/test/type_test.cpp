@@ -7,12 +7,13 @@
  *
  * Copyright (c) 2021 Peter Grajcar
  */
-#include <iostream>
 #include "type.hpp"
+#include <iostream>
 
 using namespace jasm;
 
-int main()
+int
+main()
 {
     PrimitiveType i = IntType();
     std::cout << i.descriptor() << std::endl;
@@ -32,7 +33,6 @@ int main()
     MethodType main_signature(&void_type, &str_arr);
     std::cout << main_signature.descriptor() << std::endl;
 
-
     std::cout << "int == void           " << (IntType() == VoidType()) << std::endl;
     std::cout << "int == int            " << (IntType() == IntType()) << std::endl;
     std::cout << "Thread == Thread      " << (ref == ClassType("java/lang/Thread")) << std::endl;
@@ -41,9 +41,7 @@ int main()
     std::cout << "Thread[] == Thread[]  " << (ref_arr == ArrayType(&ref, 1)) << std::endl;
     std::cout << "void(String[]) == void(String[])  " << (main_signature == MethodType(&void_type, &str_arr))
               << std::endl;
-    std::cout << "void(String[]) == void(String)    " << (main_signature == MethodType(&void_type, &str))
-              << std::endl;
-
+    std::cout << "void(String[]) == void(String)    " << (main_signature == MethodType(&void_type, &str)) << std::endl;
 
     return 0;
 }

@@ -8,14 +8,15 @@
  * Copyright (c) 2021 Peter Grajcar
  */
 
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
 #include "byte_code.hpp"
 
 using namespace jasm::byte_code;
 
-int main()
+int
+main()
 {
     u4 a = 0x12345678;
     u4 b = swap_endianness(a);

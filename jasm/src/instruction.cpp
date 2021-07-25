@@ -9,10 +9,9 @@
  */
 #include "instruction.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
-    template <>
+    template<>
     void GetStatic::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << std::setw(20) << mnemonic();
@@ -22,7 +21,7 @@ namespace jasm
         os << '#' << cp_index << std::endl;
     }
 
-    template <>
+    template<>
     void InvokeVirtual::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << std::setw(20) << mnemonic();
@@ -32,7 +31,7 @@ namespace jasm
         os << '#' << cp_index << std::endl;
     }
 
-    template <>
+    template<>
     void InvokeSpecial::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << std::setw(20) << mnemonic();

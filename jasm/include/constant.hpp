@@ -13,8 +13,7 @@
 
 #include "byte_code.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     using namespace byte_code;
 
@@ -38,15 +37,16 @@ namespace jasm
         virtual void emit_bytecode(std::ostream &os) const = 0;
 
         virtual u1 tag() const = 0;
-
     };
 
     class ClassConstant : public Constant
     {
     private:
         u2 name_index_;
+
     public:
-        ClassConstant(u2 name_index) : name_index_(name_index) {};
+        ClassConstant(u2 name_index)
+          : name_index_(name_index){};
 
         void jasm(std::ostream &os) const override
         {
@@ -59,10 +59,7 @@ namespace jasm
             write_big_endian<u2>(os, name_index_);
         }
 
-        inline u2 name_index() const
-        {
-            return name_index_;
-        }
+        inline u2 name_index() const { return name_index_; }
 
         u1 tag() const override;
     };
@@ -72,14 +69,16 @@ namespace jasm
     private:
         u2 class_index_;
         u2 name_and_type_index_;
+
     public:
         FieldRefConstant(u2 class_index, u2 name_and_type_index)
-                : class_index_(class_index), name_and_type_index_(name_and_type_index) {};
+          : class_index_(class_index)
+          , name_and_type_index_(name_and_type_index){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "FieldRef" << '#' << class_index_ << '.'
-               << '#' << name_and_type_index_ << std::endl;
+            os << std::setw(20) << std::left << "FieldRef" << '#' << class_index_ << '.' << '#' << name_and_type_index_
+               << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -97,14 +96,16 @@ namespace jasm
     private:
         u2 class_index_;
         u2 name_and_type_index_;
+
     public:
         MethodRefConstant(u2 class_index, u2 name_and_type_index)
-                : class_index_(class_index), name_and_type_index_(name_and_type_index) {};
+          : class_index_(class_index)
+          , name_and_type_index_(name_and_type_index){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "MethodRef" << '#' << class_index_ << '.'
-               << '#' << name_and_type_index_ << std::endl;
+            os << std::setw(20) << std::left << "MethodRef" << '#' << class_index_ << '.' << '#' << name_and_type_index_
+               << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -122,14 +123,16 @@ namespace jasm
     private:
         u2 class_index_;
         u2 name_and_type_index_;
+
     public:
         InterfaceMethodRefConstant(u2 class_index, u2 name_and_type_index)
-                : class_index_(class_index), name_and_type_index_(name_and_type_index) {};
+          : class_index_(class_index)
+          , name_and_type_index_(name_and_type_index){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "InterfaceMethodRef" << '#' << class_index_
-               << '.' << '#' << name_and_type_index_ << std::endl;
+            os << std::setw(20) << std::left << "InterfaceMethodRef" << '#' << class_index_ << '.' << '#'
+               << name_and_type_index_ << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -146,8 +149,10 @@ namespace jasm
     {
     private:
         u2 string_index_;
+
     public:
-        StringConstant(u2 string_index) : string_index_(string_index) {};
+        StringConstant(u2 string_index)
+          : string_index_(string_index){};
 
         void jasm(std::ostream &os) const override
         {
@@ -167,8 +172,10 @@ namespace jasm
     {
     private:
         u4 bytes_;
+
     public:
-        IntegerConstant(u4 bytes) : bytes_(bytes) {};
+        IntegerConstant(u4 bytes)
+          : bytes_(bytes){};
 
         void jasm(std::ostream &os) const override
         {
@@ -188,8 +195,10 @@ namespace jasm
     {
     private:
         u4 bytes_;
+
     public:
-        FloatConstant(u4 bytes) : bytes_(bytes) {};
+        FloatConstant(u4 bytes)
+          : bytes_(bytes){};
 
         void jasm(std::ostream &os) const override
         {
@@ -210,14 +219,15 @@ namespace jasm
     private:
         u4 high_bytes_;
         u4 low_bytes_;
+
     public:
         LongConstant(u4 high_bytes, u4 low_bytes)
-                : high_bytes_(high_bytes), low_bytes_(low_bytes) {};
+          : high_bytes_(high_bytes)
+          , low_bytes_(low_bytes){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "Long" << std::hex << high_bytes_ << low_bytes_
-               << std::endl;
+            os << std::setw(20) << std::left << "Long" << std::hex << high_bytes_ << low_bytes_ << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -235,14 +245,15 @@ namespace jasm
     private:
         u4 high_bytes_;
         u4 low_bytes_;
+
     public:
         DoubleConstant(u4 high_bytes, u4 low_bytes)
-                : high_bytes_(high_bytes), low_bytes_(low_bytes) {};
+          : high_bytes_(high_bytes)
+          , low_bytes_(low_bytes){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "Double" << std::hex << high_bytes_ << low_bytes_
-               << std::endl;
+            os << std::setw(20) << std::left << "Double" << std::hex << high_bytes_ << low_bytes_ << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -260,14 +271,15 @@ namespace jasm
     private:
         u2 name_index_;
         u2 descriptor_index_;
+
     public:
         NameAndTypeConstant(u2 name_index, u2 descriptor_index)
-                : name_index_(name_index), descriptor_index_(descriptor_index) {};
+          : name_index_(name_index)
+          , descriptor_index_(descriptor_index){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "NameAndType" << '#' << name_index_ << ':' << '#'
-               << descriptor_index_
+            os << std::setw(20) << std::left << "NameAndType" << '#' << name_index_ << ':' << '#' << descriptor_index_
                << std::endl;
         }
 
@@ -285,13 +297,16 @@ namespace jasm
     {
     private:
         utf8 value_;
+
     public:
-        Utf8Constant(u2 length, u1 bytes[length]) : value_(reinterpret_cast<char *>(bytes),
-                                                           length) {};
+        Utf8Constant(u2 length, u1 bytes[length])
+          : value_(reinterpret_cast<char *>(bytes), length){};
 
-        Utf8Constant(const char *str) : value_(str) {};
+        Utf8Constant(const char *str)
+          : value_(str){};
 
-        Utf8Constant(utf8 &str) : value_(str) {};
+        Utf8Constant(utf8 &str)
+          : value_(str){};
 
         void jasm(std::ostream &os) const override
         {
@@ -306,10 +321,7 @@ namespace jasm
                 write_big_endian<u1>(os, ch);
         }
 
-        const std::string &value() const
-        {
-            return value_;
-        }
+        const std::string &value() const { return value_; }
 
         u1 tag() const override;
     };
@@ -319,14 +331,16 @@ namespace jasm
     private:
         u1 reference_kind_;
         u2 reference_index_;
+
     public:
         MethodHandleConstant(u1 reference_kind, u2 reference_index)
-                : reference_kind_(reference_kind), reference_index_(reference_index) {};
+          : reference_kind_(reference_kind)
+          , reference_index_(reference_index){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "MethodHandle" << '#' << reference_kind_ << ':'
-               << '#' << reference_index_ << std::endl;
+            os << std::setw(20) << std::left << "MethodHandle" << '#' << reference_kind_ << ':' << '#'
+               << reference_index_ << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -343,13 +357,14 @@ namespace jasm
     {
     private:
         u2 descriptor_index_;
+
     public:
-        MethodTypeConstant(u2 descriptor_index) : descriptor_index_(descriptor_index) {};
+        MethodTypeConstant(u2 descriptor_index)
+          : descriptor_index_(descriptor_index){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << std::left << "MethodType" << '#' << descriptor_index_
-               << std::endl;
+            os << std::setw(20) << std::left << "MethodType" << '#' << descriptor_index_ << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -366,15 +381,16 @@ namespace jasm
     private:
         u2 bootstrap_method_attr_index_;
         u2 name_and_type_index_;
+
     public:
         InvokeDynamicConstant(u2 bootstrap_method_attr_index, u2 name_and_type_index)
-                : bootstrap_method_attr_index_(bootstrap_method_attr_index),
-                  name_and_type_index_(name_and_type_index) {};
+          : bootstrap_method_attr_index_(bootstrap_method_attr_index)
+          , name_and_type_index_(name_and_type_index){};
 
         void jasm(std::ostream &os) const override
         {
-            os << std::setw(20) << "InvokeDynamic" << '#' << bootstrap_method_attr_index_ << ':'
-               << '#' << name_and_type_index_ << std::endl;
+            os << std::setw(20) << "InvokeDynamic" << '#' << bootstrap_method_attr_index_ << ':' << '#'
+               << name_and_type_index_ << std::endl;
         }
 
         void emit_bytecode(std::ostream &os) const override
@@ -390,22 +406,15 @@ namespace jasm
     class EmptyConstant : public Constant
     {
     public:
-        EmptyConstant() {};
+        EmptyConstant(){};
 
-        void jasm(std::ostream &os) const override
-        {
-        }
+        void jasm(std::ostream &os) const override {}
 
-        void emit_bytecode(std::ostream &os) const override
-        {
-        }
+        void emit_bytecode(std::ostream &os) const override {}
 
-        u1 tag() const override
-        {
-            return 0;
-        };
+        u1 tag() const override { return 0; };
     };
 
 }
 
-#endif //JAWA_CONSTANT_HPP
+#endif // JAWA_CONSTANT_HPP

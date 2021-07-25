@@ -164,7 +164,7 @@ using namespace jawa;
 %type<NameList>             NameList
 %type<TypeObs>              Type VoidType PrimitiveType ReferenceType NumericType IntegralType
 %type<TypeObs>              FloatingPointType ClassOrInterfaceType ArrayType
-%type<TypeObsArray>         FormalParameters FormalParameterDecls_opt FormalParameterDecls
+%type<FormalParamArray>     FormalParameters FormalParameterDecls_opt FormalParameterDecls
 %type<size_t>               Dims
 %type<ExpressionArray>      Arguments Expressions_opt Expressions
 %type<Expression>           ExpressionNoName AssignmentExpressionNoName ConditionalExpressionNoName
@@ -177,7 +177,7 @@ using namespace jawa;
 %type<Expression>           ConditionalAndExpressionNoName
 %type<ExpressionOpt>        ExpressionNoName_opt
 %type<ClassAndName>         MethodName
-%type<ModifierAndAnnotationPack> Modifiers_opt Modifiers StaticInitializerHead
+%type<ModifierAndAnnotationPack> Modifiers_opt Modifiers Modifier StaticInitializerHead
 
 %%
 

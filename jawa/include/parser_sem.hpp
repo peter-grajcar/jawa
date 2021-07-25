@@ -4,7 +4,7 @@
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- * 
+ *
  * Copyright (c) 2021 Peter Grajcar
  */
 
@@ -14,16 +14,17 @@
 #include "context.hpp"
 #include "modifiers.hpp"
 
-namespace jawa
-{
+namespace jawa {
 
     struct Expression
     {
         TypeObs type;
 
-        Expression() : type(nullptr) {};
+        Expression()
+          : type(nullptr){};
 
-        explicit Expression(TypeObs type) : type(type) {};
+        explicit Expression(TypeObs type)
+          : type(type){};
     };
 
     struct ClassAndName
@@ -32,7 +33,7 @@ namespace jawa
         Name name;
     };
 
-    struct ArgumentPack
+    struct FormalParam
     {
         TypeObs type;
         Name name;
@@ -40,13 +41,13 @@ namespace jawa
 
     using ExpressionOpt = std::optional<Expression>;
     using ExpressionArray = std::vector<Expression>;
-    using ArgumentPackArray = std::vector<ArgumentPack>;
+    using FormalParamArray = std::vector<FormalParam>;
 
     void enter_class(context_t ctx, const Name &class_name);
 
     void leave_class(context_t ctx);
 
-    void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types);
+    void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, FormalParamArray &formal_params);
 
     void enter_static_initializer(context_t ctx);
 
@@ -62,8 +63,10 @@ namespace jawa
 
     ClassAndName resolve_method_class(context_t ctx, const Name &method);
 
-    Expression
-    invoke_method(context_t ctx, const Expression &expr, const Name &method_name, const ExpressionArray &arguments);
+    Expression invoke_method(context_t ctx,
+                             const Expression &expr,
+                             const Name &method_name,
+                             const ExpressionArray &arguments);
 
     Expression invoke_method(context_t ctx, const ClassAndName &method, const ExpressionArray &arguments);
 
@@ -71,4 +74,4 @@ namespace jawa
 
 }
 
-#endif //JAWA_PARSER_SEM_CPP_HPP
+#endif // JAWA_PARSER_SEM_CPP_HPP

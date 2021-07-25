@@ -17,14 +17,13 @@
 
 #include "byte_code.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     using namespace byte_code;
 
     class BaseType;
 
-    template <char p>
+    template<char p>
     class PrimitiveType;
 
     class ReferenceType;
@@ -89,31 +88,19 @@ namespace jasm
         virtual utf8 descriptor() const;
     };
 
-    template <char p>
+    template<char p>
     class PrimitiveType : public BaseType
     {
     public:
         explicit PrimitiveType() {}
 
-        bool is_reference_type() const override
-        {
-            return true;
-        }
+        bool is_reference_type() const override { return true; }
 
-        char prefix() const override
-        {
-            return p;
-        }
+        char prefix() const override { return p; }
 
-        utf8 descriptor() const override
-        {
-            return std::string(1, p);
-        }
+        utf8 descriptor() const override { return std::string(1, p); }
 
-        size_t hash() const override
-        {
-            return std::hash<char>{}(p);
-        }
+        size_t hash() const override { return std::hash<char>{}(p); }
 
         bool operator==(const BaseType &type) const override
         {
@@ -122,7 +109,6 @@ namespace jasm
                 return false;
             return primitive_type->prefix() == p;
         }
-
     };
 
     class ReferenceType : public BaseType
@@ -137,29 +123,27 @@ namespace jasm
     {
     private:
         utf8 class_name_;
-    public:
-        explicit ClassType(const char *name) : class_name_(name) {}
 
-        explicit ClassType(utf8 name) : class_name_(std::move(name)) {}
+    public:
+        explicit ClassType(const char *name)
+          : class_name_(name)
+        {}
+
+        explicit ClassType(utf8 name)
+          : class_name_(std::move(name))
+        {}
 
         char prefix() const override;
 
         utf8 descriptor() const override;
 
-        inline utf8 class_name() const
-        {
-            return class_name_;
-        }
+        inline utf8 class_name() const { return class_name_; }
 
-        size_t hash() const override
-        {
-            return std::hash<std::string>{}(class_name_);
-        }
+        size_t hash() const override { return std::hash<std::string>{}(class_name_); }
 
         bool operator==(const BaseType &type) const override;
 
         bool operator==(const ClassType &type) const;
-
     };
 
     class ArrayType : public ReferenceType
@@ -167,9 +151,11 @@ namespace jasm
     private:
         size_t dimension_;
         const Type *element_type_;
+
     public:
         explicit ArrayType(const Type *element_type, size_t dim = 1)
-                : element_type_(element_type), dimension_(dim)
+          : element_type_(element_type)
+          , dimension_(dim)
         {
             assert(element_type_ && dim != 0);
             auto array_type = dynamic_cast<const ArrayType *>(element_type);
@@ -179,29 +165,19 @@ namespace jasm
             }
         }
 
-        inline const Type *element_type() const
-        {
-            return element_type_;
-        }
+        inline const Type *element_type() const { return element_type_; }
 
-        inline size_t dimension() const
-        {
-            return dimension_;
-        }
+        inline size_t dimension() const { return dimension_; }
 
         char prefix() const override;
 
         utf8 descriptor() const override;
 
-        size_t hash() const override
-        {
-            return element_type_->hash() ^ std::hash<size_t>{}(dimension_);
-        }
+        size_t hash() const override { return element_type_->hash() ^ std::hash<size_t>{}(dimension_); }
 
         bool operator==(const BaseType &type) const override;
 
         bool operator==(const ArrayType &type) const;
-
     };
 
     class MethodType : public BaseType
@@ -209,10 +185,12 @@ namespace jasm
     private:
         const Type *return_type_;
         std::vector<const Type *> argument_types_;
+
     public:
-        template <typename ...Args>
-        MethodType(const Type *return_type, Args ...argument_types)
-                : return_type_(return_type), argument_types_{argument_types...}
+        template<typename... Args>
+        MethodType(const Type *return_type, Args... argument_types)
+          : return_type_(return_type)
+          , argument_types_{ argument_types... }
         {
             assert(return_type_);
             for (auto arg : argument_types_)
@@ -220,22 +198,17 @@ namespace jasm
         }
 
         MethodType(const Type *return_type, std::vector<const Type *> &&argument_types)
-                : return_type_(return_type), argument_types_(argument_types)
+          : return_type_(return_type)
+          , argument_types_(argument_types)
         {
             assert(return_type_);
             for (auto arg : argument_types_)
                 assert(arg);
         }
 
-        inline const Type *return_type() const
-        {
-            return return_type_;
-        }
+        inline const Type *return_type() const { return return_type_; }
 
-        inline const std::vector<const Type *> &argument_types() const
-        {
-            return argument_types_;
-        }
+        inline const std::vector<const Type *> &argument_types() const { return argument_types_; }
 
         bool is_reference_type() const override;
 
@@ -254,11 +227,10 @@ namespace jasm
         bool operator==(const BaseType &type) const override;
 
         bool operator==(const MethodType &type) const;
-
     };
 
     // TODO: class VariableType
 
 }
 
-#endif //JAWA_TYPE_HPP
+#endif // JAWA_TYPE_HPP

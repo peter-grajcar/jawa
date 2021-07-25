@@ -14,8 +14,7 @@
 #include <cinttypes>
 #include <vector>
 
-namespace jawa
-{
+namespace jawa {
 
     using bool_t = bool;
     using byte_t = int8_t;
@@ -31,4 +30,4 @@ namespace jawa
 
 }
 
-#endif //JAWA_TYPES_HPP
+#endif // JAWA_TYPES_HPP

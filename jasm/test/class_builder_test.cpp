@@ -8,19 +8,19 @@
  * Copyright (c) 2021 Peter Grajcar
  */
 
-#include <iostream>
 #include <ios>
+#include <iostream>
 
-#include "class.hpp"
 #include "builder.hpp"
+#include "class.hpp"
 
 using namespace jasm;
 
-int main()
+int
+main()
 {
     ClassBuilder builder("HelloWorld");
-    builder.set_version(59, 0)
-            .set_access_flags(Class::ACC_PUBLIC);
+    builder.set_version(59, 0).set_access_flags(Class::ACC_PUBLIC);
 
     ClassType str_type("java/lang/String");
     ClassType print_stream("java/io/PrintStream");

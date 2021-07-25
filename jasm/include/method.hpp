@@ -14,8 +14,7 @@
 #include "attribute.hpp"
 #include "constant_pool.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     class Method : public Attributable
     {
@@ -23,6 +22,7 @@ namespace jasm
         u2 access_flags_;
         u2 name_index_;
         u2 descriptor_index_;
+
     public:
         enum AccessFlag
         {
@@ -41,29 +41,18 @@ namespace jasm
         };
 
         Method(u2 access_flags, u2 name_index, u2 descriptor_index)
-                : access_flags_(access_flags), name_index_(name_index),
-                  descriptor_index_(descriptor_index) {}
+          : access_flags_(access_flags)
+          , name_index_(name_index)
+          , descriptor_index_(descriptor_index)
+        {}
 
+        inline u2 access_flags() const { return access_flags_; }
 
-        inline u2 access_flags() const
-        {
-            return access_flags_;
-        }
+        inline u2 name_index() const { return name_index_; }
 
-        inline u2 name_index() const
-        {
-            return name_index_;
-        }
+        inline u2 descriptor_index() const { return descriptor_index_; }
 
-        inline u2 descriptor_index() const
-        {
-            return descriptor_index_;
-        }
-
-        inline void set_access_flags(u2 access_flags)
-        {
-            access_flags_ = access_flags;
-        }
+        inline void set_access_flags(u2 access_flags) { access_flags_ = access_flags; }
 
         void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const;
 
@@ -72,4 +61,4 @@ namespace jasm
 
 }
 
-#endif //JAWA_METHOD_HPP
+#endif // JAWA_METHOD_HPP

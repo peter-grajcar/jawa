@@ -11,17 +11,16 @@
 #ifndef JAWA_BUILDER_HPP
 #define JAWA_BUILDER_HPP
 
-#include <vector>
+#include <class.hpp>
 #include <map>
 #include <string>
-#include <class.hpp>
+#include <vector>
 
-#include "instruction.hpp"
 #include "class.hpp"
+#include "instruction.hpp"
 #include "type.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     class BasicBlock
     {
@@ -31,21 +30,20 @@ namespace jasm
         friend class ClassBuilder;
 
     public:
-
-        template <typename T, typename ...Args>
-        inline void make_instruction(Args ...args)
+        template<typename T, typename... Args>
+        inline void make_instruction(Args... args)
         {
             code_.emplace_back(std::make_unique<T>(args...));
         }
 
         u4 length() const;
-
     };
 
     class ClassBuilder
     {
     public:
         using InsertionPoint = BasicBlock *;
+
     private:
         std::vector<BasicBlock> basic_blocks_;
         InsertionPoint current_insertion_point_;
@@ -90,29 +88,20 @@ namespace jasm
 
         u2 add_string_constant(const utf8 &str);
 
-        inline Method *current_method()
-        {
-            return current_method_;
-        }
+        inline Method *current_method() { return current_method_; }
 
-        template <typename T, typename ...Args>
-        inline void make_instruction(Args ...args)
+        template<typename T, typename... Args>
+        inline void make_instruction(Args... args)
         {
             assert(current_insertion_point_);
             current_insertion_point_->make_instruction<T>(args...);
         }
 
-        inline Class build()
-        {
-            return std::move(class_);
-        }
+        inline Class build() { return std::move(class_); }
 
-        inline utf8 class_name() const
-        {
-            return class_name_;
-        }
+        inline utf8 class_name() const { return class_name_; }
     };
 
 }
 
-#endif //JAWA_BUILDER_HPP
+#endif // JAWA_BUILDER_HPP

@@ -12,24 +12,23 @@
 #define JAWA_CONSTANT_POOL_HPP
 
 #include <cinttypes>
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include "byte_code.hpp"
 #include "constant.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     class ConstantPool
     {
     private:
         std::vector<std::unique_ptr<Constant>> pool_;
-    public:
 
+    public:
         /**
-     * Constant pool tags defined as defined in the JVM specification.
-     */
+         * Constant pool tags defined as defined in the JVM specification.
+         */
         enum Tag : u1
         {
             CONSTANT_UTF_8 = 1,
@@ -55,42 +54,24 @@ namespace jasm
          * @tparam Args Constant type constructor argument types.
          * @param args Constant type constructor arguments.
          */
-        template <typename T, typename ...Args>
-        inline u2 make_constant(Args ...args)
+        template<typename T, typename... Args>
+        inline u2 make_constant(Args... args)
         {
             pool_.emplace_back(std::make_unique<T>(args...));
             return pool_.size();
         }
 
-        inline std::vector<std::unique_ptr<Constant>>::const_iterator begin() const
-        {
-            return pool_.begin();
-        }
+        inline std::vector<std::unique_ptr<Constant>>::const_iterator begin() const { return pool_.begin(); }
 
-        inline std::vector<std::unique_ptr<Constant>>::const_iterator end() const
-        {
-            return pool_.end();
-        }
+        inline std::vector<std::unique_ptr<Constant>>::const_iterator end() const { return pool_.end(); }
 
-        inline std::vector<std::unique_ptr<Constant>>::iterator begin()
-        {
-            return pool_.begin();
-        }
+        inline std::vector<std::unique_ptr<Constant>>::iterator begin() { return pool_.begin(); }
 
-        inline std::vector<std::unique_ptr<Constant>>::iterator end()
-        {
-            return pool_.end();
-        }
+        inline std::vector<std::unique_ptr<Constant>>::iterator end() { return pool_.end(); }
 
-        inline const Constant *operator[](u2 index) const
-        {
-            return get(index);
-        }
+        inline const Constant *operator[](u2 index) const { return get(index); }
 
-        inline Constant *operator[](u2 index)
-        {
-            return get(index);
-        }
+        inline Constant *operator[](u2 index) { return get(index); }
 
         inline const Constant *get(u2 index) const
         {
@@ -104,14 +85,9 @@ namespace jasm
             return pool_[index - 1].get();
         }
 
-        inline u2 count() const
-        {
-            return pool_.size();
-        }
-
+        inline u2 count() const { return pool_.size(); }
     };
-
 
 }
 
-#endif //JAWA_CONSTANT_POOL_HPP
+#endif // JAWA_CONSTANT_POOL_HPP

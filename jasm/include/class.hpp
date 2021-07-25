@@ -13,13 +13,12 @@
 
 #include <memory>
 
-#include "constant_pool.hpp"
 #include "attribute.hpp"
+#include "constant_pool.hpp"
 #include "field.hpp"
 #include "method.hpp"
 
-namespace jasm
-{
+namespace jasm {
 
     class Class : public Attributable
     {
@@ -85,31 +84,23 @@ namespace jasm
 
         Class() = default;
 
-        explicit Class(std::istream &is)
-        {
-            read_class(is);
-        }
+        explicit Class(std::istream &is) { read_class(is); }
 
         Class(u2 minor_version, u2 major_version, u2 access_flags)
-                : minor_version_(minor_version), major_version_(major_version),
-                  access_flags_(access_flags) {};
+          : minor_version_(minor_version)
+          , major_version_(major_version)
+          , access_flags_(access_flags){};
 
         /**
-        * Writes the class' bytecode to the given output stream.
+         * Writes the class' bytecode to the given output stream.
          *
-        * @param os output stream.
-        */
+         * @param os output stream.
+         */
         void emit_bytecode(std::ostream &os) const;
 
-        inline const ConstantPool &constant_pool() const
-        {
-            return constant_pool_;
-        }
+        inline const ConstantPool &constant_pool() const { return constant_pool_; }
 
-        inline ConstantPool &constant_pool()
-        {
-            return constant_pool_;
-        }
+        inline ConstantPool &constant_pool() { return constant_pool_; }
 
         inline Field &add_field(Field &&field)
         {
@@ -123,35 +114,17 @@ namespace jasm
             return methods_.back();
         }
 
-        inline std::vector<Field> &fields()
-        {
-            return fields_;
-        }
+        inline std::vector<Field> &fields() { return fields_; }
 
-        inline std::vector<Method> &methods()
-        {
-            return methods_;
-        }
+        inline std::vector<Method> &methods() { return methods_; }
 
-        inline u2 minor_version() const
-        {
-            return minor_version_;
-        }
+        inline u2 minor_version() const { return minor_version_; }
 
-        inline u2 major_version() const
-        {
-            return major_version_;
-        }
+        inline u2 major_version() const { return major_version_; }
 
-        inline ClassConstant *this_class()
-        {
-            return dynamic_cast<ClassConstant *>(constant_pool_.get(this_class_));
-        }
+        inline ClassConstant *this_class() { return dynamic_cast<ClassConstant *>(constant_pool_.get(this_class_)); }
 
-        inline ClassConstant *super_class()
-        {
-            return dynamic_cast<ClassConstant *>(constant_pool_.get(super_class_));
-        }
+        inline ClassConstant *super_class() { return dynamic_cast<ClassConstant *>(constant_pool_.get(super_class_)); }
 
         inline void set_version(u2 major_version, u2 minor_version)
         {
@@ -159,20 +132,11 @@ namespace jasm
             major_version_ = major_version;
         }
 
-        inline void set_access_flags(u2 access_flags)
-        {
-            access_flags_ = access_flags;
-        }
+        inline void set_access_flags(u2 access_flags) { access_flags_ = access_flags; }
 
-        inline void set_this_class(u2 this_class_index)
-        {
-            this_class_ = this_class_index;
-        }
+        inline void set_this_class(u2 this_class_index) { this_class_ = this_class_index; }
 
-        inline void set_super_class(u2 super_class_index)
-        {
-            super_class_ = super_class_index;
-        }
+        inline void set_super_class(u2 super_class_index) { super_class_ = super_class_index; }
 
         void jasm(std::ostream &os) const;
 
@@ -185,4 +149,4 @@ namespace jasm
 
 }
 
-#endif //JAWA_CLASS_HPP
+#endif // JAWA_CLASS_HPP
