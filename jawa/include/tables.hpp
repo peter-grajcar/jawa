@@ -254,7 +254,7 @@ namespace jawa {
     public:
         const LocalVariable *get_var(const Name &name) const;
 
-        void add_var(Name name, TypeObs type, jasm::u2 index);
+        void add_var(const Name &name, TypeObs type, jasm::u2 index);
     };
 
     class VariableScopeTable
@@ -271,7 +271,7 @@ namespace jawa {
 
         const LocalVariable *get_var(const Name &name) const;
 
-        void add_var(Name name, TypeObs type);
+        void add_var(const Name &name, TypeObs type);
     };
 
 }

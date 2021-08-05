@@ -37,6 +37,11 @@ namespace jawa {
     {
         TypeObs type;
         Name name;
+
+        FormalParam(TypeObs type, Name name)
+          : name(std::move(name))
+          , type(type)
+        {}
     };
 
     using ExpressionOpt = std::optional<Expression>;
@@ -60,6 +65,8 @@ namespace jawa {
     void generate_default_constructor(context_t ctx);
 
     Expression load_string_literal(context_t ctx, const Name &name);
+
+    Expression load_name(context_t ctx, const Name &name);
 
     ClassAndName resolve_method_class(context_t ctx, const Name &method);
 

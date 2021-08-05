@@ -75,8 +75,9 @@ namespace jawa {
         SCOPE_TABLE.enter_scope();
         // TODO: if the function is not static
         // SCOPE_TABLE.add_var("this", TYPE_TABLE.get_class_type(BUILDER.class_name()));
-        for (auto &formal_param : formal_params)
+        for (auto &formal_param : formal_params) {
             SCOPE_TABLE.add_var(formal_param.name, formal_param.type);
+        }
     }
 
     void enter_static_initializer(context_t ctx)
@@ -275,5 +276,34 @@ namespace jawa {
     }
 
     Expression resolve_name_expression(context_t ctx, const Name &name) { return {}; }
+
+    Expression load_name(context_t ctx, const Name &name)
+    {
+        auto *var = SCOPE_TABLE.get_var(name);
+        if (var == nullptr) {
+            ctx->message(errors::VARIABLE_NOT_DECLARED, ctx->loc(), name);
+            return Expression{};
+        }
+        std::cout << "name expression " << name << std::endl;
+        // TODO: check if the variable has a reference type
+        switch (var->index) {
+        case 0:
+            BUILDER.make_instruction<jasm::RefLoad0>();
+            break;
+        case 1:
+            BUILDER.make_instruction<jasm::RefLoad1>();
+            break;
+        case 2:
+            BUILDER.make_instruction<jasm::RefLoad2>();
+            break;
+        case 3:
+            BUILDER.make_instruction<jasm::RefLoad3>();
+            break;
+        default:
+            BUILDER.make_instruction<jasm::RefLoad>(U2_LOW(var->index));
+            break;
+        }
+        return Expression(var->type);
+    }
 
 }

@@ -47,6 +47,7 @@ namespace jawa::errors {
     extern err_nn METHOD_NOT_FOUND;
     extern err_nn FIELD_NOT_FOUND;
     extern err EXPECTED_REFERENCE_TYPE;
+    extern err_n VARIABLE_NOT_DECLARED;
 
 }
 

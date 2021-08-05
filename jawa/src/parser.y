@@ -614,9 +614,9 @@ FormalParameterDecls_opt: %empty                        { }
                         | FormalParameterDecls          { $$ = $1; }
                         ;
 
-FormalParameterDecls: Modifiers_opt Type VariableDeclaratorId                            { $$.push_back($2); }
-                    | Modifiers_opt Type VariableDeclaratorId COMMA FormalParameterDecls { $$.push_back($2); $$ = $5; }
-                    | Modifiers_opt Type DOTS VariableDeclaratorId                       { /* TODO */ }
+FormalParameterDecls: Modifiers_opt Type Identifier Dims_opt                            { $$.emplace_back($2, $3); }
+                    | Modifiers_opt Type Identifier Dims_opt COMMA FormalParameterDecls { $$.emplace_back($2, $3); $$ = $6; }
+                    | Modifiers_opt Type DOTS Identifier Dims_opt                       { /* TODO */ }
                     ;
 
 VariableDeclaratorId: Identifier Dims_opt
@@ -887,7 +887,7 @@ Expressions_opt: %empty         { }
                ;
 
 Expressions: ExpressionNoName                   { $$.push_back($1); }
-           | Name                               { /* TODO */ }
+           | Name                               { $$.push_back(load_name(ctx, $1)); }
            | Expressions COMMA ExpressionNoName { $$ = $1; $$.push_back($3); }
            | Expressions COMMA Name             { /* TODO */ }
            ;

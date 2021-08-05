@@ -52,7 +52,7 @@ main(int argc, char *argv[])
     for (auto file : sources) {
         FILE *iff = fopen(file, "r");
         if (!iff) {
-            std::cerr << "could not open file " << argv[1] << std::endl;
+            std::cerr << "could not open file " << file << std::endl;
             return 1;
         }
 

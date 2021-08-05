@@ -321,9 +321,9 @@ namespace jawa {
         return &search->second;
     }
 
-    void VariableScope::add_var(Name name, TypeObs type, jasm::u2 index)
+    void VariableScope::add_var(const Name &name, TypeObs type, jasm::u2 index)
     {
-        local_variables_.emplace(name, LocalVariable{ std::move(name), type, index });
+        local_variables_.emplace(name, LocalVariable{ name, type, index });
     }
 
     void VariableScopeTable::enter_scope() { scopes_.emplace_back(); }
@@ -345,9 +345,9 @@ namespace jawa {
         return nullptr;
     }
 
-    void VariableScopeTable::add_var(Name name, TypeObs type)
+    void VariableScopeTable::add_var(const Name &name, TypeObs type)
     {
         assert(scopes_.size() > 0);
-        scopes_.back().add_var(std::move(name), type, ++count_);
+        scopes_.back().add_var(name, type, ++count_);
     }
 }
