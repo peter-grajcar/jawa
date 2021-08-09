@@ -14,7 +14,21 @@ namespace jasm {
     void
     Field::jasm(std::ostream &os, const ConstantPool *pool) const
     {
-        // TODO
+        os << ".field ";
+
+        os << (access_flags_ & ACC_PRIVATE ? "private " : "") << (access_flags_ & ACC_PROTECTED ? "protected " : "")
+           << (access_flags_ & ACC_PUBLIC ? "public " : "") << (access_flags_ & ACC_STATIC ? "static " : "")
+           << (access_flags_ & ACC_FINAL ? "final " : "") << (access_flags_ & ACC_TRANSIENT ? "transient " : "")
+           << (access_flags_ & ACC_VOLATILE ? "volatile " : "") << (access_flags_ & ACC_SYNTHETIC ? "synthetic " : "");
+
+        if (pool) {
+            auto name_const = dynamic_cast<const Utf8Constant *>(pool->get(name_index_));
+            auto descriptor_const = dynamic_cast<const Utf8Constant *>(pool->get(descriptor_index_));
+            assert(name_const != nullptr && descriptor_const != nullptr);
+            os << name_const->value() << ' ' << descriptor_const->value() << std::endl;
+        } else {
+            os << '#' << name_index_ << "(#" << descriptor_index_ << ')' << std::endl;
+        }
     }
 
     void

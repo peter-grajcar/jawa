@@ -55,6 +55,12 @@ namespace jasm {
         return &basic_blocks_.back();
     }
 
+    void
+    ClassBuilder::add_basic_block(BasicBlock &&basic_block)
+    {
+        basic_blocks_.emplace_back(std::forward<BasicBlock &&>(basic_block));
+    }
+
     ClassBuilder &
     ClassBuilder::set_version(u2 major_version, u2 minor_version)
     {
@@ -173,6 +179,15 @@ namespace jasm {
         }
         current_code_->set_stack_limit(max_stack_size);
         basic_blocks_.clear();
+    }
+
+    void
+    ClassBuilder::declare_field(const utf8 &field_name, const Type &type, u2 access_flags)
+    {
+        u2 name_index = add_utf8_constant(field_name);
+        u2 descriptor_index = add_utf8_constant(type.descriptor());
+        Field field(access_flags, name_index, descriptor_index);
+        class_.add_field(std::move(field));
     }
 
 }

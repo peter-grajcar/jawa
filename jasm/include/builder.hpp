@@ -39,6 +39,12 @@ namespace jasm {
 
         u4
         length() const;
+
+        const std::vector<std::unique_ptr<Instruction>> &
+        code() const
+        {
+            return code_;
+        }
     };
 
     class ClassBuilder
@@ -75,6 +81,9 @@ namespace jasm {
 
         void
         leave_method();
+
+        void
+        declare_field(const utf8 &field_name, const Type &type, u2 access_flags);
 
         void
         set_insertion_point(InsertionPoint insertion_point);
@@ -128,6 +137,9 @@ namespace jasm {
         {
             return class_name_;
         }
+
+        void
+        add_basic_block(BasicBlock &&basic_block);
     };
 
 }

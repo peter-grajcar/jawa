@@ -325,10 +325,14 @@ namespace jawa {
         load_class(const Name &class_name);
     };
 
-    struct LocalVariable
+    struct Variable
     {
         Name name;
         TypeObs type;
+    };
+
+    struct LocalVariable : public Variable
+    {
         jasm::u2 index;
     };
 

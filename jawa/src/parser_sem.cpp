@@ -16,6 +16,7 @@
 #define TYPE_TABLE ctx->type_table()
 #define CLASS_TABLE ctx->class_table()
 #define SCOPE_TABLE ctx->scope_table()
+#define CLINIT ctx->static_initializer()
 
 namespace jawa {
 
@@ -28,12 +29,17 @@ namespace jawa {
     }
 
     void
+    generate_static_initializer(context_t p_context);
+    void
     leave_class(context_t ctx)
     {
         std::cout << "leaving class" << std::endl;
 
         // TODO: check if no constructor was created
         generate_default_constructor(ctx);
+
+        if (CLINIT.length() > 0)
+            generate_static_initializer(ctx);
 
         auto class_name = BUILDER.class_name();
         jasm::Class clazz = BUILDER.build();
@@ -42,6 +48,17 @@ namespace jawa {
         std::ofstream os(class_name + ".class");
         clazz.emit_bytecode(os);
         os.close();
+    }
+
+    void
+    generate_static_initializer(context_t ctx)
+    {
+        VoidTypeObs void_type = TYPE_TABLE.get_void_type();
+        MethodTypeObs void_method_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
+        BUILDER.enter_method("<clinit>", *void_method_type, jasm::Method::ACC_STATIC);
+        CLINIT.make_instruction<jasm::Ret>();
+        BUILDER.add_basic_block(std::move(CLINIT));
+        BUILDER.leave_method();
     }
 
     bool
@@ -88,18 +105,18 @@ namespace jawa {
     enter_static_initializer(context_t ctx)
     {
         std::cout << "entering static initializer" << std::endl;
-        VoidTypeObs void_type = TYPE_TABLE.get_void_type();
-        MethodTypeObs void_method_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
-        BUILDER.enter_method("<clinit>", *void_method_type, jasm::Method::ACC_STATIC);
+        BUILDER.set_insertion_point(&CLINIT);
     }
 
     void
     leave_method(context_t ctx, const ModifierAndAnnotationPack &pack)
     {
-        std::cout << "leaving method" << std::endl;
-        // TODO: BUILDER.current_method()->set_access_flags();
-        BUILDER.make_instruction<jasm::Return>();
-        BUILDER.leave_method();
+        if (BUILDER.current_method() != nullptr) {
+            std::cout << "leaving method" << std::endl;
+            // TODO: BUILDER.current_method()->set_access_flags();
+            BUILDER.make_instruction<jasm::Return>();
+            BUILDER.leave_method();
+        }
     }
 
     void
@@ -326,6 +343,13 @@ namespace jawa {
             break;
         }
         return Expression(var->type);
+    }
+
+    void
+    declare_field(context_t ctx, const ModifierAndAnnotationPack &pack, TypeObs type, const Name &name)
+    {
+        std::cout << "declaring field " << name << std::endl;
+        BUILDER.declare_field(name, *type, jasm::Field::ACC_PUBLIC | jasm::Field::ACC_STATIC);
     }
 
 }

@@ -11,7 +11,11 @@ zaimportuj jawa.io.StrumieńDrukowania;
 
 publiczna klasa System {
 
-    statyczny StrumieńDrukowania wyjście = nowy StrumieńDrukowania();
+    statyczny StrumieńDrukowania wyjście; // = nowy StrumieńDrukowania();
+
+    statyczny {
+        wyjście = nowy StrumieńDrukowania();
+    }
 
     statyczny void wczytajBibliotekę(Łańcuch nazwaBiblioteki) {
         java.lang.Runtime.getRuntime().loadLibrary(nazwaBiblioteki);

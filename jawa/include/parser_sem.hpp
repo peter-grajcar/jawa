@@ -67,6 +67,9 @@ namespace jawa {
     void
     declare_method(context_t ctx, const ModifierAndAnnotationPack &pack);
 
+    void
+    declare_field(context_t ctx, const ModifierAndAnnotationPack &pack, TypeObs type, const Name &name);
+
     TypeObs
     find_class(context_t ctx, const Name &name);
 

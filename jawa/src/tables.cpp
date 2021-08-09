@@ -127,7 +127,7 @@ namespace jawa {
     {
         size_t start = 0;
         do {
-            size_t end = class_paths_.find(':');
+            size_t end = class_paths_.find(':', start);
             std::string class_path(class_paths_, start, end);
 
             std::string path = class_path;
@@ -139,8 +139,11 @@ namespace jawa {
                 return path;
             }
 
-            start = end;
-        } while (start != std::string::npos);
+            if (end == std::string::npos)
+                break;
+
+            start = end + 1;
+        } while (start < class_paths_.size());
 
         return "";
     }
@@ -387,6 +390,6 @@ namespace jawa {
     VariableScopeTable::add_var(const Name &name, TypeObs type)
     {
         assert(scopes_.size() > 0);
-        scopes_.back().add_var(name, type, ++count_);
+        scopes_.back().add_var(name, type, count_++);
     }
 }

@@ -517,7 +517,7 @@ MemberDecl: MethodOrFieldDecl
           | Modifiers_opt InterfaceDeclaration
           ;
 
-MethodOrFieldDecl: Modifiers_opt FieldDeclHead FieldDeclaratorsRest SEMIC
+MethodOrFieldDecl: Modifiers_opt Type Identifier FieldDeclaratorsRest SEMIC { declare_field(ctx, $1, $2, $3); }
                  | Modifiers_opt MethodDeclHead Block                  { leave_method(ctx, $1); }
                  | Modifiers_opt MethodDeclHead SEMIC                  { declare_method(ctx, $1); }
                  ;

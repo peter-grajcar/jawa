@@ -48,6 +48,7 @@ namespace jawa {
         VariableScopeTable scope_table_;
         std::locale locale_;
         std::unique_ptr<jasm::ClassBuilder> builder_;
+        jasm::BasicBlock static_initializer_;
 
         void
         message_line(loc_t const &loc) const;
@@ -194,6 +195,12 @@ namespace jawa {
         scope_table()
         {
             return scope_table_;
+        }
+
+        inline jasm::BasicBlock &
+        static_initializer()
+        {
+            return static_initializer_;
         }
     };
 
