@@ -19,14 +19,16 @@
 
 namespace jawa {
 
-    void enter_class(context_t ctx, const Name &class_name)
+    void
+    enter_class(context_t ctx, const Name &class_name)
     {
         std::cout << "entering class " << class_name << std::endl;
         ctx->new_class_builder(class_name);
         BUILDER.set_version(59, 0);
     }
 
-    void leave_class(context_t ctx)
+    void
+    leave_class(context_t ctx)
     {
         std::cout << "leaving class" << std::endl;
 
@@ -42,7 +44,8 @@ namespace jawa {
         os.close();
     }
 
-    bool is_main(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types)
+    bool
+    is_main(context_t ctx, const Name &method_name, TypeObs return_type, TypeObsArray &argument_types)
     {
         if (method_name != "głowny")
             return false;
@@ -55,7 +58,8 @@ namespace jawa {
         return argument_types[0] == str_arr_type;
     }
 
-    void enter_method(context_t ctx, const Name &method_name, TypeObs return_type, FormalParamArray &formal_params)
+    void
+    enter_method(context_t ctx, const Name &method_name, TypeObs return_type, FormalParamArray &formal_params)
     {
         std::cout << "entering method " << method_name << std::endl;
 
@@ -80,7 +84,8 @@ namespace jawa {
         }
     }
 
-    void enter_static_initializer(context_t ctx)
+    void
+    enter_static_initializer(context_t ctx)
     {
         std::cout << "entering static initializer" << std::endl;
         VoidTypeObs void_type = TYPE_TABLE.get_void_type();
@@ -88,7 +93,8 @@ namespace jawa {
         BUILDER.enter_method("<clinit>", *void_method_type, jasm::Method::ACC_STATIC);
     }
 
-    void leave_method(context_t ctx, const ModifierAndAnnotationPack &pack)
+    void
+    leave_method(context_t ctx, const ModifierAndAnnotationPack &pack)
     {
         std::cout << "leaving method" << std::endl;
         // TODO: BUILDER.current_method()->set_access_flags();
@@ -96,20 +102,23 @@ namespace jawa {
         BUILDER.leave_method();
     }
 
-    void declare_method(context_t ctx, const ModifierAndAnnotationPack &pack)
+    void
+    declare_method(context_t ctx, const ModifierAndAnnotationPack &pack)
     {
         std::cout << "declaring method" << std::endl;
         BUILDER.leave_method();
     }
 
-    TypeObs find_class(context_t ctx, const Name &name)
+    TypeObs
+    find_class(context_t ctx, const Name &name)
     {
         if (name == "Łańcuch") // temporary measure
             return TYPE_TABLE.get_class_type("java/lang/String");
         return TYPE_TABLE.get_class_type(name);
     }
 
-    void generate_default_constructor(context_t ctx)
+    void
+    generate_default_constructor(context_t ctx)
     {
         VoidTypeObs void_type = TYPE_TABLE.get_void_type();
         MethodTypeObs void_method_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
@@ -121,7 +130,8 @@ namespace jawa {
         BUILDER.leave_method();
     }
 
-    Expression load_string_literal(context_t ctx, const Name &name)
+    Expression
+    load_string_literal(context_t ctx, const Name &name)
     {
         jasm::u2 str_index = BUILDER.add_string_constant(name);
         // TODO: check if str_index <= 0xFF, otherwise use different instruction
@@ -129,7 +139,8 @@ namespace jawa {
         return Expression(TYPE_TABLE.get_class_type("java/lang/String"));
     }
 
-    static std::vector<std::size_t> split_name(const Name &name)
+    static std::vector<std::size_t>
+    split_name(const Name &name)
     {
         std::vector<std::size_t> indices;
         indices.push_back(0);
@@ -142,7 +153,8 @@ namespace jawa {
         return indices;
     }
 
-    ClassAndName resolve_method_class(context_t ctx, const Name &method)
+    ClassAndName
+    resolve_method_class(context_t ctx, const Name &method)
     {
         auto splits = split_name(method);
 
@@ -198,15 +210,14 @@ namespace jawa {
             }
 
             return { class_name, method_name };
+        } else {
+            // static method
+            return { class_name, method_name, true };
         }
-
-        return { class_name, method_name };
     }
 
-    Expression invoke_method(context_t ctx,
-                             const Expression &expr,
-                             const Name &method_name,
-                             const ExpressionArray &arguments)
+    Expression
+    invoke_method(context_t ctx, const Expression &expr, const Name &method_name, const ExpressionArray &arguments)
     {
         TypeObsArray argument_types;
         for (auto &expr : arguments) {
@@ -243,7 +254,8 @@ namespace jawa {
         return Expression(jawa_method->method_type()->return_type());
     }
 
-    Expression invoke_method(context_t ctx, const ClassAndName &method, const ExpressionArray &arguments)
+    Expression
+    invoke_method(context_t ctx, const ClassAndName &method, const ExpressionArray &arguments)
     {
         if (method.name.empty())
             return Expression();
@@ -269,15 +281,25 @@ namespace jawa {
         }
 
         jasm::u2 method_index = BUILDER.add_method_constant(method.class_name, method.name, *jawa_method->type());
-        BUILDER.make_instruction<jasm::InvokeVirtual>(U2_SPLIT(method_index));
+
+        if (method.is_static) {
+            BUILDER.make_instruction<jasm::InvokeStatic>(U2_SPLIT(method_index));
+        } else {
+            BUILDER.make_instruction<jasm::InvokeVirtual>(U2_SPLIT(method_index));
+        }
 
         std::cout << "invoking method " << method.name << std::endl;
         return Expression(jawa_method->method_type()->return_type());
     }
 
-    Expression resolve_name_expression(context_t ctx, const Name &name) { return {}; }
+    Expression
+    resolve_name_expression(context_t ctx, const Name &name)
+    {
+        return {};
+    }
 
-    Expression load_name(context_t ctx, const Name &name)
+    Expression
+    load_name(context_t ctx, const Name &name)
     {
         auto *var = SCOPE_TABLE.get_var(name);
         if (var == nullptr) {

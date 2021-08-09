@@ -10,4 +10,5 @@ ColumnLimit: 120
 NamespaceIndentation: All
 IndentCaseLabels: false
 SpaceAfterCStyleCast: true
+AlwaysBreakAfterReturnType: All
 ...

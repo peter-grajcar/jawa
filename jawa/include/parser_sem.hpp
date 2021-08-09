@@ -31,6 +31,7 @@ namespace jawa {
     {
         Name class_name;
         Name name;
+        bool is_static = false;
     };
 
     struct FormalParam

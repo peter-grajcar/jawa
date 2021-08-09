@@ -140,7 +140,7 @@ namespace jawa {
     {
         std::size_t start = 0;
         do {
-            std::size_t end = class_paths_.find(':');
+            std::size_t end = class_paths_.find(':', start);
             std::string class_path(class_paths_, start, end);
             class_path += "/jawa/jȩzyk";
 
@@ -160,8 +160,11 @@ namespace jawa {
                 }
             }
 
-            start = end;
-        } while (start != std::string::npos);
+            if (end == std::string::npos)
+                break;
+
+            start = end + 1;
+        } while (start < class_paths_.size());
     }
 
     const JawaClass *ClassTable::load_class(const Name &class_name)

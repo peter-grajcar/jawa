@@ -245,27 +245,37 @@ namespace jasm {
 
         Instruction(Instruction &&) = default;
 
-        Instruction &operator=(const Instruction &) = delete;
+        Instruction &
+        operator=(const Instruction &) = delete;
 
-        Instruction &operator=(Instruction &&) = default;
+        Instruction &
+        operator=(Instruction &&) = default;
 
         virtual ~Instruction() = default;
 
-        virtual u1 opcode() const = 0;
+        virtual u1
+        opcode() const = 0;
 
-        virtual const char *mnemonic() const = 0;
+        virtual const char *
+        mnemonic() const = 0;
 
-        virtual u2 operand_count() const = 0;
+        virtual u2
+        operand_count() const = 0;
 
-        virtual u2 input_stack_operand_count() const = 0;
+        virtual u2
+        input_stack_operand_count() const = 0;
 
-        virtual u2 output_stack_operand_count() const = 0;
+        virtual u2
+        output_stack_operand_count() const = 0;
 
-        virtual u4 size() const = 0;
+        virtual u4
+        size() const = 0;
 
-        virtual void jasm(std::ostream &os, const ConstantPool *pool) const = 0;
+        virtual void
+        jasm(std::ostream &os, const ConstantPool *pool) const = 0;
 
-        virtual void emit_bytecode(std::ostream &os) const = 0;
+        virtual void
+        emit_bytecode(std::ostream &os) const = 0;
     };
 
     template<u1 opcode_>
@@ -295,19 +305,44 @@ namespace jasm {
                 operands_[i] = read_big_endian<u1>(*is);
         }
 
-        inline u1 opcode() const override { return opcode_; }
+        inline u1
+        opcode() const override
+        {
+            return opcode_;
+        }
 
-        inline const char *mnemonic() const override { return InstructionMnemonics[opcode_]; }
+        inline const char *
+        mnemonic() const override
+        {
+            return InstructionMnemonics[opcode_];
+        }
 
-        inline u2 operand_count() const override { return InstructionInfo[opcode_][0]; }
+        inline u2
+        operand_count() const override
+        {
+            return InstructionInfo[opcode_][0];
+        }
 
-        inline u2 input_stack_operand_count() const override { return InstructionInfo[opcode_][1]; }
+        inline u2
+        input_stack_operand_count() const override
+        {
+            return InstructionInfo[opcode_][1];
+        }
 
-        inline u2 output_stack_operand_count() const override { return InstructionInfo[opcode_][2]; }
+        inline u2
+        output_stack_operand_count() const override
+        {
+            return InstructionInfo[opcode_][2];
+        }
 
-        inline u4 size() const override { return 1 + operand_count(); }
+        inline u4
+        size() const override
+        {
+            return 1 + operand_count();
+        }
 
-        void jasm(std::ostream &os, const ConstantPool *pool) const override
+        void
+        jasm(std::ostream &os, const ConstantPool *pool) const override
         {
             os << std::setw(19) << mnemonic();
             for (u1 op : operands_)
@@ -315,7 +350,8 @@ namespace jasm {
             os << std::endl;
         }
 
-        void emit_bytecode(std::ostream &os) const override
+        void
+        emit_bytecode(std::ostream &os) const override
         {
             write_big_endian<u1>(os, opcode_);
             for (auto operand : operands_)
@@ -532,6 +568,8 @@ namespace jasm {
     JASM_SPECIALISATION(InvokeVirtual)
 
     JASM_SPECIALISATION(InvokeSpecial)
+
+    JASM_SPECIALISATION(InvokeStatic)
 
     JASM_SPECIALISATION(GetStatic)
 
