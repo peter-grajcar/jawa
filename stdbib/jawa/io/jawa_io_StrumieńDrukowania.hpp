@@ -21,7 +21,8 @@ extern "C"
      * Method:    wydrukovać
      * Signature: (Ljava/lang/String;)V
      */
-    JNIEXPORT void JNICALL Java_jawa_io_Strumie_00144Drukowania_wydrukova_00107(JNIEnv *, jobject, jstring);
+    JNIEXPORT void JNICALL
+    Java_jawa_io_Strumie_00144Drukowania_wydrukova_00107(JNIEnv *, jobject, jstring);
 
 #ifdef __cplusplus
 }

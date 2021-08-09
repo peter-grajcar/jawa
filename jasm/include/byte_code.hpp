@@ -51,7 +51,8 @@ namespace jasm::byte_code {
      * @return source value with swapped endianness.
      */
     template<typename T>
-    T swap_endianness(T src)
+    T
+    swap_endianness(T src)
     {
         if (sizeof(T) == 1)
             return src;
@@ -69,7 +70,8 @@ namespace jasm::byte_code {
      * @return value
      */
     template<typename T>
-    T read_big_endian(std::istream &is)
+    T
+    read_big_endian(std::istream &is)
     {
         T dst;
         is.read(reinterpret_cast<char *>(&dst), sizeof(T));
@@ -87,7 +89,8 @@ namespace jasm::byte_code {
      * @param val value to write.
      */
     template<typename T>
-    void write_big_endian(std::ostream &os, T val)
+    void
+    write_big_endian(std::ostream &os, T val)
     {
 #ifdef IS_LITTLE_ENDIAN
         val = swap_endianness(val);

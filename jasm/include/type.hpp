@@ -56,36 +56,43 @@ namespace jasm {
 
         BaseType(BaseType &&) = default;
 
-        BaseType &operator=(const BaseType &) = delete;
+        BaseType &
+        operator=(const BaseType &) = delete;
 
-        BaseType &operator=(BaseType &&) = default;
+        BaseType &
+        operator=(BaseType &&) = default;
 
         virtual ~BaseType() = default;
 
-        virtual size_t hash() const = 0;
+        virtual size_t
+        hash() const = 0;
 
-        virtual bool operator==(const BaseType &type) const = 0;
+        virtual bool
+        operator==(const BaseType &type) const = 0;
 
         /**
          * Detrmines whether a type is a reference type.
          *
          * @return true for array ([) and class instance (L) types
          */
-        virtual bool is_reference_type() const = 0;
+        virtual bool
+        is_reference_type() const = 0;
 
         /**
          * Returns the type prefix which will be used in the byte code.
          *
          * @return type prefix.
          */
-        virtual char prefix() const = 0;
+        virtual char
+        prefix() const = 0;
 
         /**
          * Returns the type descriptor used in the byte code.
          *
          * @return type descriptor.
          */
-        virtual utf8 descriptor() const;
+        virtual utf8
+        descriptor() const;
     };
 
     template<char p>
@@ -94,15 +101,32 @@ namespace jasm {
     public:
         explicit PrimitiveType() {}
 
-        bool is_reference_type() const override { return true; }
+        bool
+        is_reference_type() const override
+        {
+            return true;
+        }
 
-        char prefix() const override { return p; }
+        char
+        prefix() const override
+        {
+            return p;
+        }
 
-        utf8 descriptor() const override { return std::string(1, p); }
+        utf8
+        descriptor() const override
+        {
+            return std::string(1, p);
+        }
 
-        size_t hash() const override { return std::hash<char>{}(p); }
+        size_t
+        hash() const override
+        {
+            return std::hash<char>{}(p);
+        }
 
-        bool operator==(const BaseType &type) const override
+        bool
+        operator==(const BaseType &type) const override
         {
             auto primitive_type = dynamic_cast<const PrimitiveType *>(&type);
             if (!primitive_type)
@@ -116,7 +140,8 @@ namespace jasm {
     public:
         virtual ~ReferenceType() = default;
 
-        bool is_reference_type() const override;
+        bool
+        is_reference_type() const override;
     };
 
     class ClassType : public ReferenceType
@@ -133,17 +158,29 @@ namespace jasm {
           : class_name_(std::move(name))
         {}
 
-        char prefix() const override;
+        char
+        prefix() const override;
 
-        utf8 descriptor() const override;
+        utf8
+        descriptor() const override;
 
-        inline utf8 class_name() const { return class_name_; }
+        inline utf8
+        class_name() const
+        {
+            return class_name_;
+        }
 
-        size_t hash() const override { return std::hash<std::string>{}(class_name_); }
+        size_t
+        hash() const override
+        {
+            return std::hash<std::string>{}(class_name_);
+        }
 
-        bool operator==(const BaseType &type) const override;
+        bool
+        operator==(const BaseType &type) const override;
 
-        bool operator==(const ClassType &type) const;
+        bool
+        operator==(const ClassType &type) const;
     };
 
     class ArrayType : public ReferenceType
@@ -165,19 +202,35 @@ namespace jasm {
             }
         }
 
-        inline const Type *element_type() const { return element_type_; }
+        inline const Type *
+        element_type() const
+        {
+            return element_type_;
+        }
 
-        inline size_t dimension() const { return dimension_; }
+        inline size_t
+        dimension() const
+        {
+            return dimension_;
+        }
 
-        char prefix() const override;
+        char
+        prefix() const override;
 
-        utf8 descriptor() const override;
+        utf8
+        descriptor() const override;
 
-        size_t hash() const override { return element_type_->hash() ^ std::hash<size_t>{}(dimension_); }
+        size_t
+        hash() const override
+        {
+            return element_type_->hash() ^ std::hash<size_t>{}(dimension_);
+        }
 
-        bool operator==(const BaseType &type) const override;
+        bool
+        operator==(const BaseType &type) const override;
 
-        bool operator==(const ArrayType &type) const;
+        bool
+        operator==(const ArrayType &type) const;
     };
 
     class MethodType : public BaseType
@@ -206,17 +259,29 @@ namespace jasm {
                 assert(arg);
         }
 
-        inline const Type *return_type() const { return return_type_; }
+        inline const Type *
+        return_type() const
+        {
+            return return_type_;
+        }
 
-        inline const std::vector<const Type *> &argument_types() const { return argument_types_; }
+        inline const std::vector<const Type *> &
+        argument_types() const
+        {
+            return argument_types_;
+        }
 
-        bool is_reference_type() const override;
+        bool
+        is_reference_type() const override;
 
-        char prefix() const override;
+        char
+        prefix() const override;
 
-        utf8 descriptor() const override;
+        utf8
+        descriptor() const override;
 
-        size_t hash() const override
+        size_t
+        hash() const override
         {
             size_t h = return_type_->hash();
             for (auto &arg_type : argument_types_)
@@ -224,9 +289,11 @@ namespace jasm {
             return h;
         }
 
-        bool operator==(const BaseType &type) const override;
+        bool
+        operator==(const BaseType &type) const override;
 
-        bool operator==(const MethodType &type) const;
+        bool
+        operator==(const MethodType &type) const;
     };
 
     // TODO: class VariableType

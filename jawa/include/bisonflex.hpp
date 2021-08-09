@@ -47,9 +47,11 @@ typedef void *yyscan_t;
 #endif
 
 namespace jawa {
-    yyscan_t lexer_init(FILE *iff);
+    yyscan_t
+    lexer_init(FILE *iff);
 
-    void lexer_shutdown(yyscan_t scanner);
+    void
+    lexer_shutdown(yyscan_t scanner);
 }
 
 #endif // JAWA_BISONFLEX_HPP

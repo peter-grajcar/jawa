@@ -15,7 +15,8 @@
 
 namespace jawa {
 
-    size_t JawaMethodSignature::hash() const
+    size_t
+    JawaMethodSignature::hash() const
     {
         size_t h = std::hash<std::string>()(name);
         for (TypeObs type : argument_types)
@@ -23,7 +24,8 @@ namespace jawa {
         return h;
     }
 
-    bool JawaMethodSignature::operator==(const JawaMethodSignature &signature) const
+    bool
+    JawaMethodSignature::operator==(const JawaMethodSignature &signature) const
     {
         if (argument_types.size() != signature.argument_types.size())
             return false;
@@ -35,20 +37,38 @@ namespace jawa {
         return name == signature.name;
     }
 
-    JawaMethodSignature JawaMethod::signature() const
+    JawaMethodSignature
+    JawaMethod::signature() const
     {
         return JawaMethodSignature(name_, method_type()->argument_types());
     }
 
-    size_t JawaField::hash() const { return std::hash<std::string>()(name_) ^ type_->hash(); }
+    size_t
+    JawaField::hash() const
+    {
+        return std::hash<std::string>()(name_) ^ type_->hash();
+    }
 
-    bool JawaField::operator==(const JawaField &field) const { return name_ == field.name_ && type_ == field.type_; }
+    bool
+    JawaField::operator==(const JawaField &field) const
+    {
+        return name_ == field.name_ && type_ == field.type_;
+    }
 
-    size_t JawaClass::hash() const { return std::hash<std::string>()(name_); }
+    size_t
+    JawaClass::hash() const
+    {
+        return std::hash<std::string>()(name_);
+    }
 
-    bool JawaClass::operator==(const JawaClass &clazz) const { return name_ == clazz.name_; }
+    bool
+    JawaClass::operator==(const JawaClass &clazz) const
+    {
+        return name_ == clazz.name_;
+    }
 
-    const JawaMethod *JawaClass::get_method(const JawaMethodSignature &signature) const
+    const JawaMethod *
+    JawaClass::get_method(const JawaMethodSignature &signature) const
     {
         auto search = methods_.find(signature);
         if (search != methods_.end())
@@ -93,7 +113,8 @@ namespace jawa {
         }
     }
 
-    const JawaField *JawaClass::get_field(const Name &name) const
+    const JawaField *
+    JawaClass::get_field(const Name &name) const
     {
         auto search = fields_.find(name);
         if (search != fields_.end())
@@ -101,7 +122,8 @@ namespace jawa {
         return nullptr;
     }
 
-    Name ClassTable::find_class_file(const Name &class_name) const
+    Name
+    ClassTable::find_class_file(const Name &class_name) const
     {
         size_t start = 0;
         do {
@@ -123,7 +145,8 @@ namespace jawa {
         return "";
     }
 
-    bool ClassTable::import_class(const Name &fully_qualified_name)
+    bool
+    ClassTable::import_class(const Name &fully_qualified_name)
     {
         Name file = find_class_file(fully_qualified_name);
         if (file.empty())
@@ -136,7 +159,8 @@ namespace jawa {
         return true;
     }
 
-    void ClassTable::implicit_import()
+    void
+    ClassTable::implicit_import()
     {
         std::size_t start = 0;
         do {
@@ -167,7 +191,8 @@ namespace jawa {
         } while (start < class_paths_.size());
     }
 
-    const JawaClass *ClassTable::load_class(const Name &class_name)
+    const JawaClass *
+    ClassTable::load_class(const Name &class_name)
     {
         auto search = classes_.find(class_name);
         if (search != classes_.end())
@@ -189,7 +214,8 @@ namespace jawa {
         return &inserted.first->second;
     }
 
-    Name ClassTable::get_fully_qualified_name(const Name &name)
+    Name
+    ClassTable::get_fully_qualified_name(const Name &name)
     {
         auto search = imported_classes_.find(name);
         if (search != imported_classes_.end())
@@ -199,7 +225,8 @@ namespace jawa {
         return "";
     }
 
-    TypeObs TypeTable::from_descriptor(const Name &descriptor)
+    TypeObs
+    TypeTable::from_descriptor(const Name &descriptor)
     {
         enum Action
         {
@@ -316,7 +343,8 @@ namespace jawa {
         return type;
     }
 
-    const LocalVariable *VariableScope::get_var(const Name &name) const
+    const LocalVariable *
+    VariableScope::get_var(const Name &name) const
     {
         auto search = local_variables_.find(name);
         if (search == local_variables_.end())
@@ -324,21 +352,28 @@ namespace jawa {
         return &search->second;
     }
 
-    void VariableScope::add_var(const Name &name, TypeObs type, jasm::u2 index)
+    void
+    VariableScope::add_var(const Name &name, TypeObs type, jasm::u2 index)
     {
         local_variables_.emplace(name, LocalVariable{ name, type, index });
     }
 
-    void VariableScopeTable::enter_scope() { scopes_.emplace_back(); }
+    void
+    VariableScopeTable::enter_scope()
+    {
+        scopes_.emplace_back();
+    }
 
-    void VariableScopeTable::leave_scope()
+    void
+    VariableScopeTable::leave_scope()
     {
         assert(scopes_.size() > 0);
         count_ -= scopes_.back().local_variables_.size();
         scopes_.pop_back();
     }
 
-    const LocalVariable *VariableScopeTable::get_var(const Name &name) const
+    const LocalVariable *
+    VariableScopeTable::get_var(const Name &name) const
     {
         for (auto scope = scopes_.rbegin(); scope < scopes_.rend(); ++scope) {
             const LocalVariable *var = scope->get_var(name);
@@ -348,7 +383,8 @@ namespace jawa {
         return nullptr;
     }
 
-    void VariableScopeTable::add_var(const Name &name, TypeObs type)
+    void
+    VariableScopeTable::add_var(const Name &name, TypeObs type)
     {
         assert(scopes_.size() > 0);
         scopes_.back().add_var(name, type, ++count_);

@@ -23,7 +23,8 @@ namespace jawa {
         NEUT,
     };
 
-    ModifierForm get_form(Name name);
+    ModifierForm
+    get_form(Name name);
 
     enum class Modifier
     {
@@ -47,9 +48,11 @@ namespace jawa {
         uint32_t mod_flags_fem_;
 
     public:
-        void set(Modifier mod, ModifierForm form = ModifierForm::NEUT);
+        void
+        set(Modifier mod, ModifierForm form = ModifierForm::NEUT);
 
-        ModifierForm get(Modifier mod) const;
+        ModifierForm
+        get(Modifier mod) const;
     };
 
     struct ModifierAndAnnotationPack

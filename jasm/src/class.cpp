@@ -14,7 +14,8 @@
 
 namespace jasm {
 
-    void Class::read_class(std::istream &is)
+    void
+    Class::read_class(std::istream &is)
     {
         u4 magic = read_big_endian<u4>(is);
         assert(magic == Magic);
@@ -83,7 +84,8 @@ namespace jasm {
         }
     }
 
-    void Class::read_constant(std::istream &is, u1 tag)
+    void
+    Class::read_constant(std::istream &is, u1 tag)
     {
         switch (tag) {
         case ConstantPool::CONSTANT_UTF_8: {
@@ -174,7 +176,8 @@ namespace jasm {
         }
     }
 
-    void Class::read_attribute(std::istream &is, Attributable *attr)
+    void
+    Class::read_attribute(std::istream &is, Attributable *attr)
     {
         u2 attribute_name_index = read_big_endian<u2>(is);
         u4 attribute_length = read_big_endian<u4>(is);
@@ -227,7 +230,8 @@ namespace jasm {
         code->make_instruction<SimpleInstruction<OPCODE>>(&is);                                                        \
         return 1 + InstructionInfo[opcode][0];
 
-    u4 Class::read_instruction(std::istream &is, CodeAttribute *code)
+    u4
+    Class::read_instruction(std::istream &is, CodeAttribute *code)
     {
         u1 opcode = read_big_endian<u1>(is);
         switch (opcode) {
@@ -442,7 +446,8 @@ namespace jasm {
         }
     }
 
-    void Class::jasm(std::ostream &os) const
+    void
+    Class::jasm(std::ostream &os) const
     {
         // dump the constant pool
         size_t i = 1;
@@ -471,7 +476,8 @@ namespace jasm {
         }
     }
 
-    void Class::emit_bytecode(std::ostream &os) const
+    void
+    Class::emit_bytecode(std::ostream &os) const
     {
         write_big_endian<u4>(os, Magic);
         write_big_endian<u2>(os, minor_version_);

@@ -40,7 +40,11 @@ namespace jawa {
     private:
         struct type_hasher_t
         {
-            std::size_t operator()(const jasm::Type &t) const { return t.hash(); }
+            std::size_t
+            operator()(const jasm::Type &t) const
+            {
+                return t.hash();
+            }
         };
 
         jasm::VoidType void_type_;
@@ -59,34 +63,80 @@ namespace jawa {
     public:
         TypeTable() = default;
 
-        TypeObs from_descriptor(const Name &descriptor);
+        TypeObs
+        from_descriptor(const Name &descriptor);
 
-        VoidTypeObs get_void_type() const { return &void_type_; }
+        VoidTypeObs
+        get_void_type() const
+        {
+            return &void_type_;
+        }
 
-        IntTypeObs get_int_type() const { return &int_type_; }
+        IntTypeObs
+        get_int_type() const
+        {
+            return &int_type_;
+        }
 
-        ByteTypeObs get_byte_type() const { return &byte_type_; }
+        ByteTypeObs
+        get_byte_type() const
+        {
+            return &byte_type_;
+        }
 
-        ShortTypeObs get_short_type() const { return &short_type_; }
+        ShortTypeObs
+        get_short_type() const
+        {
+            return &short_type_;
+        }
 
-        CharTypeObs get_char_type() const { return &char_type_; }
+        CharTypeObs
+        get_char_type() const
+        {
+            return &char_type_;
+        }
 
-        LongTypeObs get_long_type() const { return &long_type_; }
+        LongTypeObs
+        get_long_type() const
+        {
+            return &long_type_;
+        }
 
-        FloatTypeObs get_float_type() const { return &float_type_; }
+        FloatTypeObs
+        get_float_type() const
+        {
+            return &float_type_;
+        }
 
-        DoubleTypeObs get_double_type() const { return &double_type_; }
+        DoubleTypeObs
+        get_double_type() const
+        {
+            return &double_type_;
+        }
 
-        BooleanTypeObs get_boolean_type() const { return &boolean_type_; }
+        BooleanTypeObs
+        get_boolean_type() const
+        {
+            return &boolean_type_;
+        }
 
-        MethodTypeObs get_method_type(TypeObs return_type, TypeObsArray arguments)
+        MethodTypeObs
+        get_method_type(TypeObs return_type, TypeObsArray arguments)
         {
             return &*method_types_.emplace(return_type, std::move(arguments)).first;
         }
 
-        ClassTypeObs get_class_type(const Name &class_name) { return &*class_types_.emplace(class_name).first; }
+        ClassTypeObs
+        get_class_type(const Name &class_name)
+        {
+            return &*class_types_.emplace(class_name).first;
+        }
 
-        ArrayTypeObs get_array_type(TypeObs type, size_t dims) { return &*array_types_.emplace(type, dims).first; }
+        ArrayTypeObs
+        get_array_type(TypeObs type, size_t dims)
+        {
+            return &*array_types_.emplace(type, dims).first;
+        }
     };
 
     struct JawaMethodSignature
@@ -102,9 +152,11 @@ namespace jawa {
                 assert(arg != nullptr);
         }
 
-        std::size_t hash() const;
+        std::size_t
+        hash() const;
 
-        bool operator==(const JawaMethodSignature &signature) const;
+        bool
+        operator==(const JawaMethodSignature &signature) const;
     };
 
     class JawaClassMember
@@ -121,11 +173,23 @@ namespace jawa {
           , access_flags_(access_flags)
         {}
 
-        inline Name name() const { return name_; }
+        inline Name
+        name() const
+        {
+            return name_;
+        }
 
-        inline TypeObs type() const { return type_; }
+        inline TypeObs
+        type() const
+        {
+            return type_;
+        }
 
-        inline jasm::u2 access_flags() const { return access_flags_; }
+        inline jasm::u2
+        access_flags() const
+        {
+            return access_flags_;
+        }
 
         virtual ~JawaClassMember() = default;
     };
@@ -139,9 +203,14 @@ namespace jawa {
             assert(type != nullptr);
         }
 
-        inline MethodTypeObs method_type() const { return dynamic_cast<MethodTypeObs>(type_); }
+        inline MethodTypeObs
+        method_type() const
+        {
+            return dynamic_cast<MethodTypeObs>(type_);
+        }
 
-        JawaMethodSignature signature() const;
+        JawaMethodSignature
+        signature() const;
     };
 
     class JawaField : public JawaClassMember
@@ -153,9 +222,11 @@ namespace jawa {
             assert(type != nullptr);
         }
 
-        std::size_t hash() const;
+        std::size_t
+        hash() const;
 
-        bool operator==(const JawaField &field) const;
+        bool
+        operator==(const JawaField &field) const;
     };
 
     struct JawaImport
@@ -174,7 +245,11 @@ namespace jawa {
     private:
         struct signature_hasher_t
         {
-            std::size_t operator()(const JawaMethodSignature &signature) const { return signature.hash(); }
+            std::size_t
+            operator()(const JawaMethodSignature &signature) const
+            {
+                return signature.hash();
+            }
         };
 
         Name name_;
@@ -184,15 +259,23 @@ namespace jawa {
     public:
         JawaClass(TypeTable &type_table, jasm::Class &clazz);
 
-        const JawaMethod *get_method(const JawaMethodSignature &signature) const;
+        const JawaMethod *
+        get_method(const JawaMethodSignature &signature) const;
 
-        const JawaField *get_field(const Name &name) const;
+        const JawaField *
+        get_field(const Name &name) const;
 
-        inline Name class_name() const { return name_; }
+        inline Name
+        class_name() const
+        {
+            return name_;
+        }
 
-        std::size_t hash() const;
+        std::size_t
+        hash() const;
 
-        bool operator==(const JawaClass &clazz) const;
+        bool
+        operator==(const JawaClass &clazz) const;
     };
 
     class ClassTable
@@ -206,9 +289,11 @@ namespace jawa {
 
         std::unordered_map<Name, JawaImport> imported_classes_;
 
-        Name find_class_file(const Name &class_name) const;
+        Name
+        find_class_file(const Name &class_name) const;
 
-        void implicit_import();
+        void
+        implicit_import();
 
     public:
         ClassTable(TypeTable &type_table, std::string class_paths)
@@ -218,7 +303,8 @@ namespace jawa {
             implicit_import();
         }
 
-        Name get_fully_qualified_name(const Name &name);
+        Name
+        get_fully_qualified_name(const Name &name);
 
         /**
          * Imports a class. Note that import itself does not load the class' content.
@@ -226,7 +312,8 @@ namespace jawa {
          * @param fully_qualified_name fully qualified class name.
          * @return true if the class was successfully imported, false otherwise.
          */
-        bool import_class(const Name &fully_qualified_name);
+        bool
+        import_class(const Name &fully_qualified_name);
 
         /**
          * Loads the content of a given class.
@@ -234,7 +321,8 @@ namespace jawa {
          * @param class_name name of the class to be loaded.
          * @return loaded class.
          */
-        const JawaClass *load_class(const Name &class_name);
+        const JawaClass *
+        load_class(const Name &class_name);
     };
 
     struct LocalVariable
@@ -252,9 +340,11 @@ namespace jawa {
         friend class VariableScopeTable;
 
     public:
-        const LocalVariable *get_var(const Name &name) const;
+        const LocalVariable *
+        get_var(const Name &name) const;
 
-        void add_var(const Name &name, TypeObs type, jasm::u2 index);
+        void
+        add_var(const Name &name, TypeObs type, jasm::u2 index);
     };
 
     class VariableScopeTable
@@ -265,13 +355,17 @@ namespace jawa {
         jasm::u2 count_;
 
     public:
-        void enter_scope();
+        void
+        enter_scope();
 
-        void leave_scope();
+        void
+        leave_scope();
 
-        const LocalVariable *get_var(const Name &name) const;
+        const LocalVariable *
+        get_var(const Name &name) const;
 
-        void add_var(const Name &name, TypeObs type);
+        void
+        add_var(const Name &name, TypeObs type);
     };
 
 }

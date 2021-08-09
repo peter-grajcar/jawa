@@ -11,12 +11,14 @@
 
 namespace jasm {
 
-    void Field::jasm(std::ostream &os, const ConstantPool *pool) const
+    void
+    Field::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         // TODO
     }
 
-    void Field::emit_bytecode(std::ostream &os) const
+    void
+    Field::emit_bytecode(std::ostream &os) const
     {
         write_big_endian<u2>(os, access_flags_);
         write_big_endian<u2>(os, name_index_);

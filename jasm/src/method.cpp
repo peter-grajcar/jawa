@@ -13,7 +13,8 @@
 
 namespace jasm {
 
-    void Method::jasm(std::ostream &os, const ConstantPool *pool) const
+    void
+    Method::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << ".method ";
 
@@ -39,7 +40,8 @@ namespace jasm {
         os << ".end method" << std::endl;
     }
 
-    void Method::emit_bytecode(std::ostream &os) const
+    void
+    Method::emit_bytecode(std::ostream &os) const
     {
         write_big_endian<u2>(os, access_flags_);
         write_big_endian<u2>(os, name_index_);

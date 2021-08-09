@@ -49,7 +49,8 @@ namespace jawa {
         std::locale locale_;
         std::unique_ptr<jasm::ClassBuilder> builder_;
 
-        void message_line(loc_t const &loc) const;
+        void
+        message_line(loc_t const &loc) const;
 
     public:
         explicit Context(const std::string &class_paths)
@@ -63,19 +64,28 @@ namespace jawa {
          *
          * @return current location.
          */
-        inline const loc_t &loc() const { return loc_; }
+        inline const loc_t &
+        loc() const
+        {
+            return loc_;
+        }
 
         /**
          * Returns used locale.
          *
          * @return locale.
          */
-        inline const std::locale &locale() const { return locale_; }
+        inline const std::locale &
+        locale() const
+        {
+            return locale_;
+        }
 
         /**
          * Increments the line number.
          */
-        inline void inc_line()
+        inline void
+        inc_line()
         {
             loc_.column_start = 1;
             loc_.column_end = 1;
@@ -85,7 +95,8 @@ namespace jawa {
         /**
          * Increments the line number.
          */
-        inline void inc_column(unsigned n)
+        inline void
+        inc_column(unsigned n)
         {
             loc_.column_start = loc_.column_end;
             loc_.column_end += n;
@@ -94,7 +105,8 @@ namespace jawa {
         /**
          * Increments the line number.
          */
-        inline void dec_column(unsigned n)
+        inline void
+        dec_column(unsigned n)
         {
             loc_.column_end = loc_.column_start;
             loc_.column_start = loc_.column_end - n;
@@ -107,7 +119,8 @@ namespace jawa {
          * @param loc location of the error.
          */
         template<typename... Args>
-        void message(errors::error_object<Args...> err, const loc_t &loc, Args... args) const
+        void
+        message(errors::error_object<Args...> err, const loc_t &loc, Args... args) const
         {
             std::cerr << "błąd:" << std::dec << loc.line << ':' << loc.column_start << ": ";
             format(std::cerr, err.msg(), args...) << std::endl;
@@ -121,7 +134,8 @@ namespace jawa {
          * @param rhs right hand side token.
          * @return true if there are no spaces in between the tokens, otherwise false.
          */
-        bool no_spaces_between(const loc_t &lhs, const loc_t &rhs) const;
+        bool
+        no_spaces_between(const loc_t &lhs, const loc_t &rhs) const;
 
         /**
          * Determines whether a name corresponds to an existing type name.
@@ -129,14 +143,19 @@ namespace jawa {
          * @param name the name of potential type.
          * @return true if the name corresponds to an existing type name, otherwise false.
          */
-        bool is_type_name(const Name &name) const;
+        bool
+        is_type_name(const Name &name) const;
 
         /**
          * Returns current class builder.
          *
          * @return class builder.
          */
-        inline jasm::ClassBuilder &class_builder() { return *builder_; }
+        inline jasm::ClassBuilder &
+        class_builder()
+        {
+            return *builder_;
+        }
 
         /**
          * Creates a new class builder.
@@ -144,25 +163,38 @@ namespace jawa {
          * @param class_name name of a new class.
          * @return newly created class builder.
          */
-        jasm::ClassBuilder &new_class_builder(Name class_name);
+        jasm::ClassBuilder &
+        new_class_builder(Name class_name);
 
         /**
          *
          * @return reference to the type table.
          */
-        inline TypeTable &type_table() { return type_table_; }
+        inline TypeTable &
+        type_table()
+        {
+            return type_table_;
+        }
 
         /**
          *
          * @return reference to the class table.
          */
-        inline ClassTable &class_table() { return class_table_; }
+        inline ClassTable &
+        class_table()
+        {
+            return class_table_;
+        }
 
         /**
          *
          * @return reference to the variable scope table.
          */
-        inline VariableScopeTable &scope_table() { return scope_table_; }
+        inline VariableScopeTable &
+        scope_table()
+        {
+            return scope_table_;
+        }
     };
 
     using context_t = Context *;

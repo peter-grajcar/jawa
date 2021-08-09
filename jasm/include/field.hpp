@@ -45,15 +45,29 @@ namespace jasm {
           , descriptor_index_(descriptor_index)
         {}
 
-        inline u2 access_flags() const { return access_flags_; }
+        inline u2
+        access_flags() const
+        {
+            return access_flags_;
+        }
 
-        inline u2 name_index() const { return name_index_; }
+        inline u2
+        name_index() const
+        {
+            return name_index_;
+        }
 
-        inline u2 descriptor_index() const { return descriptor_index_; }
+        inline u2
+        descriptor_index() const
+        {
+            return descriptor_index_;
+        }
 
-        void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const;
+        void
+        jasm(std::ostream &os, const ConstantPool *pool = nullptr) const;
 
-        void emit_bytecode(std::ostream &os) const;
+        void
+        emit_bytecode(std::ostream &os) const;
     };
 
 }

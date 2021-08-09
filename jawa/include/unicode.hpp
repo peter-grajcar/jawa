@@ -22,7 +22,8 @@ namespace jawa::unicode {
      * @param str string.
      * @return length of the string.
      */
-    int utf8_length(const char *str);
+    int
+    utf8_length(const char *str);
 
 }
 

@@ -55,37 +55,68 @@ namespace jasm {
          * @param args Constant type constructor arguments.
          */
         template<typename T, typename... Args>
-        inline u2 make_constant(Args... args)
+        inline u2
+        make_constant(Args... args)
         {
             pool_.emplace_back(std::make_unique<T>(args...));
             return pool_.size();
         }
 
-        inline std::vector<std::unique_ptr<Constant>>::const_iterator begin() const { return pool_.begin(); }
+        inline std::vector<std::unique_ptr<Constant>>::const_iterator
+        begin() const
+        {
+            return pool_.begin();
+        }
 
-        inline std::vector<std::unique_ptr<Constant>>::const_iterator end() const { return pool_.end(); }
+        inline std::vector<std::unique_ptr<Constant>>::const_iterator
+        end() const
+        {
+            return pool_.end();
+        }
 
-        inline std::vector<std::unique_ptr<Constant>>::iterator begin() { return pool_.begin(); }
+        inline std::vector<std::unique_ptr<Constant>>::iterator
+        begin()
+        {
+            return pool_.begin();
+        }
 
-        inline std::vector<std::unique_ptr<Constant>>::iterator end() { return pool_.end(); }
+        inline std::vector<std::unique_ptr<Constant>>::iterator
+        end()
+        {
+            return pool_.end();
+        }
 
-        inline const Constant *operator[](u2 index) const { return get(index); }
+        inline const Constant *
+        operator[](u2 index) const
+        {
+            return get(index);
+        }
 
-        inline Constant *operator[](u2 index) { return get(index); }
+        inline Constant *
+        operator[](u2 index)
+        {
+            return get(index);
+        }
 
-        inline const Constant *get(u2 index) const
+        inline const Constant *
+        get(u2 index) const
         {
             assert(index > 0);
             return pool_[index - 1].get();
         }
 
-        inline Constant *get(u2 index)
+        inline Constant *
+        get(u2 index)
         {
             assert(index > 0);
             return pool_[index - 1].get();
         }
 
-        inline u2 count() const { return pool_.size(); }
+        inline u2
+        count() const
+        {
+            return pool_.size();
+        }
     };
 
 }

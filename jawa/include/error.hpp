@@ -29,7 +29,11 @@ namespace jawa::errors {
           : msg_(msg)
         {}
 
-        inline const char *msg() const { return msg_; }
+        inline const char *
+        msg() const
+        {
+            return msg_;
+        }
     };
 
     using err = error_object<>;

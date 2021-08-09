@@ -15,7 +15,8 @@ namespace jawa {
 
     std::ostringstream line_buffer{};
 
-    std::string escape(char ch)
+    std::string
+    escape(char ch)
     {
         std::ostringstream oss;
         if (ch < 32 || ch > 126 || ch == '\'' || ch == '"')
@@ -25,7 +26,8 @@ namespace jawa {
         return std::move(oss).str();
     }
 
-    void Context::message_line(loc_t const &loc) const
+    void
+    Context::message_line(loc_t const &loc) const
     {
         std::cerr << ' ' << std::setw(5) << std::setfill(' ') << loc.line << " | " << jawa::line_buffer.str()
                   << std::endl
@@ -45,18 +47,21 @@ namespace jawa {
         std::cerr << std::endl;
     }
 
-    bool Context::no_spaces_between(const loc_t &lhs, const loc_t &rhs) const
+    bool
+    Context::no_spaces_between(const loc_t &lhs, const loc_t &rhs) const
     {
         return lhs.column_end == rhs.column_start;
     }
 
-    bool Context::is_type_name(const Name &name) const
+    bool
+    Context::is_type_name(const Name &name) const
     {
         // TODO: implement this method
         return name == "Łańcuch" || name == "System";
     }
 
-    jasm::ClassBuilder &Context::new_class_builder(Name class_name)
+    jasm::ClassBuilder &
+    Context::new_class_builder(Name class_name)
     {
         builder_ = std::make_unique<jasm::ClassBuilder>(class_name);
         return *builder_;

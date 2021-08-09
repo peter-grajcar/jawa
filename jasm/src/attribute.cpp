@@ -11,7 +11,8 @@
 
 namespace jasm {
 
-    void SourceFileAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
+    void
+    SourceFileAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         if (pool) {
             auto source_file_const = dynamic_cast<const Utf8Constant *>(pool->get(source_file_index_));
@@ -21,14 +22,16 @@ namespace jasm {
         }
     }
 
-    void SourceFileAttribute::emit_bytecode(std::ostream &os) const
+    void
+    SourceFileAttribute::emit_bytecode(std::ostream &os) const
     {
         write_big_endian<u2>(os, attribute_name_index_);
         write_big_endian<u4>(os, 2);
         write_big_endian<u2>(os, source_file_index_);
     }
 
-    void CodeAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
+    void
+    CodeAttribute::jasm(std::ostream &os, const ConstantPool *pool) const
     {
         os << "  " << std::setw(20) << ".limit stack" << max_stack_ << std::endl;
         os << "  " << std::setw(20) << ".limit locals" << max_locals_ << std::endl;
@@ -39,9 +42,14 @@ namespace jasm {
         }
     }
 
-    u4 CodeAttribute::length() const { return 12 + exception_table_length() + code_length() + attributes_length(); }
+    u4
+    CodeAttribute::length() const
+    {
+        return 12 + exception_table_length() + code_length() + attributes_length();
+    }
 
-    u4 CodeAttribute::code_length() const
+    u4
+    CodeAttribute::code_length() const
     {
         u4 code_length = 0;
         for (auto &inst : code_)
@@ -49,9 +57,14 @@ namespace jasm {
         return code_length;
     }
 
-    u4 CodeAttribute::exception_table_length() const { return 8 * exception_table_.size(); }
+    u4
+    CodeAttribute::exception_table_length() const
+    {
+        return 8 * exception_table_.size();
+    }
 
-    u4 CodeAttribute::attributes_length() const
+    u4
+    CodeAttribute::attributes_length() const
     {
         u4 attributes_length = 0;
         for (auto &attr : attributes_)
@@ -59,7 +72,8 @@ namespace jasm {
         return attributes_length;
     }
 
-    void CodeAttribute::emit_bytecode(std::ostream &os) const
+    void
+    CodeAttribute::emit_bytecode(std::ostream &os) const
     {
         write_big_endian<u2>(os, attribute_name_index_);
         write_big_endian<u4>(os, length());

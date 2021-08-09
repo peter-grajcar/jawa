@@ -11,7 +11,8 @@
 
 namespace jawa::unicode {
 
-    int utf8_length(const char *str)
+    int
+    utf8_length(const char *str)
     {
         int len = 0;
         while (*str)

@@ -11,7 +11,8 @@
 
 namespace jawa {
 
-    ModifierForm get_form(Name name)
+    ModifierForm
+    get_form(Name name)
     {
         switch (name.back()) {
         case 'a':
@@ -23,7 +24,8 @@ namespace jawa {
         }
     }
 
-    void ModifierPack::set(Modifier mod, ModifierForm form)
+    void
+    ModifierPack::set(Modifier mod, ModifierForm form)
     {
         uint32_t mask = 1U << (size_t) mod;
         assert((mod_flags_masc_ & mask) == 0 && (mod_flags_fem_ & mask) == 0);
@@ -39,7 +41,8 @@ namespace jawa {
         }
     }
 
-    ModifierForm ModifierPack::get(Modifier mod) const
+    ModifierForm
+    ModifierPack::get(Modifier mod) const
     {
         uint32_t mask = 1U << (size_t) mod;
         if ((mod_flags_masc_ & mask) && (mod_flags_fem_ & mask))

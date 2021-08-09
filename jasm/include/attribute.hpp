@@ -33,11 +33,14 @@ namespace jasm {
           : attribute_name_index_(attribute_name_index)
         {}
 
-        virtual void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const = 0;
+        virtual void
+        jasm(std::ostream &os, const ConstantPool *pool = nullptr) const = 0;
 
-        virtual void emit_bytecode(std::ostream &os) const = 0;
+        virtual void
+        emit_bytecode(std::ostream &os) const = 0;
 
-        virtual u4 length() const = 0;
+        virtual u4
+        length() const = 0;
     };
 
     class Attributable
@@ -52,24 +55,36 @@ namespace jasm {
 
         Attributable(Attributable &&) = default;
 
-        Attributable &operator=(const Attributable &) = delete;
+        Attributable &
+        operator=(const Attributable &) = delete;
 
-        Attributable &operator=(Attributable &&) = default;
+        Attributable &
+        operator=(Attributable &&) = default;
 
         virtual ~Attributable() = default;
 
-        inline std::vector<std::unique_ptr<Attribute>> &attributes() { return attributes_; }
+        inline std::vector<std::unique_ptr<Attribute>> &
+        attributes()
+        {
+            return attributes_;
+        }
 
-        inline const std::vector<std::unique_ptr<Attribute>> &attributes() const { return attributes_; }
+        inline const std::vector<std::unique_ptr<Attribute>> &
+        attributes() const
+        {
+            return attributes_;
+        }
 
         template<typename T, typename... Args>
-        inline void make_attribute(Args... args)
+        inline void
+        make_attribute(Args... args)
         {
             attributes_.push_back(std::make_unique<T>(args...));
         }
 
         template<typename T>
-        inline void add_attribute(T &&attr)
+        inline void
+        add_attribute(T &&attr)
         {
             attributes_.push_back(std::make_unique<T>(std::forward<T>(attr)));
         }
@@ -86,7 +101,11 @@ namespace jasm {
           , constant_value_index_(constant_value_index)
         {}
 
-        inline u4 length() const override { return 2; }
+        inline u4
+        length() const override
+        {
+            return 2;
+        }
     };
 
     class CodeAttribute
@@ -115,11 +134,14 @@ namespace jasm {
         std::vector<std::unique_ptr<Instruction>> code_;
         std::vector<ExceptionTableEntry> exception_table_;
 
-        u4 code_length() const;
+        u4
+        code_length() const;
 
-        u4 exception_table_length() const;
+        u4
+        exception_table_length() const;
 
-        u4 attributes_length() const;
+        u4
+        attributes_length() const;
 
     public:
         CodeAttribute(u2 name_index, u2 max_stack, u2 max_locals)
@@ -128,38 +150,64 @@ namespace jasm {
           , max_locals_(max_locals)
         {}
 
-        inline void make_exception_table_entry(u2 start_pc, u2 end_pc, u2 handler_pc, u2 catch_type)
+        inline void
+        make_exception_table_entry(u2 start_pc, u2 end_pc, u2 handler_pc, u2 catch_type)
         {
             exception_table_.emplace_back(start_pc, end_pc, handler_pc, catch_type);
         }
 
         template<typename T, typename... Args>
-        inline void make_instruction(Args... args)
+        inline void
+        make_instruction(Args... args)
         {
             code_.emplace_back(std::make_unique<T>(args...));
         }
 
         template<typename T>
-        inline void add_instruction(T &&inst)
+        inline void
+        add_instruction(T &&inst)
         {
             code_.emplace_back(std::forward<T>(inst));
         }
 
-        inline std::vector<std::unique_ptr<Instruction>> &code() { return code_; }
+        inline std::vector<std::unique_ptr<Instruction>> &
+        code()
+        {
+            return code_;
+        }
 
-        inline u2 locals_limit() const { return max_locals_; }
+        inline u2
+        locals_limit() const
+        {
+            return max_locals_;
+        }
 
-        inline u2 stack_limit() const { return max_stack_; }
+        inline u2
+        stack_limit() const
+        {
+            return max_stack_;
+        }
 
-        inline void set_locals_limit(u2 max_locals) { max_locals_ = max_locals; }
+        inline void
+        set_locals_limit(u2 max_locals)
+        {
+            max_locals_ = max_locals;
+        }
 
-        inline void set_stack_limit(u2 max_stack) { max_stack_ = max_stack; }
+        inline void
+        set_stack_limit(u2 max_stack)
+        {
+            max_stack_ = max_stack;
+        }
 
-        void jasm(std::ostream &os, const ConstantPool *pool) const override;
+        void
+        jasm(std::ostream &os, const ConstantPool *pool) const override;
 
-        void emit_bytecode(std::ostream &os) const override;
+        void
+        emit_bytecode(std::ostream &os) const override;
 
-        u4 length() const override;
+        u4
+        length() const override;
     };
 
     class StackMapTableAttribute : public Attribute
@@ -203,11 +251,17 @@ namespace jasm {
           , source_file_index_(source_file_index)
         {}
 
-        void jasm(std::ostream &os, const ConstantPool *pool = nullptr) const override;
+        void
+        jasm(std::ostream &os, const ConstantPool *pool = nullptr) const override;
 
-        void emit_bytecode(std::ostream &os) const override;
+        void
+        emit_bytecode(std::ostream &os) const override;
 
-        inline u4 length() const override { return 2; }
+        inline u4
+        length() const override
+        {
+            return 2;
+        }
     };
 
     class SourceDebugExtensionAttribute : public Attribute
@@ -237,7 +291,8 @@ namespace jasm {
           : Attribute(attribute_name_index)
         {}
 
-        inline void make_line_number_table_entry(u2 start_pc, u2 line_number)
+        inline void
+        make_line_number_table_entry(u2 start_pc, u2 line_number)
         {
             line_number_table_.emplace_back(start_pc, line_number);
         }

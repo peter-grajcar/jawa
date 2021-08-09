@@ -15,13 +15,26 @@
 
 namespace jasm {
 
-    bool ReferenceType::is_reference_type() const { return true; }
+    bool
+    ReferenceType::is_reference_type() const
+    {
+        return true;
+    }
 
-    char ClassType::prefix() const { return byte_code::ClassTypePrefix; }
+    char
+    ClassType::prefix() const
+    {
+        return byte_code::ClassTypePrefix;
+    }
 
-    utf8 ClassType::descriptor() const { return prefix() + class_name_ + ";"; }
+    utf8
+    ClassType::descriptor() const
+    {
+        return prefix() + class_name_ + ";";
+    }
 
-    bool ClassType::operator==(const BaseType &type) const
+    bool
+    ClassType::operator==(const BaseType &type) const
     {
         auto class_type = dynamic_cast<const ClassType *>(&type);
         if (!class_type)
@@ -29,11 +42,20 @@ namespace jasm {
         return *this == *class_type;
     }
 
-    bool ClassType::operator==(const ClassType &class_type) const { return class_type.class_name_ == class_name_; }
+    bool
+    ClassType::operator==(const ClassType &class_type) const
+    {
+        return class_type.class_name_ == class_name_;
+    }
 
-    char ArrayType::prefix() const { return byte_code::ArrayTypePrefix; }
+    char
+    ArrayType::prefix() const
+    {
+        return byte_code::ArrayTypePrefix;
+    }
 
-    utf8 ArrayType::descriptor() const
+    utf8
+    ArrayType::descriptor() const
     {
         std::ostringstream ss;
         for (size_t i = 0; i < dimension_; ++i)
@@ -42,7 +64,8 @@ namespace jasm {
         return ss.str();
     }
 
-    bool ArrayType::operator==(const BaseType &type) const
+    bool
+    ArrayType::operator==(const BaseType &type) const
     {
         auto array_type = dynamic_cast<const ArrayType *>(&type);
         if (!array_type)
@@ -50,16 +73,26 @@ namespace jasm {
         return *this == *array_type;
     }
 
-    bool ArrayType::operator==(const ArrayType &array_type) const
+    bool
+    ArrayType::operator==(const ArrayType &array_type) const
     {
         return array_type.element_type_ == element_type_ && array_type.dimension_ == dimension_;
     }
 
-    utf8 BaseType::descriptor() const { return std::string(1, prefix()); }
+    utf8
+    BaseType::descriptor() const
+    {
+        return std::string(1, prefix());
+    }
 
-    char MethodType::prefix() const { return '('; }
+    char
+    MethodType::prefix() const
+    {
+        return '(';
+    }
 
-    utf8 MethodType::descriptor() const
+    utf8
+    MethodType::descriptor() const
     {
         std::ostringstream ss;
         ss << '(';
@@ -70,9 +103,14 @@ namespace jasm {
         return ss.str();
     }
 
-    bool MethodType::is_reference_type() const { return false; }
+    bool
+    MethodType::is_reference_type() const
+    {
+        return false;
+    }
 
-    bool MethodType::operator==(const BaseType &type) const
+    bool
+    MethodType::operator==(const BaseType &type) const
     {
         auto method_type = dynamic_cast<const MethodType *>(&type);
         if (!method_type)
@@ -80,7 +118,8 @@ namespace jasm {
         return *this == *method_type;
     }
 
-    bool MethodType::operator==(const MethodType &method_type) const
+    bool
+    MethodType::operator==(const MethodType &method_type) const
     {
         if (method_type.return_type_ != return_type_)
             return false;
