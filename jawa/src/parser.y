@@ -161,6 +161,7 @@ using namespace jawa;
 
 
 %type<Name>                 Identifier Name
+%type<Name>                 CreatedName
 %type<NameList>             NameList
 %type<TypeObs>              Type VoidType PrimitiveType ReferenceType NumericType IntegralType
 %type<TypeObs>              FloatingPointType ClassOrInterfaceType ArrayType
@@ -174,10 +175,11 @@ using namespace jawa;
 %type<Expression>           CastExpressionNoName UnaryExpressionNotPlusMinusNoName PreIncDecExpression
 %type<Expression>           UnaryExpressionNoName PostIncDecExpression PostfixExpressionNoName
 %type<Expression>           ConstantExpressionNoName PrimaryNoName Literal ConditionalOrExpressionNoName
-%type<Expression>           ConditionalAndExpressionNoName
+%type<Expression>           ConditionalAndExpressionNoName Creator
 %type<ExpressionOpt>        ExpressionNoName_opt
 %type<ClassAndName>         MethodName
-%type<ModifierAndAnnotationPack> Modifiers_opt Modifiers Modifier StaticInitializerHead
+%type<ModifierAndAnnotationPack> Modifiers_opt Modifiers StaticInitializerHead
+%type<std::pair<Modifier, ModifierForm>> Modifier
 
 %%
 
@@ -203,7 +205,7 @@ PackageDeclaration_opt: %empty
                       | PackageDeclaration
                       ;
 
-PackageDeclaration: PACKAGE Name SEMIC
+PackageDeclaration: PACKAGE Name SEMIC { set_package_name(ctx, $2); }
                   ;
 
 ImportDeclarations_opt: %empty
@@ -214,7 +216,7 @@ ImportDeclarations: ImportDeclaration
                   | ImportDeclarations ImportDeclaration
                   ;
 
-ImportDeclaration: IMPORT Name SEMIC
+ImportDeclaration: IMPORT Name SEMIC    { import(ctx, $2); }
                  ;
 
 TypeDeclarations_opt: %empty
@@ -432,22 +434,22 @@ Modifiers_opt: %empty
              | Modifiers
              ;
 
-Modifiers: Modifier
-         | Modifiers Modifier
+Modifiers: Modifier             { $$.modifier_pack.set($1.first, $1.second); }
+         | Modifiers Modifier   { $$ = $1; $$.modifier_pack.set($2.first, $2.second); }
          ;
 
 Modifier: Annotation
-        | PUBLIC
-        | PROTECTED
-        | PRIVATE
-        | STATIC
-        | ABSTRACT
-        | FINAL
-        | NATIVE
-        | SYNCHRONIZED
-        | TRANSIENT
-        | VOLATILE
-        | STRICTFP
+        | PUBLIC        { $$ = std::make_pair(Modifier::PUBLIC, $1); }
+        | PROTECTED     { $$ = std::make_pair(Modifier::PROTECTED, $1); }
+        | PRIVATE       { $$ = std::make_pair(Modifier::PRIVATE, $1); }
+        | STATIC        { $$ = std::make_pair(Modifier::STATIC, $1); }
+        | ABSTRACT      { $$ = std::make_pair(Modifier::ABSTRACT, $1); }
+        | FINAL         { $$ = std::make_pair(Modifier::FINAL, $1); }
+        | NATIVE        { $$ = std::make_pair(Modifier::NATIVE, $1); }
+        | SYNCHRONIZED  { $$ = std::make_pair(Modifier::SYNCHRONIZED, $1); }
+        | TRANSIENT     { $$ = std::make_pair(Modifier::TRANSIENT, $1); }
+        | VOLATILE      { $$ = std::make_pair(Modifier::VOLATILE, $1); }
+        | STRICTFP      { $$ = std::make_pair(Modifier::STRICTFP, ModifierForm::NEUT); }
         ;
 
 Annotation: AT Name
@@ -902,7 +904,7 @@ ExpressionNoName: AssignmentExpressionNoName { $$ = $1; }
 AssignmentExpressionNoName: ConditionalExpressionNoName { $$ = $1; }
                     | ConditionalExpressionNoName AssignmentOperator AssignmentExpressionNoName
                     | ConditionalExpressionNoName AssignmentOperator Name
-                    | Name AssignmentOperator AssignmentExpressionNoName
+                    | Name AssignmentOperator AssignmentExpressionNoName { assign(ctx, $1, $3); }
                     | Name AssignmentOperator Name
                     ;
 
@@ -1057,7 +1059,7 @@ PrimaryNoName: Literal          { $$ = $1; }
              | LPAR Name RPAR
              | THIS ThisSuffix
              | SUPER SuperSuffix
-             | NEW Creator
+             | NEW Creator { $$ = $2; }
              /* | NonWildcardTypeArguments ExplicitGenericInvocationSuffix */
              /* | NonWildcardTypeArguments THIS Arguments */
              | PrimitiveType Dims_opt DOT CLASS
@@ -1108,11 +1110,11 @@ ExplicitGenericInvocationSuffix: SUPER SuperSuffix
 
 
 Creator: NonWildcardTypeArguments CreatedName ClassCreatorRest
-       | CreatedName ClassCreatorRest
+       | CreatedName ClassCreatorRest { $$ = instantiate_object(ctx, $1); }
        | CreatedName ArrayCreatorRest
        ;
 
-CreatedName: Identifier CreatedNameTail_opt
+CreatedName: Identifier CreatedNameTail_opt { $$ = $1; }
            | Identifier TypeArgumentsOrDiamond CreatedNameTail_opt
            ;
 

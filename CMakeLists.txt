@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.16)
 project(jawa)
 
 set(CMAKE_CXX_STANDARD 17)
+set(JAVA_CLASSPATH /Users/petergrajcar/Desktop/classpath)
 
 add_subdirectory("jawa")
 add_subdirectory("jasm")

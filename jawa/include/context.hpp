@@ -49,6 +49,7 @@ namespace jawa {
         std::locale locale_;
         std::unique_ptr<jasm::ClassBuilder> builder_;
         jasm::BasicBlock static_initializer_;
+        Name package_name_;
 
         void
         message_line(loc_t const &loc) const;
@@ -58,6 +59,7 @@ namespace jawa {
           : locale_("pl_PL.UTF-8")
           , type_table_()
           , class_table_(type_table_, class_paths)
+          , package_name_()
         {}
 
         /**
@@ -165,7 +167,7 @@ namespace jawa {
          * @return newly created class builder.
          */
         jasm::ClassBuilder &
-        new_class_builder(Name class_name);
+        new_class_builder(const Name &class_name);
 
         /**
          *
@@ -201,6 +203,12 @@ namespace jawa {
         static_initializer()
         {
             return static_initializer_;
+        }
+
+        inline void
+        set_package_name(const Name &name)
+        {
+            package_name_ = name;
         }
     };
 

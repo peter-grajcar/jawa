@@ -11,13 +11,13 @@ zaimportuj jawa.io.StrumieńDrukowania;
 
 publiczna klasa System {
 
-    statyczny StrumieńDrukowania wyjście; // = nowy StrumieńDrukowania();
+    publiczny statyczny StrumieńDrukowania wyjście;
 
     statyczny {
         wyjście = nowy StrumieńDrukowania();
     }
 
-    statyczny void wczytajBibliotekę(Łańcuch nazwaBiblioteki) {
+    publiczny statyczny void wczytajBibliotekę(Łańcuch nazwaBiblioteki) {
         java.lang.Runtime.getRuntime().loadLibrary(nazwaBiblioteki);
     }
 

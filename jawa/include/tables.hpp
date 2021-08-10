@@ -359,6 +359,10 @@ namespace jawa {
         jasm::u2 count_;
 
     public:
+        VariableScopeTable()
+          : scopes_()
+          , count_(0){};
+
         void
         enter_scope();
 

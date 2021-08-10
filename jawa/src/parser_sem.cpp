@@ -26,6 +26,7 @@ namespace jawa {
         std::cout << "entering class " << class_name << std::endl;
         ctx->new_class_builder(class_name);
         BUILDER.set_version(59, 0);
+        BUILDER.set_access_flags(jasm::Class::ACC_PUBLIC | jasm::Class::ACC_SUPER);
     }
 
     void
@@ -56,7 +57,7 @@ namespace jawa {
         VoidTypeObs void_type = TYPE_TABLE.get_void_type();
         MethodTypeObs void_method_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
         BUILDER.enter_method("<clinit>", *void_method_type, jasm::Method::ACC_STATIC);
-        CLINIT.make_instruction<jasm::Ret>();
+        CLINIT.make_instruction<jasm::Return>();
         BUILDER.add_basic_block(std::move(CLINIT));
         BUILDER.leave_method();
     }
@@ -109,13 +110,30 @@ namespace jawa {
     }
 
     void
+    set_method_modifiers(context_t ctx, const ModifierAndAnnotationPack &pack)
+    {
+        jasm::u2 flags = 0;
+        if (pack.modifier_pack.get(Modifier::PUBLIC) != ModifierForm::NONE)
+            flags |= jasm::Method::ACC_PUBLIC;
+        if (pack.modifier_pack.get(Modifier::STATIC) != ModifierForm::NONE)
+            flags |= jasm::Method::ACC_STATIC;
+        if (pack.modifier_pack.get(Modifier::NATIVE) != ModifierForm::NONE)
+            flags |= jasm::Method::ACC_NATIVE;
+        BUILDER.current_method()->set_access_flags(flags);
+    }
+
+    void
     leave_method(context_t ctx, const ModifierAndAnnotationPack &pack)
     {
         if (BUILDER.current_method() != nullptr) {
             std::cout << "leaving method" << std::endl;
-            // TODO: BUILDER.current_method()->set_access_flags();
+            SCOPE_TABLE.leave_scope();
+
+            set_method_modifiers(ctx, pack);
+
             BUILDER.make_instruction<jasm::Return>();
             BUILDER.leave_method();
+            BUILDER.set_insertion_point(&CLINIT);
         }
     }
 
@@ -123,6 +141,7 @@ namespace jawa {
     declare_method(context_t ctx, const ModifierAndAnnotationPack &pack)
     {
         std::cout << "declaring method" << std::endl;
+        set_method_modifiers(ctx, pack);
         BUILDER.leave_method();
     }
 
@@ -131,7 +150,9 @@ namespace jawa {
     {
         if (name == "Łańcuch") // temporary measure
             return TYPE_TABLE.get_class_type("java/lang/String");
-        return TYPE_TABLE.get_class_type(name);
+        auto cls = CLASS_TABLE.load_class(name);
+        assert(cls != nullptr);
+        return TYPE_TABLE.get_class_type(cls->class_name());
     }
 
     void
@@ -310,12 +331,6 @@ namespace jawa {
     }
 
     Expression
-    resolve_name_expression(context_t ctx, const Name &name)
-    {
-        return {};
-    }
-
-    Expression
     load_name(context_t ctx, const Name &name)
     {
         auto *var = SCOPE_TABLE.get_var(name);
@@ -349,7 +364,52 @@ namespace jawa {
     declare_field(context_t ctx, const ModifierAndAnnotationPack &pack, TypeObs type, const Name &name)
     {
         std::cout << "declaring field " << name << std::endl;
-        BUILDER.declare_field(name, *type, jasm::Field::ACC_PUBLIC | jasm::Field::ACC_STATIC);
+        BUILDER.declare_field(name, *type,
+                              jasm::Field::ACC_PUBLIC | jasm::Field::ACC_STATIC); // <- temporary solution TODO: remove
+    }
+
+    Expression
+    instantiate_object(context_t ctx, const Name &class_name)
+    {
+        std::cout << "instantiate new class " << class_name << std::endl;
+        auto cls = CLASS_TABLE.load_class(class_name);
+        assert(cls != nullptr);
+
+        ClassTypeObs type = TYPE_TABLE.get_class_type(cls->class_name());
+        jasm::u2 class_idx = BUILDER.add_class_constant(cls->class_name());
+        BUILDER.make_instruction<jasm::New>(U2_SPLIT(class_idx));
+        BUILDER.make_instruction<jasm::Duplicate>();
+
+        VoidTypeObs void_type = TYPE_TABLE.get_void_type();
+        // TODO: support for different types of constructors
+        MethodTypeObs constructor_type = TYPE_TABLE.get_method_type(void_type, TypeObsArray());
+        jasm::u2 constructor_idx = BUILDER.add_method_constant(cls->class_name(), "<init>", *constructor_type);
+        BUILDER.make_instruction<jasm::InvokeSpecial>(U2_SPLIT(constructor_idx));
+
+        return Expression(type);
+    }
+
+    Expression
+    assign(context_t ctx, const Name &name, const Expression &expr)
+    {
+        // TODO: this is an ad hoc function in its entirety
+        std::cout << "assigning to " << name << std::endl;
+        jasm::u2 field_idx = BUILDER.add_field_constant(BUILDER.class_name(), name, *expr.type);
+        BUILDER.make_instruction<jasm::PutStatic>(U2_SPLIT(field_idx));
+        return expr;
+    }
+
+    void
+    set_package_name(context_t ctx, const Name &name)
+    {
+        ctx->set_package_name(name);
+    }
+
+    void
+    import(context_t ctx, const Name &name)
+    {
+        std::cout << "importing " << name << std::endl;
+        CLASS_TABLE.import_class(name);
     }
 
 }

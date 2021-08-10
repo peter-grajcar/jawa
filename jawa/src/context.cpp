@@ -61,9 +61,12 @@ namespace jawa {
     }
 
     jasm::ClassBuilder &
-    Context::new_class_builder(Name class_name)
+    Context::new_class_builder(const Name &class_name)
     {
-        builder_ = std::make_unique<jasm::ClassBuilder>(class_name);
+        if (package_name_.empty())
+            builder_ = std::make_unique<jasm::ClassBuilder>(class_name);
+        else
+            builder_ = std::make_unique<jasm::ClassBuilder>(package_name_ + '/' + class_name);
         return *builder_;
     }
 

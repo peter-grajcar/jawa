@@ -156,7 +156,8 @@ namespace jawa {
             return false;
 
         std::size_t index = fully_qualified_name.rfind('/');
-        Name last_part = fully_qualified_name.substr(index, std::string::npos);
+        Name last_part = fully_qualified_name.substr(index + 1, std::string::npos);
+        std::cout << last_part << std::endl;
 
         imported_classes_.insert({ last_part, JawaImport(fully_qualified_name, file) });
         return true;
@@ -201,8 +202,10 @@ namespace jawa {
         if (search != classes_.end())
             return &search->second;
 
-        // TODO: check imports
-        Name file = find_class_file(class_name);
+        auto import_search = imported_classes_.find(class_name);
+        Name file = import_search != imported_classes_.end() ? import_search->second.class_file_path
+                                                             : find_class_file(class_name);
+
         if (file.empty())
             return nullptr;
 

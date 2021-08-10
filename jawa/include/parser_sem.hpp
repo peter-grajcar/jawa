@@ -94,6 +94,18 @@ namespace jawa {
     Expression
     resolve_name_expression(context_t ctx, const Name &name);
 
+    Expression
+    instantiate_object(context_t ctx, const Name &class_name);
+
+    Expression
+    assign(context_t ctx, const Name &name, const Expression &expr);
+
+    void
+    set_package_name(context_t ctx, const Name &name);
+
+    void
+    import(context_t ctx, const Name &name);
+
 }
 
 #endif // JAWA_PARSER_SEM_CPP_HPP

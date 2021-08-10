@@ -215,7 +215,7 @@ namespace jasm {
         { 2, 2, 0 }, // 0xb5 putfield
         { 2, 1, 0 }, // 0xb6 invokevirtual
         { 2, 1, 0 }, // 0xb7 invokespecial
-        { 2, 0, 0 }, // 0xb8 invokestatic
+        { 2, 0, 1 }, // 0xb8 invokestatic
         { 4, 1, 0 }, // 0xb9 invokeinterface
         { 4, 0, 0 }, // 0xba invokedynamic
         { 2, 0, 1 }, // 0xbb new

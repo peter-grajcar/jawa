@@ -164,6 +164,11 @@ namespace jasm {
     void
     ClassBuilder::leave_method()
     {
+        if (current_method_->access_flags() & Method::ACC_NATIVE) {
+            current_method_->attributes().erase(std::remove_if(
+              current_method_->attributes().begin(), current_method_->attributes().end(),
+              [](std::unique_ptr<Attribute> &attr) { return dynamic_cast<CodeAttribute *>(attr.get()) != nullptr; }));
+        }
         u2 stack_size = 0;
         u2 max_stack_size = 0;
         for (auto &basic_block : basic_blocks_) {
