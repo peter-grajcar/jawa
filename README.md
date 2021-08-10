@@ -14,10 +14,6 @@ Jawa jest obiektowy język programowania.
 }
 </pre>
 
-## Current State
-
-TODO
-
 ## Compiling the Sources
 
 ```
