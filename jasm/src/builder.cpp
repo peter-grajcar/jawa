@@ -24,18 +24,18 @@ namespace jasm {
 
     ClassBuilder::ClassBuilder(utf8 class_name)
       : current_insertion_point_()
-      , class_name_(std::move(class_name))
       , current_code_()
       , current_method_()
+      , class_name_(std::move(class_name))
     {
         init();
     }
 
     ClassBuilder::ClassBuilder(const char *class_name)
       : current_insertion_point_()
-      , class_name_(class_name)
       , current_code_()
       , current_method_()
+      , class_name_(class_name)
     {
         init();
     }

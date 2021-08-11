@@ -169,8 +169,8 @@ namespace jawa {
     public:
         JawaClassMember(Name name, TypeObs type, jasm::u2 access_flags)
           : name_(std::move(name))
-          , type_(type)
           , access_flags_(access_flags)
+          , type_(type)
         {}
 
         inline Name

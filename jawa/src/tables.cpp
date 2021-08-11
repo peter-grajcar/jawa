@@ -361,7 +361,7 @@ namespace jawa {
     void
     VariableScope::add_var(const Name &name, TypeObs type, jasm::u2 index)
     {
-        local_variables_.emplace(name, LocalVariable{ name, type, index });
+        local_variables_.emplace(name, LocalVariable{ { name, type }, index });
     }
 
     void

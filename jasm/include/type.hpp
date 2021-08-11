@@ -191,8 +191,8 @@ namespace jasm {
 
     public:
         explicit ArrayType(const Type *element_type, size_t dim = 1)
-          : element_type_(element_type)
-          , dimension_(dim)
+          : dimension_(dim)
+          , element_type_(element_type)
         {
             assert(element_type_ && dim != 0);
             auto array_type = dynamic_cast<const ArrayType *>(element_type);

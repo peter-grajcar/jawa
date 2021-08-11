@@ -40,8 +40,8 @@ namespace jawa {
         Name name;
 
         FormalParam(TypeObs type, Name name)
-          : name(std::move(name))
-          , type(type)
+          : type(type)
+          , name(std::move(name))
         {}
     };
 

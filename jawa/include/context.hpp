@@ -56,9 +56,9 @@ namespace jawa {
 
     public:
         explicit Context(const std::string &class_paths)
-          : locale_("pl_PL.UTF-8")
-          , type_table_()
+          : type_table_()
           , class_table_(type_table_, class_paths)
+          , locale_("pl_PL.UTF-8")
           , package_name_()
         {}
 
