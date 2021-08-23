@@ -11,6 +11,13 @@
 
 Jawa jest obiektowy język programowania.
 
+The Jawa programming language compiler was inspired by the meme above (author unknown).
+
+## Status
+
+The compiler is incomplete and it contains a few ad-hoc solutions. However, the example program can be compiled along
+with the library.
+
 ## Code Example
 
 <pre lang="jawa">
