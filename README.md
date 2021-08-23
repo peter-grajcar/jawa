@@ -1,3 +1,12 @@
+<p align="center">
+    <img
+        alt="A meme made by an unknown author. A hello world (witaj świecie) example program written in Jawa programming language."
+        src="./jawa.jpg">
+    <p align="center">
+    (Unknown author)
+    </p>
+</p>
+
 # Jawa
 
 Jawa jest obiektowy język programowania.
