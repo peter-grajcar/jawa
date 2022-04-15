@@ -51,11 +51,11 @@ $ make jawa_stdbib
 
 ## Project Structure
 
-`jasm` is a library for low-level library for JVM byte code manipulation.
+`jasm` is a low-level library for JVM byte code manipulation.
 
 `jawa` is a Jawa compiler implemented using `jasm`.
 
-`stdbib` contains sources of Jawa standard library (standardowa biblioteka).
+`stdbib` contains sources of the Jawa standard library (standardowa biblioteka).
 
 `editor` contains plugins for supported code editors.
 
