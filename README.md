@@ -9,14 +9,13 @@
 
 # Jawa
 
-Jawa jest obiektowy język programowania.
-
-The Jawa programming language compiler was inspired by the meme above (author unknown).
+Jawa jest obiektowy język programowania. The Jawa programming language compiler was inspired by the meme above 
+(author unknown).
 
 ## Status
 
-The compiler is incomplete and it contains a few ad-hoc solutions. However, the example program can be compiled along
-with the library.
+The compiler is incomplete and it contains a few ad-hoc solutions. However, WitajŚwiecie (HelloWorld) program
+can be compiled as well as the necessary standard library.
 
 ## Code Example
 
@@ -66,11 +65,11 @@ $ make jawa_stdbib
 $ build/jawa/jawac --ścieżkaklasy .:stdbib test/WitajŚwiecie.jawa
 ```
 
-Make sure you have copiled the standard library.
+Make sure you have compiled the standard library.
 
 ## Running the Compiled Programs
 
-You need to specify standard library path and classpath:
+You need to specify the standard library path and classpath:
 
 ```
 $ java -Djava.library.path=build/stdbib -classpath stdbib:. WitajŚwiecie
